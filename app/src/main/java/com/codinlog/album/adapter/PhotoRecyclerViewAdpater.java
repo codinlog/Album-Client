@@ -37,6 +37,7 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
     private PhotoItemOnLongClickListenser photoItemOnLongClickListenser;
     private PhotoItemOnClickListener photoItemOnClickListener;
     private PhotoItemCheckBoxListener photoItemCheckBoxListener;
+    private ArrayList<Integer> selectList;
 
 
     public PhotoRecyclerViewAdpater(PhotoItemOnLongClickListenser photoItemOnLongClickListenser, PhotoItemOnClickListener photoItemOnClickListener, PhotoItemCheckBoxListener photoItemCheckBoxListener) {
@@ -119,6 +120,7 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
                     Object o = arrayList.get(position);
                     if (o instanceof ImageBean) {
                         ImageBean imageBean = (ImageBean) o;
+                        Log.d("isSelected", "isSelectMode: " + imageBean);
                         photoItemViewHolder.checkBox.setChecked(imageBean.isSelected());
                     }
                 } else if (holder instanceof PhotoTitleViewHolder) {
@@ -174,6 +176,10 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
     public void setMode(WorthStoreUtil.MODE mode) {
         this.mode = mode;
         notifyItemRangeChanged(0, arrayList == null ? 0 : arrayList.size(),"payload");
+    }
+    
+    public void setSelectList(ArrayList<Integer> selectList){
+        this.selectList = selectList;
     }
 
     private class PhotoItemViewHolder extends RecyclerView.ViewHolder {

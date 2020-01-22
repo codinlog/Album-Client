@@ -11,9 +11,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.codinlog.album.databinding.PhotoFragmentBinding;
 
 public abstract class BaseFragmentController<T extends ViewModel> extends Fragment {
     protected T viewModel;
@@ -34,7 +31,7 @@ public abstract class BaseFragmentController<T extends ViewModel> extends Fragme
         doInitData();
     }
     protected abstract int getLayoutId();
-    protected abstract void doInitListener();
     protected abstract void doInitView();
+    protected abstract void doInitListener();
     protected abstract void doInitData();
 }

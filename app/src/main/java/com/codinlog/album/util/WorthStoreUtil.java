@@ -32,10 +32,13 @@ public class WorthStoreUtil {
     };
     public static String[] selectionArgs = {"image/jpeg", "image/png"};
 
+    public static boolean isFirstScanner = true;
     public static int thumbnailImageNum = 4;
     public static int thumbnailTitleNum = 1;
     public static int no_type = 501;
     public final static int photo_item_type = 501;
     public final static int photo_title_type = 502;
+    public final static int photo_isRepeat = 10;
+    public final static int photo_isNew = 11;
     public enum MODE{MODE_NORMAL,MODE_SELECT};
 }
