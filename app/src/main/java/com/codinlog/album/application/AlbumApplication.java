@@ -5,13 +5,15 @@ import android.content.Context;
 import android.util.Log;
 
 public class AlbumApplication extends Application {
-    public  Context context;
+    public static Context mContext;
+    public static Application mApplictaion;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        this.context = getApplicationContext();
+        AlbumApplication.mContext = getApplicationContext();
+        AlbumApplication.mApplictaion = this;
     }
 
     public void Log(String TAG, String MSG){

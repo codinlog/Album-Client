@@ -10,4 +10,7 @@
     <string name="notice">提示</string>
     <string name="certain">确定</string>
     <string name="permission_camera">相机权限</string>
+    <string name="photo_item_des">photo_item</string>
+    <string name="classify_title">TextView</string>
+    <string name="navigtion_more_notice">navigtion more</string>
 </resources>
