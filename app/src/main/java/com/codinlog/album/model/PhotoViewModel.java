@@ -3,21 +3,34 @@ package com.codinlog.album.model;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.codinlog.album.bean.ImageBean;
+import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
 
 public class PhotoViewModel extends ViewModel {
     // TODO: Implement the ViewModel
-    private MutableLiveData<ArrayList<Object>> mutableLiveData;
+    private MutableLiveData<ArrayList<Object>> objectMutableLiveData;
+    private MutableLiveData<WorthStoreUtil.MODE> modeMutableLiveData;
 
-    public MutableLiveData<ArrayList<Object>> getMutableLiveData() {
-        if (mutableLiveData == null)
-            mutableLiveData = new MutableLiveData<>();
-        return mutableLiveData;
+    public MutableLiveData<ArrayList<Object>> getObjectMutableLiveData() {
+        if (objectMutableLiveData == null)
+            objectMutableLiveData = new MutableLiveData<>();
+        return objectMutableLiveData;
     }
 
-    public void setMutableLiveData(ArrayList<Object> value){
-        mutableLiveData.postValue(value);
+    public void setObjectMutableLiveData(ArrayList<Object> value){
+        objectMutableLiveData.postValue(value);
+    }
+
+    public MutableLiveData<WorthStoreUtil.MODE> getModeMutableLiveData() {
+        if (modeMutableLiveData == null){
+            modeMutableLiveData = new MutableLiveData<>();
+            modeMutableLiveData.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+        }
+        return modeMutableLiveData;
+    }
+
+    public void setModeMutableLiveData(WorthStoreUtil.MODE value) {
+        modeMutableLiveData.postValue(value);
     }
 }

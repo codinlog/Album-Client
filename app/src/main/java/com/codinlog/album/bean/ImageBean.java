@@ -17,20 +17,7 @@ public class ImageBean {
     public ImageBean() {
     }
 
-    public ImageBean(String path, String thumbnail, int imageId, int imageWidth, int imageHeight, int size, int tokenDate, long modified, int orientation, double latitude, double longitude, double altitude, boolean isSelected) {
-        this.path = path;
-        this.thumbnail = thumbnail;
-        this.imageId = imageId;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
-        this.size = size;
-        this.tokenDate = tokenDate;
-        this.modified = modified;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.altitude = altitude;
-        this.isSelected = isSelected;
-    }
+
 
     public static ImageBean newInstance(){
         return new ImageBean();

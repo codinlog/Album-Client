@@ -37,5 +37,5 @@ public class WorthStoreUtil {
     public static int no_type = 501;
     public final static int photo_item_type = 501;
     public final static int photo_title_type = 502;
-    public static enum MODE{MODE_NORMAL,MODE_SELECT};
+    public enum MODE{MODE_NORMAL,MODE_SELECT};
 }

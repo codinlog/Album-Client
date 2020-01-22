@@ -146,7 +146,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             @Override
             public void onChanged(ArrayList<ImageBean> imageBeans) {
                 ArrayList<Object> classified = ClassifyUtil.PhotoClassification(imageBeans);
-                photoViewModel.setMutableLiveData(classified);
+                photoViewModel.setObjectMutableLiveData(classified);
             }
         });
     }
@@ -167,6 +167,11 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         }
                     }).show();
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.d(TAG, "onBackPressed: ");
     }
 }
