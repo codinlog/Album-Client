@@ -1,11 +1,11 @@
-package com.codinlog.album.Controller.Activity;
+package com.codinlog.album.controller.Activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +16,10 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-import com.codinlog.album.Controller.BaseActivityController;
-import com.codinlog.album.Controller.Fragment.AlbumFragment;
-import com.codinlog.album.Controller.Fragment.PhotoFragment;
-import com.codinlog.album.Controller.Fragment.TimeFragment;
+import com.codinlog.album.controller.BaseActivityController;
+import com.codinlog.album.controller.Fragment.AlbumFragment;
+import com.codinlog.album.controller.Fragment.PhotoFragment;
+import com.codinlog.album.controller.Fragment.TimeFragment;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.ViewPagerAdapter;
 import com.codinlog.album.bean.FragmentBean;
@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.viewPager.setAdapter(viewPagerAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
         viewModel.setFragmentBeans(fragmentBeans);
+        loadImageData();
     }
 
     @Override
@@ -93,7 +94,32 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                 photoViewModel.setObjectMutableLiveData(classified);
             }
         });
-        loadImageData();
+        photoViewModel.getModeMutableLiveData().observe(this, new Observer<WorthStoreUtil.MODE>() {
+            @Override
+            public void onChanged(WorthStoreUtil.MODE mode) {
+                switch (mode){
+                    case MODE_NORMAL:
+                        binding.viewPager.setCanScroll(true);
+                        binding.bottomNavigation.setVisibility(View.GONE);
+                        binding.tabLayout.setVisibility(View.VISIBLE);
+                        binding.topBarSelectNotice.setVisibility(View.INVISIBLE);break;
+                    case MODE_SELECT:
+                        binding.viewPager.setCanScroll(false);
+                        binding.bottomNavigation.setVisibility(View.VISIBLE);
+                        binding.tabLayout.setVisibility(View.INVISIBLE);
+                        binding.topBarSelectNotice.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        photoViewModel.getSelectMutableLiveData().observe(this, new Observer<ArrayList<Integer>>() {
+            @Override
+            public void onChanged(ArrayList<Integer> integers) {
+                if(photoViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT){
+                    Log.d("format", "onChanged: " + String.format(getString(R.string.top_bar_select_notice),integers.size()));
+                    binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice),integers.size()));
+                }
+            }
+        });
     }
 
     @Override

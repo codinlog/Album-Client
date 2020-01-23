@@ -7,6 +7,7 @@ import com.codinlog.album.bean.ImageBean;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PhotoViewModel extends ViewModel {
     // TODO: Implement the ViewModel
@@ -46,5 +47,17 @@ public class PhotoViewModel extends ViewModel {
 
     public void addSelectMutableLiveData(Integer value) {
         selectMutableLiveData.getValue().add(value);
+        selectMutableLiveData.postValue(selectMutableLiveData.getValue());
+    }
+
+    public void removeSelectMutableLiveData(int position) {
+        Iterator<Integer> iterator = selectMutableLiveData.getValue().iterator();
+        while (iterator.hasNext()){
+            if(position == iterator.next()) {
+                iterator.remove();
+                break;
+            }
+        }
+        selectMutableLiveData.postValue(selectMutableLiveData.getValue());
     }
 }

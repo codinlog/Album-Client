@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/albumFragment"
-        android:name="com.codinlog.album.Controller.Fragment.AlbumFragment"
+        android:name="com.codinlog.album.controller.Fragment.AlbumFragment"
         android:label="album"
         tools:layout="@layout/album_fragment" />
     <fragment
         android:id="@+id/timeFragment"
-        android:name="com.codinlog.album.Controller.Fragment.TimeFragment"
+        android:name="com.codinlog.album.controller.Fragment.TimeFragment"
         android:label="time"
         tools:layout="@layout/time_fragment" />
     <fragment
         android:id="@+id/photoFragment"
-        android:name="com.codinlog.album.Controller.Fragment.PhotoFragment"
+        android:name="com.codinlog.album.controller.Fragment.PhotoFragment"
         android:label="photo"
         tools:layout="@layout/photo_fragment" />
 </navigation>

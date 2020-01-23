@@ -13,4 +13,6 @@
     <string name="photo_item_des">photo_item</string>
     <string name="classify_title">TextView</string>
     <string name="navigtion_more_notice">navigtion more</string>
+    <string name="top_bar_select_notice">已选择%d个项目</string>
+    <string name="addto_album">添加到相册</string>
 </resources>

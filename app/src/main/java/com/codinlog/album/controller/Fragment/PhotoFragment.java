@@ -1,15 +1,11 @@
-package com.codinlog.album.Controller.Fragment;
-
-import android.media.Image;
-import android.util.Log;
-import android.widget.CheckBox;
+package com.codinlog.album.controller.Fragment;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.codinlog.album.Controller.BaseFragmentController;
+import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoRecyclerViewAdpater;
 import com.codinlog.album.bean.ImageBean;
@@ -49,7 +45,11 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                         ImageBean imageBean = (ImageBean) o;
                         imageBean.setSelected(!imageBean.isSelected());
                         objectArrayList.set(position, imageBean);
-                        viewModel.addSelectMutableLiveData(position);
+                        if (imageBean.isSelected()) {
+                            viewModel.addSelectMutableLiveData(position);
+                        } else {
+                            viewModel.removeSelectMutableLiveData(position);
+                        }
                         photoRecyclerViewAdpater.notifyItemChanged(position,"payload");
                     }
                     return;
@@ -62,7 +62,11 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                         ImageBean imageBean = (ImageBean) o;
                         imageBean.setSelected(!imageBean.isSelected());
                         objectArrayList.set(position, imageBean);
-                        viewModel.addSelectMutableLiveData(position);
+                        if (imageBean.isSelected()) {
+                            viewModel.addSelectMutableLiveData(position);
+                        } else {
+                            viewModel.removeSelectMutableLiveData(position);
+                        }
                         photoRecyclerViewAdpater.notifyItemChanged(position,"payload");
                     }
                 }
@@ -76,7 +80,11 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                     ImageBean imageBean = (ImageBean) o;
                     imageBean.setSelected(!imageBean.isSelected());
                     objectArrayList.set(position, imageBean);
-                    viewModel.addSelectMutableLiveData(position);
+                    if (imageBean.isSelected()) {
+                        viewModel.addSelectMutableLiveData(position);
+                    } else {
+                        viewModel.removeSelectMutableLiveData(position);
+                    }
                     photoRecyclerViewAdpater.notifyItemChanged(position,"payload");
                 }
             }
@@ -89,7 +97,11 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                     ImageBean imageBean = (ImageBean) o;
                     imageBean.setSelected(!imageBean.isSelected());
                     objectArrayList.set(position, imageBean);
-                    viewModel.addSelectMutableLiveData(position);
+                    if (imageBean.isSelected()) {
+                        viewModel.addSelectMutableLiveData(position);
+                    } else {
+                        viewModel.removeSelectMutableLiveData(position);
+                    }
                     photoRecyclerViewAdpater.notifyItemChanged(position,"payload");
                 }
             }

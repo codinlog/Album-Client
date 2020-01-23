@@ -1,4 +1,4 @@
-package com.codinlog.album.Controller.Fragment;
+package com.codinlog.album.controller.Fragment;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -13,26 +13,26 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codinlog.album.R;
-import com.codinlog.album.model.TimeViewModel;
+import com.codinlog.album.model.AlbumViewModel;
 
-public class TimeFragment extends Fragment {
+public class AlbumFragment extends Fragment {
+    public static int TITLE = R.string.album;
+    private AlbumViewModel mViewModel;
 
-    private TimeViewModel mViewModel;
-
-    public static TimeFragment newInstance() {
-        return new TimeFragment();
+    public static AlbumFragment newInstance() {
+        return new AlbumFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.time_fragment, container, false);
+        return inflater.inflate(R.layout.album_fragment, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
         // TODO: Use the ViewModel
     }
 

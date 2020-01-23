@@ -13,7 +13,17 @@
         android:id="@+id/consLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Controller.Activity.MainActivity">
+        tools:context=".controller.Activity.MainActivity">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_menu" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/innner_consLayout"
@@ -60,6 +70,19 @@
 
             </com.google.android.material.tabs.TabLayout>
 
+            <TextView
+                android:id="@+id/top_bar_select_notice"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="@string/top_bar_select_notice"
+                android:textSize="@dimen/top_bar_font_size"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="@+id/tabLayout"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageButton
                 android:id="@+id/btn_search"
                 android:layout_width="@dimen/top_bar_width"
@@ -88,11 +111,11 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.viewpager.widget.ViewPager
+        <com.codinlog.album.widget.AlbumViewPager
             android:id="@+id/viewPager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/innner_consLayout" />

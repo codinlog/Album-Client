@@ -1,4 +1,4 @@
-package com.codinlog.album.Controller;
+package com.codinlog.album.controller;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.codinlog.album.Controller;
+package com.codinlog.album.controller;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
