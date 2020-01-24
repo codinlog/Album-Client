@@ -9,6 +9,7 @@
         android:id="@+id/tv"
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginStart="@dimen/normal_marign"
         android:gravity="center_vertical"
         android:text="@string/classify_title"
         android:textSize="@dimen/classify_title_size"

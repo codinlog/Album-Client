@@ -6,8 +6,7 @@ public class FragmentBean {
     private Fragment fragment;
     private String Title;
 
-    public FragmentBean() {
-    }
+    public FragmentBean() {}
 
     public FragmentBean(Fragment fragment, String title) {
         this.fragment = fragment;

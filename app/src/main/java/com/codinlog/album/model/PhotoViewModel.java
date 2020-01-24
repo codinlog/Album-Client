@@ -3,7 +3,6 @@ package com.codinlog.album.model;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.codinlog.album.bean.ImageBean;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
@@ -50,10 +49,10 @@ public class PhotoViewModel extends ViewModel {
         selectMutableLiveData.postValue(selectMutableLiveData.getValue());
     }
 
-    public void removeSelectMutableLiveData(int position) {
+    public void removeSelectMutableLiveData(int imageId) {
         Iterator<Integer> iterator = selectMutableLiveData.getValue().iterator();
         while (iterator.hasNext()){
-            if(position == iterator.next()) {
+            if(imageId == iterator.next()) {
                 iterator.remove();
                 break;
             }

@@ -2,6 +2,10 @@
 <resources>
     <dimen name="top_bar_width">50dp</dimen>
     <dimen name="top_bar_font_size">30sp</dimen>
-    <dimen name="classify_title_size">25sp</dimen>
+    <dimen name="classify_title_size">20sp</dimen>
     <dimen name="item_magin">1dp</dimen>
+    <dimen name="normal_size">20sp</dimen>
+    <dimen name="normal_marign">5dp</dimen>
+    <dimen name="dialog_marign">20dp</dimen>
+    <dimen name="dialog_height">250dp</dimen>
 </resources>

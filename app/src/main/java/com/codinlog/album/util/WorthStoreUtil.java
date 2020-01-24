@@ -18,17 +18,18 @@ public class WorthStoreUtil {
     public static String orderRule = MediaStore.Images.Media.DATE_MODIFIED + " desc";
     public static String selectionRule = MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "= ?";
     public static String[] imageProjection = {
-//            MediaStore.Images.Media._ID,
 //            MediaStore.Images.Media.DISPLAY_NAME,
 //            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
 //            MediaStore.Images.Media.BUCKET_ID,
-//            MediaStore.Images.Media.DATE_TAKEN,
 //            MediaStore.Images.Media.DATE_ADDED,
 //            MediaStore.Images.Media.HEIGHT,
 //            MediaStore.Images.Media.WIDTH,
 //            MediaStore.Images.Media.TITLE,
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DATE_TAKEN,
+
     };
     public static String[] selectionArgs = {"image/jpeg", "image/png"};
 
@@ -40,5 +41,9 @@ public class WorthStoreUtil {
     public final static int photo_title_type = 502;
     public final static int photo_isRepeat = 10;
     public final static int photo_isNew = 11;
-    public enum MODE{MODE_NORMAL,MODE_SELECT};
+    public final static int photo_isDelete = 12;
+
+    public enum MODE {MODE_NORMAL, MODE_SELECT}
+
+    ;
 }

@@ -32,13 +32,10 @@ import static android.view.View.VISIBLE;
 
 public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<Object> arrayList;
-    private String TAG = "PhotoRecyclerViewAdpater";
     private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
     private PhotoItemOnLongClickListenser photoItemOnLongClickListenser;
     private PhotoItemOnClickListener photoItemOnClickListener;
     private PhotoItemCheckBoxListener photoItemCheckBoxListener;
-    private ArrayList<Integer> selectList;
-
 
     public PhotoRecyclerViewAdpater(PhotoItemOnLongClickListenser photoItemOnLongClickListenser, PhotoItemOnClickListener photoItemOnClickListener, PhotoItemCheckBoxListener photoItemCheckBoxListener) {
         this.photoItemOnLongClickListenser = photoItemOnLongClickListenser;
@@ -64,18 +61,16 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
         if (payloads.isEmpty())
-            onBindViewHolder(holder,position);
-        else{
-            isSelectMode(holder,position);
-        }
-
+            onBindViewHolder(holder, position);
+        else
+            isSelectMode(holder, position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof PhotoItemViewHolder) {
             ImageBean imageBean = (ImageBean) arrayList.get(position);
-            final PhotoItemViewHolder photoItemViewHolder = (PhotoItemViewHolder) holder;
+            PhotoItemViewHolder photoItemViewHolder = (PhotoItemViewHolder) holder;
             photoItemViewHolder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -98,7 +93,7 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
             Glide.with(AlbumApplication.mContext).load(imageBean.getPath()).thumbnail(0.1f).error(R.drawable.ic_photo_black_24dp).into(photoItemViewHolder.imageView);
         } else if (holder instanceof PhotoTitleViewHolder) {
             PhotoTitleViewHolder photoTitleViewHolder = (PhotoTitleViewHolder) holder;
-            photoTitleViewHolder.textView.setText("2019/12/29");
+            photoTitleViewHolder.textView.setText((String)arrayList.get(position));
         }
         isSelectMode(holder, position);
     }
@@ -120,7 +115,6 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
                     Object o = arrayList.get(position);
                     if (o instanceof ImageBean) {
                         ImageBean imageBean = (ImageBean) o;
-                        Log.d("isSelected", "isSelectMode: " + imageBean);
                         photoItemViewHolder.checkBox.setChecked(imageBean.isSelected());
                     }
                 } else if (holder instanceof PhotoTitleViewHolder) {
@@ -157,10 +151,8 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
                 public int getSpanSize(int position) {
                     switch (getItemViewType(position)) {
                         case WorthStoreUtil.photo_title_type:
-                            Log.d("size", "getSpanSize: " + WorthStoreUtil.thumbnailTitleNum);
                             return WorthStoreUtil.thumbnailImageNum;
                         default:
-                            Log.d("size", "getSpanSize: " + WorthStoreUtil.thumbnailImageNum);
                             return WorthStoreUtil.thumbnailTitleNum;
                     }
                 }
@@ -175,11 +167,7 @@ public class PhotoRecyclerViewAdpater extends RecyclerView.Adapter<RecyclerView.
 
     public void setMode(WorthStoreUtil.MODE mode) {
         this.mode = mode;
-        notifyItemRangeChanged(0, arrayList == null ? 0 : arrayList.size(),"payload");
-    }
-    
-    public void setSelectList(ArrayList<Integer> selectList){
-        this.selectList = selectList;
+        notifyItemRangeChanged(0, arrayList == null ? 0 : arrayList.size(), "payload");
     }
 
     private class PhotoItemViewHolder extends RecyclerView.ViewHolder {
