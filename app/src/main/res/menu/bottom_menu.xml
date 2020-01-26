@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item
+        android:id="@+id/menu_cancel"
+        android:icon="@drawable/ic_cancel_black_24dp"
+        android:title="@string/btn_cancel" />
     <item
         android:id="@+id/menu_addto_album"
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/addto_album" />
+    <item
+        android:id="@+id/menu_all"
+        android:icon="@drawable/ic_select_all_black_24dp"
+        android:title="@string/btn_all" />
 </menu>

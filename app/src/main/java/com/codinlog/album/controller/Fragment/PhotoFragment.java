@@ -2,25 +2,22 @@ package com.codinlog.album.controller.Fragment;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.PhotoRecyclerViewAdpater;
-import com.codinlog.album.bean.ImageBean;
+import com.codinlog.album.adapter.PhotoRVAdpater;
+import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.PhotoFragmentBinding;
-import com.codinlog.album.listener.PhotoItemCheckBoxListener;
-import com.codinlog.album.listener.PhotoItemOnClickListener;
-import com.codinlog.album.listener.PhotoItemOnLongClickListenser;
+import com.codinlog.album.listener.BaseListener;
+import com.codinlog.album.listener.PhotoGroupListener;
+import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.util.WorthStoreUtil;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
-    private PhotoRecyclerViewAdpater photoRecyclerViewAdpater;
+    private PhotoRVAdpater photoRVAdpater;
     private PhotoFragmentBinding photoFragmentBinding;
 
     public static PhotoFragment newInstance() {
@@ -36,81 +33,75 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     @Override
     protected void doInitView() {
         viewModel = ViewModelProviders.of(getActivity()).get(PhotoViewModel.class);
-        photoRecyclerViewAdpater = new PhotoRecyclerViewAdpater(new PhotoItemOnLongClickListenser() {
+        viewModel.mainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        photoFragmentBinding = (PhotoFragmentBinding) binding;
+        photoRVAdpater = new PhotoRVAdpater(new BaseListener() {
             @Override
             public void handleEvent(int position) {
-                if (viewModel.getModeMutableLiveData().getValue() != WorthStoreUtil.MODE.MODE_SELECT)
-                    viewModel.setModeMutableLiveData(WorthStoreUtil.MODE.MODE_SELECT);
-                selectPhotoChanged(position);
+                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() != WorthStoreUtil.MODE.MODE_SELECT)
+                    viewModel.mainViewModel.setModeMutableLiveData(WorthStoreUtil.MODE.MODE_SELECT);
+                selectPhotoChanged(position, false, false, false);
             }
-        }, new PhotoItemOnClickListener() {
+        }, new BaseListener() {
             @Override
             public void handleEvent(int position) {
-                selectPhotoChanged(position);
+                selectPhotoChanged(position, false, false, false);
             }
-        }, new PhotoItemCheckBoxListener() {
+        }, new BaseListener() {
             @Override
             public void handleEvent(int position) {
-                selectPhotoChanged(position);
+                selectPhotoChanged(position, false, false, false);
+            }
+        }, new PhotoGroupListener() {
+            @Override
+            public void handleEvent(int position, boolean isChecked) {
+                viewModel.setIsSelectGroupAllMutableLiveData(isChecked);
+                selectPhotoChanged(position, true, true, false);
+            }
+        }, new PhotoGroupListener() {
+            @Override
+            public void handleEvent(int position, boolean isChecked) {
+                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() != WorthStoreUtil.MODE.MODE_SELECT)
+                    viewModel.mainViewModel.setModeMutableLiveData(WorthStoreUtil.MODE.MODE_SELECT);
+                viewModel.setIsSelectGroupAllMutableLiveData(!isChecked);
+                selectPhotoChanged(position, true, true, false);
             }
         });
-        photoFragmentBinding = (PhotoFragmentBinding) binding;
     }
 
     @Override
     protected void doInitListener() {
-        viewModel.getObjectMutableLiveData().observe(getViewLifecycleOwner(), new Observer<ArrayList<Object>>() {
+        viewModel.getClassifiedResListMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<Object>>() {
             @Override
-            public void onChanged(ArrayList<Object> objects) {
-                photoRecyclerViewAdpater.setData(objects);
+            public void onChanged(List<Object> objects) {
+                photoRVAdpater.setData(objects);
             }
         });
 
-        viewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), new Observer<WorthStoreUtil.MODE>() {
+        viewModel.mainViewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), new Observer<WorthStoreUtil.MODE>() {
             @Override
             public void onChanged(WorthStoreUtil.MODE mode) {
-                if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL && viewModel.getSelectMutableLiveData().getValue() != null) {
-                    ArrayList<Integer> selectList = viewModel.getSelectMutableLiveData().getValue();
-                    ArrayList<Object> objectArrayList = viewModel.getObjectMutableLiveData().getValue();
-                    Iterator<Integer> iterator = selectList.iterator();
-                    while (iterator.hasNext()) {
-                        Integer id = iterator.next();
-                        for (Object o : objectArrayList) {
-                            if (o instanceof ImageBean) {
-                                ImageBean imageBean = (ImageBean) o;
-                                if (imageBean.getImageId() == id) {
-                                    imageBean.setSelected(!imageBean.isSelected());
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    selectList.clear();
-                }
-                photoRecyclerViewAdpater.setMode(mode);
+                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
+                    viewModel.modeChangeToNormal();
+                photoRVAdpater.setMode(mode);
+            }
+        });
+        viewModel.getSelectMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<Integer>>() {
+            @Override
+            public void onChanged(List<Integer> integers) {
+                photoRVAdpater.notifyDataSetChanged();
             }
         });
     }
 
     @Override
     protected void doInitData() {
-        photoFragmentBinding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.thumbnailImageNum));
-        photoFragmentBinding.rv.setAdapter(photoRecyclerViewAdpater);
+        photoFragmentBinding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.thumbnailPhotoNum));
+        photoFragmentBinding.rv.setAdapter(photoRVAdpater);
     }
 
-    private void selectPhotoChanged(int position) {
-        ArrayList<Object> objectArrayList = viewModel.getObjectMutableLiveData().getValue();
-        Object o = objectArrayList.get(position);
-        if (o instanceof ImageBean) {
-            ImageBean imageBean = (ImageBean) o;
-            imageBean.setSelected(!imageBean.isSelected());
-            if (imageBean.isSelected()) {
-                viewModel.addSelectMutableLiveData(imageBean.getImageId());
-            } else {
-                viewModel.removeSelectMutableLiveData(imageBean.getImageId());
-            }
-            photoRecyclerViewAdpater.notifyItemChanged(position, "payload");
-        }
+    private void selectPhotoChanged(int position, boolean isRepeat, boolean isGroupAll, boolean isAllGroup) {
+        viewModel.changeSelectMutableLiveData(position, isRepeat, isGroupAll, isAllGroup);
     }
 
 }

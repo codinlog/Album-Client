@@ -68,16 +68,19 @@ public class AlbumDialog extends Dialog {
             tvTitle.setText(title);
     }
 
-    public void setBtnOkListener(AlbumDialogBaseListener albumDialogBaseListener) {
+    public AlbumDialog setBtnOkListener(AlbumDialogBaseListener albumDialogBaseListener) {
         this.albumDialogBaseListener_btnOk = albumDialogBaseListener;
+        return this;
     }
 
-    public void setBtnCancelListener(AlbumDialogBaseListener albumDialogBaseListener) {
+    public AlbumDialog setBtnCancelListener(AlbumDialogBaseListener albumDialogBaseListener) {
         this.albumDialogBaseListener_btnCancel = albumDialogBaseListener;
+        return this;
     }
 
-    public void setTvTitle(String title) {
+    public AlbumDialog setTvTitle(String title) {
            this.title = title;
+           return this;
     }
 
     class OnKeyDownListener implements DialogInterface.OnKeyListener{

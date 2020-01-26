@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TimeUtils;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -18,11 +15,13 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.ViewPagerAdapter;
+import com.codinlog.album.adapter.MainVPAdapter;
+import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.bean.FragmentBean;
-import com.codinlog.album.bean.ImageBean;
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
@@ -38,12 +37,9 @@ import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.TimeZone;
+import java.util.List;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
@@ -52,10 +48,7 @@ import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
 
 public class MainActivity extends BaseActivityController<MainViewModel> {
     private ArrayList<FragmentBean> fragmentBeans;
-    private ViewPagerAdapter viewPagerAdapter;
-    private PhotoViewModel photoViewModel;
-    private AlbumViewModel albumViewModel;
-    private TimeViewModel timeViewModel;
+    private MainVPAdapter mainVPAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +60,13 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
-        albumViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
-        timeViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
+        viewModel.photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
+        viewModel.albumViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
+        viewModel.timeViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
         binding.setData(viewModel);
         fragmentBeans = new ArrayList<>();
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        binding.bottomNavigation.setVisibility(View.GONE);
     }
 
     @Override
@@ -80,54 +74,98 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
-        binding.viewPager.setAdapter(viewPagerAdapter);
+        binding.viewPager.setAdapter(mainVPAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-        viewModel.setFragmentBeans(fragmentBeans);
+        viewModel.setFragmentMutableLiveData(fragmentBeans);
         loadImageData();
     }
 
     @Override
     protected void doInitListener() {
-        viewModel.getFragmentBeans().observe(this, new Observer<ArrayList<FragmentBean>>() {
+        viewModel.getFragmentMutableLiveData().observe(this, new Observer<ArrayList<FragmentBean>>() {
             @Override
             public void onChanged(ArrayList<FragmentBean> fragmentBeans) {
-                viewPagerAdapter.setList(MainActivity.this.fragmentBeans);
-                viewPagerAdapter.notifyDataSetChanged();
+                mainVPAdapter.setList(MainActivity.this.fragmentBeans);
+                mainVPAdapter.notifyDataSetChanged();
             }
         });
-        viewModel.getImageBeans().observe(this, new Observer<ArrayList<ImageBean>>() {
+        viewModel.getPhotoMutableLiveData().observe(this, new Observer<ArrayList<PhotoBean>>() {
             @Override
-            public void onChanged(ArrayList<ImageBean> imageBeans) {
-                ArrayList<Object> classified = ClassifyUtil.PhotoClassification(imageBeans);
-                photoViewModel.setObjectMutableLiveData(classified);
+            public void onChanged(ArrayList<PhotoBean> photoBeans) {
+                ClassifiedResBean.getInstance().loadClassifiedRes(photoBeans);
+                viewModel.setPhotoViewModelListData(ClassifiedResBean.getInstance().getClassifiedPhotoResList());
+                viewModel.setPhotoViewModelMapData(ClassifiedResBean.getInstance().getClassifiedPhotoResMap());
+                viewModel.setPhotoViewModelMapNumData(ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap());
             }
         });
-        photoViewModel.getModeMutableLiveData().observe(this, new Observer<WorthStoreUtil.MODE>() {
+        viewModel.getModeMutableLiveData().observe(this, new Observer<WorthStoreUtil.MODE>() {
             @Override
             public void onChanged(WorthStoreUtil.MODE mode) {
                 binding.viewPager.setCanScroll(mode == MODE_NORMAL ? true : false);
+                binding.bottomNavigation.getMenu().getItem(1).setChecked(true);
                 binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
                 binding.tabLayout.setVisibility(mode == MODE_NORMAL ? View.VISIBLE : View.INVISIBLE);
                 binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
+                binding.btnSearch.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
             }
         });
-        photoViewModel.getSelectMutableLiveData().observe(this, new Observer<ArrayList<Integer>>() {
+        viewModel.getIsSelectAllMutableLiveData().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(ArrayList<Integer> integers) {
-                if (photoViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
-                    binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers.size()));
+            public void onChanged(Boolean aBoolean) {
+                binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel):getString(R.string.btn_all));
+            }
+        });
+        viewModel.photoViewModel.getSelectMutableLiveData().observe(this, new Observer<List<Integer>>() {
+            @Override
+            public void onChanged(List<Integer> integers) {
+                if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+                    binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
+            }
+        });
+        viewModel.getCurrentPagerMutableLiveData().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                switch (integer){
+                    case WorthStoreUtil.photoPager:;break;
+                    case WorthStoreUtil.albumPager:break;
+                    case WorthStoreUtil.timePager:break;
                 }
+            }
+        });
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                viewModel.setCurrentPagerMutableLiveData(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
         binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                int id = menuItem.getItemId();
-                if(id == R.id.menu_addto_album){
-                    AlbumDialog albumDialog = new AlbumDialog(MainActivity.this);
-                    albumDialog.setBtnOkListener(new AlbumDialogBtnOkListener());
-                    albumDialog.setBtnCancelListener(new AlbumDialogBtnCancelListener());
-                    albumDialog.show();
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_addto_album:
+                        AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
+                                .setBtnOkListener(new AlbumDialogBtnOkListener())
+                                .setBtnCancelListener(new AlbumDialogBtnCancelListener())
+                                .setTvTitle(getString(R.string.addto_album));
+                        albumDialog.show();
+                        break;
+                    case R.id.menu_cancel:
+                        viewModel.setModeMutableLiveData(MODE_NORMAL);
+                        break;
+                    case R.id.menu_all:
+                        viewModel.setIsSelectAllMutableLiveData(!viewModel.getIsSelectAllMutableLiveData().getValue());
+                        viewModel.setIsSelectAllToOtherViewModel();
+                        break;
                 }
                 return true;
             }
@@ -154,8 +192,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
     @Override
     public void onBackPressed() {
-        if (photoViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
-            photoViewModel.setModeMutableLiveData(MODE_NORMAL);
+        if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+            viewModel.setModeMutableLiveData(MODE_NORMAL);
         else
             super.onBackPressed();
     }
@@ -168,20 +206,17 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
                 if (id == loaderManager_ID) {
                     return new CursorLoader(MainActivity.this, WorthStoreUtil.imageUri, WorthStoreUtil.imageProjection, WorthStoreUtil.selectionRule, WorthStoreUtil.selectionArgs, WorthStoreUtil.orderRule);
-//                    return new CursorLoader(MainActivity.this,
-//                            WorthStoreUtil.imageUri,WorthStoreUtil.imageProjection,
-//                            null,null,WorthStoreUtil.orderRule);
                 }
                 return null;
             }
 
             @Override
             public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-                ArrayList<ImageBean> imageBeanArrayList = viewModel.getImageBeans().getValue();
+                ArrayList<PhotoBean> photoBeanArrayList = viewModel.getPhotoMutableLiveData().getValue();
                 if (isFirstScanner)
-                    imageBeanArrayList = new ArrayList<>();
+                    photoBeanArrayList = new ArrayList<>();
                 else
-                    ClassifyUtil.removeDeleteImage(imageBeanArrayList, true);
+                    ClassifyUtil.removeDeleteImage(photoBeanArrayList, true);
                 if (data != null) {
                     data.moveToFirst();
                     do {
@@ -189,35 +224,17 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
                         String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
                         String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                        Log.d("simpleDateFormat", "onLoadFinished: "  + simpleDateFormat.format(Long.parseLong(tokenData)));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[4])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[6])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[7])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[8])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[9])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[10])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[11])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[12])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[13])));
-//                        Log.d(TAG,data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[14])));
-                        if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(imageBeanArrayList, path) == WorthStoreUtil.photo_isNew)) {
-                            ImageBean imageBean = ImageBean.newInstance();
-                            imageBean.setPath(path);
-                            imageBean.setSize(Long.parseLong(size));
-                            imageBean.setImageId(Integer.parseInt(id));
-                            imageBean.setTokenDate(Long.parseLong(tokenData));
-                            imageBeanArrayList.add(imageBean);
+                        if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeanArrayList, path) == WorthStoreUtil.photoIsNew)) {
+                            PhotoBean photoBean = PhotoBean.newInstance();
+                            photoBean.setPath(path).setSize(Long.parseLong(size)).setPhotoId(Integer.parseInt(id)).setTokenDate(Long.parseLong(tokenData));
+                            photoBeanArrayList.add(photoBean);
                         }
                     } while (data.moveToNext());
                     if (!isFirstScanner)
-                        ClassifyUtil.removeDeleteImage(imageBeanArrayList, false);
+                        ClassifyUtil.removeDeleteImage(photoBeanArrayList, false);
                     else
                         isFirstScanner = false;
-                    viewModel.setImageBeans(imageBeanArrayList);
+                    viewModel.setPhotoMutableLiveData(photoBeanArrayList);
                 }
             }
 

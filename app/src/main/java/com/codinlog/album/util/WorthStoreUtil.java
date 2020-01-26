@@ -6,8 +6,6 @@ import android.provider.MediaStore;
 
 import com.codinlog.album.R;
 
-import static android.icu.text.MessagePattern.ArgType.SELECT;
-
 public class WorthStoreUtil {
     public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.CAMERA};
     public static int[] permissionsDetails = {R.string.permission_storage, R.string.permission_network, R.string.permission_camera};
@@ -32,18 +30,21 @@ public class WorthStoreUtil {
 
     };
     public static String[] selectionArgs = {"image/jpeg", "image/png"};
-
     public static boolean isFirstScanner = true;
-    public static int thumbnailImageNum = 4;
-    public static int thumbnailTitleNum = 1;
-    public static int no_type = 501;
-    public final static int photo_item_type = 501;
-    public final static int photo_title_type = 502;
-    public final static int photo_isRepeat = 10;
-    public final static int photo_isNew = 11;
-    public final static int photo_isDelete = 12;
+    public final static int photoPager = 0;
+    public final static int albumPager = 1;
+    public final static int timePager = 2;
+    public  final static int thumbnailGroupNum = 1;
+    public final static int thumbnailPhotoNum = 4;
+    public final static int viewHolderNoType = 501;
+    public final static int photoItemType = 501;
+    public final static int photoGroupType = 502;
+    public final static int photoIsRepeat = 10;
+    public final static int photoIsNew = 11;
+    public final static int errorCode = 404;
+    public final static int groupAllSelected = 20;
+    public final static int groupNotAllSelected = 30;
+    public final static int allGroupSelected = 40;
 
     public enum MODE {MODE_NORMAL, MODE_SELECT}
-
-    ;
 }

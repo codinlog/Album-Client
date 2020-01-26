@@ -85,7 +85,7 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/btn_more"
                 app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/ic_search_black_24dp" />
+                app:srcCompat="@drawable/ic_camera_black_24dp" />
 
             <ImageButton
                 android:id="@+id/btn_more"
@@ -108,17 +108,22 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/innner_consLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/innner_consLayout" >
+
+        </com.codinlog.album.widget.AlbumViewPager>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="visible"
+            android:background="?android:attr/selectableItemBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_menu" />
+            app:menu="@menu/bottom_menu">
+
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

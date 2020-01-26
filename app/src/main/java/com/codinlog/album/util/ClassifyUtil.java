@@ -1,24 +1,35 @@
 package com.codinlog.album.util;
 
-import com.codinlog.album.bean.ImageBean;
+import com.codinlog.album.bean.ClassifiedResBean;
+import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.bean.GroupBean;
+import com.codinlog.album.bean.PhotoSelectNumBean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.codinlog.album.util.WorthStoreUtil.photo_isNew;
-import static com.codinlog.album.util.WorthStoreUtil.photo_isRepeat;
+import static com.codinlog.album.util.WorthStoreUtil.errorCode;
+import static com.codinlog.album.util.WorthStoreUtil.photoIsNew;
+import static com.codinlog.album.util.WorthStoreUtil.photoIsRepeat;
 
 public class ClassifyUtil {
-    public static ArrayList<Object> PhotoClassification(ArrayList<ImageBean> classifications) {
+    public static ClassifiedResBean PhotoClassification(List<PhotoBean> classifications) {
+        if (classifications == null)
+            return ClassifiedResBean.getInstance();
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ArrayList<Object> classified = new ArrayList<>();
-        Map<String, ArrayList<ImageBean>> map = new TreeMap<>(new Comparator<String>() {
+        List<Object> classifiedPhotoResList = new ArrayList<>();
+        Map<String, PhotoSelectNumBean> classifiedPhotoResNumMap = ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap();
+        if (classifiedPhotoResNumMap == null)
+            classifiedPhotoResNumMap = new HashMap<>();
+        Map<String, List<PhotoBean>> classifiedPhotoResMap = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 try {
@@ -31,59 +42,69 @@ public class ClassifyUtil {
                 }
             }
         });
-        Iterator<ImageBean> iterator = classifications.iterator();
+        Iterator<PhotoBean> iterator = classifications.iterator();
         while (iterator.hasNext()) {
-            ImageBean imageBean = iterator.next();
-            String key = simpleDateFormat.format(imageBean.getTokenDate());
+            PhotoBean photoBean = iterator.next();
+            String key = simpleDateFormat.format(photoBean.getTokenDate());
             boolean keyContains = false;
-            for (Map.Entry<String, ArrayList<ImageBean>> entry : map.entrySet()) {
+            for (Map.Entry<String, List<PhotoBean>> entry : classifiedPhotoResMap.entrySet()) {
                 String tempKey = entry.getKey();
                 if (tempKey.equals(key)) {
-                    entry.getValue().add(imageBean);
+                    entry.getValue().add(photoBean);
                     keyContains = true;
                     break;
                 }
             }
-            if(!keyContains) {
-                ArrayList<ImageBean> tempArrayList = new ArrayList<>();
-                tempArrayList.add(imageBean);
-                map.put(key, tempArrayList);
+            if (!keyContains) {
+                ArrayList<PhotoBean> tempArrayList = new ArrayList<>();
+                tempArrayList.add(photoBean);
+                classifiedPhotoResMap.put(key, tempArrayList);
             }
         }
-        for (Map.Entry<String, ArrayList<ImageBean>> entry : map.entrySet()) {
+        for (Map.Entry<String, List<PhotoBean>> entry : classifiedPhotoResMap.entrySet()) {
             String key = entry.getKey();
-            ArrayList<ImageBean> tempArrayList = entry.getValue();
+            List<PhotoBean> tempArrayList = entry.getValue();
             Collections.sort(tempArrayList);
-            classified.add(key);
-            for (ImageBean imageBean : tempArrayList) {
-                classified.add(imageBean);
+            classifiedPhotoResList.add(new GroupBean().setGroupId(key));
+            if (classifiedPhotoResNumMap.containsKey(key))
+                classifiedPhotoResNumMap.get(key).setSize(tempArrayList.size());
+            else
+                classifiedPhotoResNumMap.put(key, PhotoSelectNumBean.newInstance().setSize(tempArrayList.size()));
+            for (PhotoBean photoBean : tempArrayList) {
+                classifiedPhotoResList.add(photoBean.setGroupId(key));
             }
         }
-        return classified;
+        ClassifiedResBean.getInstance().setClassifiedPhotoResList(classifiedPhotoResList)
+                .setClassifiedPhotoResMap(classifiedPhotoResMap)
+                .setClassifiedPhotoResNumMap(classifiedPhotoResNumMap);
+        return ClassifiedResBean.getInstance();
     }
 
-    public static int isPhotoRepeat(ArrayList<ImageBean> imageBeans, String path) {
-        Iterator<ImageBean> iterator = imageBeans.iterator();
+    public static int isPhotoRepeat(ArrayList<PhotoBean> photoBeans, String path) {
+        if (photoBeans == null)
+            return errorCode;
+        Iterator<PhotoBean> iterator = photoBeans.iterator();
         while (iterator.hasNext()) {
-            ImageBean imageBean = iterator.next();
-            if (imageBean.getPath().equals(path)) {
-                imageBean.setDelete(false);
-                return photo_isRepeat;
+            PhotoBean photoBean = iterator.next();
+            if (photoBean.getPath().equals(path)) {
+                photoBean.setDelete(false);
+                return photoIsRepeat;
             }
         }
-        return photo_isNew;
+        return photoIsNew;
     }
 
-    public static void removeDeleteImage(ArrayList<ImageBean> imageBeans, boolean isResetStatus) {
-        Iterator<ImageBean> iterator = imageBeans.iterator();
+    public static void removeDeleteImage(ArrayList<PhotoBean> photoBeans, boolean isResetStatus) {
+        if (photoBeans == null)
+            return;
+        Iterator<PhotoBean> iterator = photoBeans.iterator();
         while (iterator.hasNext()) {
-            ImageBean imageBean = iterator.next();
+            PhotoBean photoBean = iterator.next();
             if (isResetStatus) {
-                imageBean.setDelete(true);
-            } else if (imageBean.isDelete()) {
+                photoBean.setDelete(true);
+            } else if (photoBean.isDelete()) {
                 iterator.remove();
             }
         }
     }
-
 }
