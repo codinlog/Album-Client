@@ -1,18 +1,18 @@
 package com.codinlog.album.bean;
 
-public class PhotoSelectNumBean {
+public class PhotoSelectedNumBean {
     private int size = 0;
     private int selected = 0;
 
-    public static PhotoSelectNumBean newInstance(){
-        return new PhotoSelectNumBean();
+    public static PhotoSelectedNumBean newInstance(){
+        return new PhotoSelectedNumBean();
     }
 
     public int getSize() {
         return size;
     }
 
-    public PhotoSelectNumBean setSize(int size) {
+    public PhotoSelectedNumBean setSize(int size) {
         this.size = size;
         return this;
     }

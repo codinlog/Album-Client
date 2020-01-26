@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 public class ClassifiedResBean {
     private Map<String, List<PhotoBean>> classifiedPhotoResMap;
-    private Map<String, PhotoSelectNumBean> classifiedPhotoResNumMap;
+    private Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap;
     private List<Object> classifiedPhotoResList;
 
     private enum SingletonEnum{
@@ -49,11 +49,11 @@ public class ClassifiedResBean {
         return this;
     }
 
-    public Map<String, PhotoSelectNumBean> getClassifiedPhotoResNumMap() {
+    public Map<String, PhotoSelectedNumBean> getClassifiedPhotoResNumMap() {
         return classifiedPhotoResNumMap;
     }
 
-    public ClassifiedResBean setClassifiedPhotoResNumMap(Map<String, PhotoSelectNumBean> classifiedPhotoResNumMap) {
+    public ClassifiedResBean setClassifiedPhotoResNumMap(Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap) {
         this.classifiedPhotoResNumMap = classifiedPhotoResNumMap;
         return SingletonEnum.INSTANCE.getClassifiedResBean();
     }

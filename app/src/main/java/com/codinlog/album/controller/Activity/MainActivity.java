@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                 binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel):getString(R.string.btn_all));
             }
         });
-        viewModel.photoViewModel.getSelectMutableLiveData().observe(this, new Observer<List<Integer>>() {
+        viewModel.photoViewModel.getSelectedMutableLiveData().observe(this, new Observer<List<Integer>>() {
             @Override
             public void onChanged(List<Integer> integers) {
                 if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)

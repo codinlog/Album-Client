@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectNumBean;
+import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
@@ -75,7 +75,6 @@ public class MainViewModel extends ViewModel {
     }
 
     public void setIsSelectAllMutableLiveData(boolean value) {
-        Log.d("value","=========================:" + value);
         getIsSelectAllMutableLiveData().setValue(value);
     }
 
@@ -96,7 +95,7 @@ public class MainViewModel extends ViewModel {
         photoViewModel.setClassifiedResMapMutableLiveData(resMap);
     }
 
-    public void setPhotoViewModelMapNumData(Map<String, PhotoSelectNumBean> resNumMap){
+    public void setPhotoViewModelMapNumData(Map<String, PhotoSelectedNumBean> resNumMap){
         photoViewModel.setClassifiedPhotoResNumMapMutableLiveData(resNumMap);
     }
 

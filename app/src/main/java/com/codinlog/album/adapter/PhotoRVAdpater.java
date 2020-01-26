@@ -48,8 +48,8 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
             PhotoItemViewHolder photoItemViewHolder = new PhotoItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false));
             return photoItemViewHolder;
         } else if (viewType == WorthStoreUtil.photoGroupType) {
-            PhotoTitleViewHolder photoTitleViewHolder = new PhotoTitleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.classify_title, parent, false));
-            return photoTitleViewHolder;
+            PhotoGroupViewHolder photoGroupViewHolder = new PhotoGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.classify_title, parent, false));
+            return photoGroupViewHolder;
         } else
             return null;
     }
@@ -89,8 +89,8 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
             Glide.with(AlbumApplication.mContext).load(photoBean.getPath()).thumbnail(0.1f).error(R.drawable.ic_photo_black_24dp).into(photoItemViewHolder.imageView);
-        } else if (holder instanceof PhotoTitleViewHolder) {
-            final PhotoTitleViewHolder photoGroupViewHolder = (PhotoTitleViewHolder) holder;
+        } else if (holder instanceof PhotoGroupViewHolder) {
+            final PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
             GroupBean groupBean = (GroupBean) objectClassifiedResList.get(position);
             photoGroupViewHolder.textView.setText(groupBean.getGroupId());
             photoGroupViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
@@ -117,9 +117,19 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (holder instanceof PhotoItemViewHolder) {
                     PhotoItemViewHolder photoItemViewHolder = (PhotoItemViewHolder) holder;
                     photoItemViewHolder.checkBox.setVisibility(INVISIBLE);
-                } else if (holder instanceof PhotoTitleViewHolder) {
-                    PhotoTitleViewHolder photoTitleViewHolder = (PhotoTitleViewHolder) holder;
-                    photoTitleViewHolder.checkBox.setVisibility(INVISIBLE);
+                    Object o = objectClassifiedResList.get(position);
+                    if (o instanceof PhotoBean) {
+                        PhotoBean photoBean = (PhotoBean) o;
+                        photoItemViewHolder.checkBox.setChecked(photoBean.isSelected());
+                    }
+                } else if (holder instanceof PhotoGroupViewHolder) {
+                    PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
+                    photoGroupViewHolder.checkBox.setVisibility(INVISIBLE);
+                    Object o = objectClassifiedResList.get(position);
+                    if(o instanceof GroupBean){
+                        GroupBean groupBean = (GroupBean)o;
+                        photoGroupViewHolder.checkBox.setChecked(groupBean.isSelected());
+                    }
                 }
                 break;
             case MODE_SELECT:
@@ -131,13 +141,13 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         PhotoBean photoBean = (PhotoBean) o;
                         photoItemViewHolder.checkBox.setChecked(photoBean.isSelected());
                     }
-                } else if (holder instanceof PhotoTitleViewHolder) {
-                    PhotoTitleViewHolder photoTitleViewHolder = (PhotoTitleViewHolder) holder;
-                    photoTitleViewHolder.checkBox.setVisibility(VISIBLE);
+                } else if (holder instanceof PhotoGroupViewHolder) {
+                    PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
+                    photoGroupViewHolder.checkBox.setVisibility(VISIBLE);
                     Object o = objectClassifiedResList.get(position);
                     if(o instanceof GroupBean){
                         GroupBean groupBean = (GroupBean)o;
-                        photoTitleViewHolder.checkBox.setChecked(groupBean.isSelected());
+                        photoGroupViewHolder.checkBox.setChecked(groupBean.isSelected());
                     }
                 }
                 break;
@@ -187,7 +197,13 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setMode(WorthStoreUtil.MODE mode) {
         this.mode = mode;
-        notifyItemRangeChanged(0, objectClassifiedResList == null ? 0 : objectClassifiedResList.size(), "payload");
+        notifyChange(null,true);
+    }
+    public void notifyChange(Integer position,boolean changeAll){
+        if(changeAll)
+            notifyItemRangeChanged(0, objectClassifiedResList == null ? 0 : objectClassifiedResList.size(), "payload");
+        else
+            notifyItemChanged(position);
     }
 
     private class PhotoItemViewHolder extends RecyclerView.ViewHolder {
@@ -202,12 +218,12 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private class PhotoTitleViewHolder extends RecyclerView.ViewHolder {
+    private class PhotoGroupViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public ImageButton imageButton;
         public CheckBox checkBox;
 
-        public PhotoTitleViewHolder(@NonNull View itemView) {
+        public PhotoGroupViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.tv);
             imageButton = itemView.findViewById(R.id.imageBtn);

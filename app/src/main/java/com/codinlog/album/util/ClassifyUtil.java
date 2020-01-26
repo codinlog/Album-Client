@@ -3,7 +3,7 @@ package com.codinlog.album.util;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.GroupBean;
-import com.codinlog.album.bean.PhotoSelectNumBean;
+import com.codinlog.album.bean.PhotoSelectedNumBean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,9 +26,7 @@ public class ClassifyUtil {
             return ClassifiedResBean.getInstance();
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Object> classifiedPhotoResList = new ArrayList<>();
-        Map<String, PhotoSelectNumBean> classifiedPhotoResNumMap = ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap();
-        if (classifiedPhotoResNumMap == null)
-            classifiedPhotoResNumMap = new HashMap<>();
+        Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap = new HashMap<>();
         Map<String, List<PhotoBean>> classifiedPhotoResMap = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -66,10 +64,7 @@ public class ClassifyUtil {
             List<PhotoBean> tempArrayList = entry.getValue();
             Collections.sort(tempArrayList);
             classifiedPhotoResList.add(new GroupBean().setGroupId(key));
-            if (classifiedPhotoResNumMap.containsKey(key))
-                classifiedPhotoResNumMap.get(key).setSize(tempArrayList.size());
-            else
-                classifiedPhotoResNumMap.put(key, PhotoSelectNumBean.newInstance().setSize(tempArrayList.size()));
+            classifiedPhotoResNumMap.put(key, PhotoSelectedNumBean.newInstance().setSize(tempArrayList.size()));
             for (PhotoBean photoBean : tempArrayList) {
                 classifiedPhotoResList.add(photoBean.setGroupId(key));
             }
