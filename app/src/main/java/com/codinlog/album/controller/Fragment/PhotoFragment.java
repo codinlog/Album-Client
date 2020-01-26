@@ -80,12 +80,12 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
             }
         });
 
-        viewModel.getClassifiedPhotoResNumMapMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Map<String, PhotoSelectedNumBean>>() {
-            @Override
-            public void onChanged(Map<String, PhotoSelectedNumBean> stringPhotoSelectNumBeanMap) {
-                viewModel.selectChangeCount("null",false);
-            }
-        });
+//        viewModel.getClassifiedPhotoResNumMapMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Map<String, PhotoSelectedNumBean>>() {
+//            @Override
+//            public void onChanged(Map<String, PhotoSelectedNumBean> stringPhotoSelectNumBeanMap) {
+//                viewModel.selectChangeCount("null",false);
+//            }
+//        });
 
         viewModel.getSelectedMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<Integer>>() {
             @Override

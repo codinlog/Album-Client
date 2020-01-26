@@ -22,6 +22,7 @@ import com.codinlog.album.adapter.MainVPAdapter;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
@@ -120,6 +121,14 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             public void onChanged(List<Integer> integers) {
                 if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
                     binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
+                int countFlag = 0;
+                for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedPhotoResNumMapMutableLiveData().getValue().values()){
+                    countFlag = countFlag + photoSelectedNumBean.getSize();
+                }
+                if(integers.size() == countFlag)
+                    viewModel.setIsSelectAllMutableLiveData(true);
+                else
+                    viewModel.setIsSelectAllMutableLiveData(false);
             }
         });
         viewModel.getCurrentPagerMutableLiveData().observe(this, new Observer<Integer>() {

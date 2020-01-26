@@ -33,6 +33,7 @@ public class PhotoViewModel extends ViewModel {
 
     public void setClassifiedResListMutableLiveData(List<Object> value) {
         Iterator<Object> iteratorNewValue = value.iterator();
+        getSelectedMutableLiveData().getValue().clear();
         while (iteratorNewValue.hasNext()) {
             Object o1 = iteratorNewValue.next();
             if (o1 instanceof GroupBean) {
@@ -48,8 +49,13 @@ public class PhotoViewModel extends ViewModel {
                         }
                     }
                 }
+            } else if (o1 instanceof PhotoBean) {
+                PhotoBean photoBean = (PhotoBean) o1;
+                if (photoBean.isSelected())
+                    getSelectedMutableLiveData().getValue().add(photoBean.getPhotoId());
             }
         }
+        getSelectedMutableLiveData().setValue(getSelectedMutableLiveData().getValue());
         getClassifiedResListMutableLiveData().setValue(value);
     }
 
@@ -157,9 +163,13 @@ public class PhotoViewModel extends ViewModel {
         Map<String, PhotoSelectedNumBean> oldValue = getClassifiedPhotoResNumMapMutableLiveData().getValue();
         for (Map.Entry<String, PhotoSelectedNumBean> entry : value.entrySet()) {
             if (oldValue.containsKey(entry.getKey()))
-                entry.getValue().setSelected(oldValue.get(entry.getKey()).getSelected());
+                if (entry.getValue().getSize() < oldValue.get(entry.getKey()).getSelected())
+                    entry.getValue().setSelected(entry.getValue().getSize());
+                else
+                    entry.getValue().setSelected(oldValue.get(entry.getKey()).getSelected());
         }
         getClassifiedPhotoResNumMapMutableLiveData().setValue(value);
+        selectChangeCount("null", false);
     }
 
     public void selectChangeCount(String key, boolean isAdd) {
@@ -171,7 +181,6 @@ public class PhotoViewModel extends ViewModel {
                 photoSelectedNumBean.sub();
         }
         Iterator<Object> iterator = getClassifiedResListMutableLiveData().getValue().iterator();
-        boolean flag = true;
         while (iterator.hasNext()) {
             Object o = iterator.next();
             if (o instanceof GroupBean) {
@@ -180,17 +189,11 @@ public class PhotoViewModel extends ViewModel {
                     PhotoSelectedNumBean photoSelectedNumBean = getClassifiedPhotoResNumMapMutableLiveData().getValue().get(groupBean.getGroupId());
                     if (photoSelectedNumBean.getSize() <= photoSelectedNumBean.getSelected())
                         groupBean.setSelected(true);
-                    else {
+                    else
                         groupBean.setSelected(false);
-                        flag = false;
-                    }
                 }
             }
         }
-        if (flag)
-            mainViewModel.setIsSelectAllMutableLiveData(true);
-        else
-            mainViewModel.setIsSelectAllMutableLiveData(false);
     }
 
     public void resetSelectChangeCount() {
