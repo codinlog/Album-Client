@@ -7,6 +7,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.databinding.ActivityMainBinding;
@@ -19,7 +21,7 @@ import static com.codinlog.album.util.WorthStoreUtil.permission_RequestCode;
 public abstract class BaseActivityController<T extends ViewModel> extends AppCompatActivity {
     protected static final String TAG = "BaseActivityController";
     protected T viewModel;
-    protected ActivityMainBinding binding;
+    protected ViewDataBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

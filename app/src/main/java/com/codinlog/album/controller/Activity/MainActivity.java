@@ -2,15 +2,14 @@ package com.codinlog.album.controller.Activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -27,6 +26,7 @@ import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
 import com.codinlog.album.controller.Fragment.TimeFragment;
+import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.listener.AlbumDialogBtnCancelListener;
 import com.codinlog.album.listener.AlbumDialogBtnOkListener;
 import com.codinlog.album.model.AlbumViewModel;
@@ -36,20 +36,20 @@ import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
 import static com.codinlog.album.util.WorthStoreUtil.isFirstScanner;
 import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
+import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 
 public class MainActivity extends BaseActivityController<MainViewModel> {
     private ArrayList<FragmentBean> fragmentBeans;
     private MainVPAdapter mainVPAdapter;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,62 +83,42 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
     @Override
     protected void doInitListener() {
-        viewModel.getFragmentMutableLiveData().observe(this, new Observer<ArrayList<FragmentBean>>() {
-            @Override
-            public void onChanged(ArrayList<FragmentBean> fragmentBeans) {
-                mainVPAdapter.setList(MainActivity.this.fragmentBeans);
-                mainVPAdapter.notifyDataSetChanged();
-            }
+        viewModel.getFragmentMutableLiveData().observe(this, fragmentBeans -> {
+            mainVPAdapter.setList(MainActivity.this.fragmentBeans);
+            mainVPAdapter.notifyDataSetChanged();
         });
-        viewModel.getPhotoMutableLiveData().observe(this, new Observer<ArrayList<PhotoBean>>() {
-            @Override
-            public void onChanged(ArrayList<PhotoBean> photoBeans) {
-                ClassifiedResBean.getInstance().loadClassifiedRes(photoBeans);
-                viewModel.setPhotoViewModelListData(ClassifiedResBean.getInstance().getClassifiedPhotoResList());
-                viewModel.setPhotoViewModelMapData(ClassifiedResBean.getInstance().getClassifiedPhotoResMap());
-                viewModel.setPhotoViewModelMapNumData(ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap());
-            }
+        viewModel.getPhotoMutableLiveData().observe(this, photoBeans -> {
+            ClassifiedResBean.getInstance().loadClassifiedRes(photoBeans);
+            viewModel.setPhotoViewModelListData(ClassifiedResBean.getInstance().getClassifiedPhotoResList());
+            viewModel.setPhotoViewModelMapData(ClassifiedResBean.getInstance().getClassifiedPhotoResMap());
+            viewModel.setPhotoViewModelMapNumData(ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap());
         });
-        viewModel.getModeMutableLiveData().observe(this, new Observer<WorthStoreUtil.MODE>() {
-            @Override
-            public void onChanged(WorthStoreUtil.MODE mode) {
-                binding.viewPager.setCanScroll(mode == MODE_NORMAL ? true : false);
-                binding.bottomNavigation.getMenu().getItem(1).setChecked(true);
-                binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
-                binding.tabLayout.setVisibility(mode == MODE_NORMAL ? View.VISIBLE : View.INVISIBLE);
-                binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
-                binding.btnSearch.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
-            }
+        viewModel.getModeMutableLiveData().observe(this, mode -> {
+            binding.viewPager.setCanScroll(mode == MODE_NORMAL ? true : false);
+            binding.bottomNavigation.getMenu().getItem(1).setChecked(true);
+            binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
+            binding.tabLayout.setVisibility(mode == MODE_NORMAL ? View.VISIBLE : View.INVISIBLE);
+            binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
+            binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
         });
-        viewModel.getIsSelectAllMutableLiveData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel):getString(R.string.btn_all));
+        viewModel.getIsSelectAllMutableLiveData().observe(this, aBoolean -> binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel):getString(R.string.btn_all)));
+        viewModel.photoViewModel.getSelectedMutableLiveData().observe(this, integers -> {
+            if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+                binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
+            int countFlag = 0;
+            for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedPhotoResNumMapMutableLiveData().getValue().values()){
+                countFlag = countFlag + photoSelectedNumBean.getSize();
             }
+            if(integers.size() == countFlag)
+                viewModel.setIsSelectAllMutableLiveData(true);
+            else
+                viewModel.setIsSelectAllMutableLiveData(false);
         });
-        viewModel.photoViewModel.getSelectedMutableLiveData().observe(this, new Observer<List<Integer>>() {
-            @Override
-            public void onChanged(List<Integer> integers) {
-                if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
-                    binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
-                int countFlag = 0;
-                for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedPhotoResNumMapMutableLiveData().getValue().values()){
-                    countFlag = countFlag + photoSelectedNumBean.getSize();
-                }
-                if(integers.size() == countFlag)
-                    viewModel.setIsSelectAllMutableLiveData(true);
-                else
-                    viewModel.setIsSelectAllMutableLiveData(false);
-            }
-        });
-        viewModel.getCurrentPagerMutableLiveData().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                switch (integer){
-                    case WorthStoreUtil.photoPager:;break;
-                    case WorthStoreUtil.albumPager:break;
-                    case WorthStoreUtil.timePager:break;
-                }
+        viewModel.getCurrentPagerMutableLiveData().observe(this, integer -> {
+            switch (integer){
+                case WorthStoreUtil.photoPager:;break;
+                case WorthStoreUtil.albumPager:break;
+                case WorthStoreUtil.timePager:break;
             }
         });
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -157,26 +137,32 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
             }
         });
-        binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_addto_album:
-                        AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
-                                .setBtnOkListener(new AlbumDialogBtnOkListener())
-                                .setBtnCancelListener(new AlbumDialogBtnCancelListener())
-                                .setTvTitle(getString(R.string.addto_album));
-                        albumDialog.show();
-                        break;
-                    case R.id.menu_cancel:
-                        viewModel.setModeMutableLiveData(MODE_NORMAL);
-                        break;
-                    case R.id.menu_all:
-                        viewModel.setIsSelectAllMutableLiveData(!viewModel.getIsSelectAllMutableLiveData().getValue());
-                        viewModel.setIsSelectAllToOtherViewModel();
-                        break;
-                }
-                return true;
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.menu_addto_album:
+                    AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
+                            .setBtnOkListener(new AlbumDialogBtnOkListener())
+                            .setBtnCancelListener(new AlbumDialogBtnCancelListener())
+                            .setTvTitle(getString(R.string.addto_album));
+                    albumDialog.show();
+                    break;
+                case R.id.menu_cancel:
+                    viewModel.setModeMutableLiveData(MODE_NORMAL);
+                    break;
+                case R.id.menu_all:
+                    viewModel.setIsSelectAllMutableLiveData(!viewModel.getIsSelectAllMutableLiveData().getValue());
+                    viewModel.setIsSelectAllToOtherViewModel();
+                    break;
+            }
+            return true;
+        });
+
+        binding.btnOperation.setOnClickListener(v -> {
+            switch (viewModel.getCurrentPagerMutableLiveData().getValue()){
+                case photoPager:
+                    Intent intent  = new Intent(MainActivity.this,CameraXActivity.class);
+                    startActivity(intent);
+                    break;
             }
         });
     }

@@ -32,7 +32,7 @@ public class ClassifiedResBean {
     }
 
     public Map<String, List<PhotoBean>> getClassifiedPhotoResMap() {
-        return classifiedPhotoResMap == null ? new TreeMap<String, List<PhotoBean>>() : classifiedPhotoResMap;
+        return classifiedPhotoResMap == null ? new TreeMap<>() : classifiedPhotoResMap;
     }
 
     public ClassifiedResBean setClassifiedPhotoResMap(Map<String, List<PhotoBean>> classifiedPhotoResMap) {
@@ -41,7 +41,7 @@ public class ClassifiedResBean {
     }
 
     public List<Object> getClassifiedPhotoResList() {
-        return classifiedPhotoResList == null ? new ArrayList<Object>() : classifiedPhotoResList;
+        return classifiedPhotoResList == null ? new ArrayList<>() : classifiedPhotoResList;
     }
 
     public ClassifiedResBean setClassifiedPhotoResList(List<Object> classifiedPhotoResList) {

@@ -51,19 +51,9 @@ public class AlbumDialog extends Dialog {
     }
 
     private void doInit() {
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                albumDialogBaseListener_btnOk.handleEvent(AlbumDialog.this.getOwnerActivity());
-            }
-        });
+        btn_ok.setOnClickListener(v -> albumDialogBaseListener_btnOk.handleEvent(AlbumDialog.this.getOwnerActivity()));
 
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                albumDialogBaseListener_btnCancel.handleEvent(AlbumDialog.this);
-            }
-        });
+        btn_cancel.setOnClickListener(v -> albumDialogBaseListener_btnCancel.handleEvent(AlbumDialog.this));
         if(title != null)
             tvTitle.setText(title);
     }

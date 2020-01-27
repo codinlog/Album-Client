@@ -7,8 +7,8 @@ import android.provider.MediaStore;
 import com.codinlog.album.R;
 
 public class WorthStoreUtil {
-    public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.CAMERA};
-    public static int[] permissionsDetails = {R.string.permission_storage, R.string.permission_network, R.string.permission_camera};
+    public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET, Manifest.permission.CAMERA};
+    public static int[] permissionsDetails = {R.string.permission_storage_read,R.string.permission_storage_write, R.string.permission_network, R.string.permission_camera};
     public static int permission_RequestCode = 100;
     public static int loaderManager_ID = 200;
 

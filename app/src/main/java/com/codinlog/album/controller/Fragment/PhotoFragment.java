@@ -1,12 +1,10 @@
 package com.codinlog.album.controller.Fragment;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoRVAdpater;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.PhotoFragmentBinding;
 import com.codinlog.album.listener.BaseListener;
@@ -14,9 +12,6 @@ import com.codinlog.album.listener.PhotoGroupListener;
 import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.util.WorthStoreUtil;
-
-import java.util.List;
-import java.util.Map;
 
 public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     private PhotoRVAdpater photoRVAdpater;
@@ -73,12 +68,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
 
     @Override
     protected void doInitListener() {
-        viewModel.getClassifiedResListMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<Object>>() {
-            @Override
-            public void onChanged(List<Object> objects) {
-                photoRVAdpater.setData(objects);
-            }
-        });
+        viewModel.getClassifiedResListMutableLiveData().observe(getViewLifecycleOwner(), objects -> photoRVAdpater.setData(objects));
 
 //        viewModel.getClassifiedPhotoResNumMapMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Map<String, PhotoSelectedNumBean>>() {
 //            @Override
@@ -87,28 +77,15 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
 //            }
 //        });
 
-        viewModel.getSelectedMutableLiveData().observe(getViewLifecycleOwner(), new Observer<List<Integer>>() {
-            @Override
-            public void onChanged(List<Integer> integers) {
-                photoRVAdpater.notifyChange(null, true);
-            }
+        viewModel.getSelectedMutableLiveData().observe(getViewLifecycleOwner(), integers -> photoRVAdpater.notifyChange(null, true));
+
+        viewModel.mainViewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), mode -> {
+            if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
+                viewModel.modeChangeToNormal();
+            photoRVAdpater.setMode(mode);
         });
 
-        viewModel.mainViewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), new Observer<WorthStoreUtil.MODE>() {
-            @Override
-            public void onChanged(WorthStoreUtil.MODE mode) {
-                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
-                    viewModel.modeChangeToNormal();
-                photoRVAdpater.setMode(mode);
-            }
-        });
-
-        viewModel.getIsSelectedAllGroupMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                photoRVAdpater.notifyChange(null, true);
-            }
-        });
+        viewModel.getIsSelectedAllGroupMutableLiveData().observe(getViewLifecycleOwner(), aBoolean -> photoRVAdpater.notifyChange(null, true));
     }
 
     @Override

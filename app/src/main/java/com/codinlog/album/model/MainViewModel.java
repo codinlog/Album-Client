@@ -31,7 +31,7 @@ public class MainViewModel extends ViewModel {
     public MutableLiveData<ArrayList<FragmentBean>> getFragmentMutableLiveData() {
         if (fragmentMutableLiveData == null) {
             fragmentMutableLiveData = new MutableLiveData<>();
-            fragmentMutableLiveData.setValue(new ArrayList<FragmentBean>());
+            fragmentMutableLiveData.setValue(new ArrayList<>());
         }
         return fragmentMutableLiveData;
     }
@@ -44,7 +44,7 @@ public class MainViewModel extends ViewModel {
     public MutableLiveData<ArrayList<PhotoBean>> getPhotoMutableLiveData() {
         if(photoMutableLiveData == null){
             photoMutableLiveData = new MutableLiveData<>();
-            photoMutableLiveData.setValue(new ArrayList<PhotoBean>());
+            photoMutableLiveData.setValue(new ArrayList<>());
         }
         return photoMutableLiveData;
     }

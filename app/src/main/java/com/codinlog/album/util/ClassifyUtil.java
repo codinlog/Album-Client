@@ -1,15 +1,14 @@
 package com.codinlog.album.util;
 
 import com.codinlog.album.bean.ClassifiedResBean;
-import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.GroupBean;
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.PhotoSelectedNumBean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,17 +26,14 @@ public class ClassifyUtil {
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Object> classifiedPhotoResList = new ArrayList<>();
         Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap = new HashMap<>();
-        Map<String, List<PhotoBean>> classifiedPhotoResMap = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                try {
-                    if (simpleDateFormat.parse(o1).getTime() > simpleDateFormat.parse(o2).getTime())
-                        return -1;
-                    else
-                        return 1;
-                } catch (ParseException e) {
+        Map<String, List<PhotoBean>> classifiedPhotoResMap = new TreeMap<>((o1, o2) -> {
+            try {
+                if (simpleDateFormat.parse(o1).getTime() > simpleDateFormat.parse(o2).getTime())
+                    return -1;
+                else
                     return 1;
-                }
+            } catch (ParseException e) {
+                return 1;
             }
         });
         Iterator<PhotoBean> iterator = classifications.iterator();

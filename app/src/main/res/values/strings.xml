@@ -5,11 +5,12 @@
     <string name="time">时刻</string>
     <string name="search">搜索</string>
     <string name="more">更多</string>
-    <string name="permission_storage">读取手机内容</string>
+    <string name="permission_storage_read">读取手机内容</string>
+    <string name="permission_storage_write">写入手机内容</string>
     <string name="permission_network">网络权限</string>
-    <string name="notice">提示</string>
-    <string name="certain">确定</string>
     <string name="permission_camera">相机权限</string>
+    <string name="certain">确定</string>
+    <string name="notice">提示</string>
     <string name="photo_item_des">photo_item</string>
     <string name="classify_title">TextView</string>
     <string name="navigtion_more_notice">navigtion more</string>
@@ -21,4 +22,5 @@
     <string name="btn_ok">确定</string>
     <string name="btn_all">全选</string>
     <string name="btn_all_cancel">全不选</string>
+    <string name="token_photo">拍照</string>
 </resources>

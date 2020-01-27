@@ -69,43 +69,22 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof PhotoItemViewHolder) {
             PhotoBean photoBean = (PhotoBean) objectClassifiedResList.get(position);
             PhotoItemViewHolder photoItemViewHolder = (PhotoItemViewHolder) holder;
-            photoItemViewHolder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    photoItemIVOnLongListener.handleEvent(position);
-                    return true;
-                }
+            photoItemViewHolder.imageView.setOnLongClickListener(v -> {
+                photoItemIVOnLongListener.handleEvent(position);
+                return true;
             });
-            photoItemViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    photoItemIVOnClickListener.handleEvent(position);
-                }
-            });
-            photoItemViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    photoItemCheckBoxListener.handleEvent(position);
-                }
-            });
+            photoItemViewHolder.imageView.setOnClickListener(v -> photoItemIVOnClickListener.handleEvent(position));
+            photoItemViewHolder.checkBox.setOnClickListener(v -> photoItemCheckBoxListener.handleEvent(position));
             Glide.with(AlbumApplication.mContext).load(photoBean.getPath()).thumbnail(0.1f).error(R.drawable.ic_photo_black_24dp).into(photoItemViewHolder.imageView);
         } else if (holder instanceof PhotoGroupViewHolder) {
             final PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
             GroupBean groupBean = (GroupBean) objectClassifiedResList.get(position);
             photoGroupViewHolder.textView.setText(groupBean.getGroupId());
-            photoGroupViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((PhotoGroupListener)photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked());
-                }
-            });
-            photoGroupViewHolder.textView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    CheckBox checkBox = ((View)v.getParent()).findViewById(R.id.checkBox);
-                    ((PhotoGroupListener)photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());
-                    return true;
-                }
+            photoGroupViewHolder.checkBox.setOnClickListener(v -> ((PhotoGroupListener)photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked()));
+            photoGroupViewHolder.textView.setOnLongClickListener(v -> {
+                CheckBox checkBox = ((View)v.getParent()).findViewById(R.id.checkBox);
+                ((PhotoGroupListener)photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());
+                return true;
             });
         }
         doSelectMode(holder, position);
