@@ -1,15 +1,19 @@
 package com.codinlog.album.controller.Activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -37,11 +41,16 @@ import com.codinlog.album.util.ClassifyUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
+import static com.codinlog.album.util.WorthStoreUtil.REQUEST_TAKE_PHOTO;
 import static com.codinlog.album.util.WorthStoreUtil.isFirstScanner;
 import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
 import static com.codinlog.album.util.WorthStoreUtil.photoPager;
@@ -50,6 +59,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
     private ArrayList<FragmentBean> fragmentBeans;
     private MainVPAdapter mainVPAdapter;
     private ActivityMainBinding binding;
+    private String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,8 +170,15 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.btnOperation.setOnClickListener(v -> {
             switch (viewModel.getCurrentPagerMutableLiveData().getValue()){
                 case photoPager:
-                    Intent intent  = new Intent(MainActivity.this,CameraXActivity.class);
-                    startActivity(intent);
+                    if(viewModel.getModeMutableLiveData().getValue() == MODE_NORMAL) {
+                        try {
+                            dispatchTakePictureIntent();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+
+                    }
                     break;
             }
         });
@@ -174,13 +191,10 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.notice)
                     .setMessage(iterator.next())
-                    .setPositiveButton(R.string.certain, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            iterator.remove();
-                            showPermissionDialog(notAllowPermissions);
-                        }
+                    .setPositiveButton(R.string.certain, (dialog, which) -> {
+                        dialog.dismiss();
+                        iterator.remove();
+                        showPermissionDialog(notAllowPermissions);
                     }).show();
         }
     }
@@ -238,5 +252,66 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(currentPhotoPath);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast(mediaScanIntent);
+        }
+    }
+
+
+    private void dispatchTakePictureIntent() throws IOException {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = createImageFile();
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.codinlog.album.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStorageDirectory() + File.separator + "MyAlbum/Pictures");
+        if(!storageDir.exists())
+            storageDir.mkdirs();
+        File photoFile = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        currentPhotoPath = photoFile.getAbsolutePath();
+        return photoFile;
+    }
+
+    private boolean deletePhotos(ArrayList<String> filePaths){
+        final Iterator<String> iterator = filePaths.iterator();
+        while (iterator.hasNext()){
+            String path = iterator.next();
+            File file = new File(path);
+            if(file.exists()){
+                if(file.isFile()){
+                    file.delete();
+                    iterator.remove();
+                }
+            }
+        }
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+        return false;
     }
 }

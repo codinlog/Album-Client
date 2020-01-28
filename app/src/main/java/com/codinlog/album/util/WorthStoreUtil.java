@@ -42,9 +42,8 @@ public class WorthStoreUtil {
     public final static int photoIsRepeat = 10;
     public final static int photoIsNew = 11;
     public final static int errorCode = 404;
-    public final static int groupAllSelected = 20;
-    public final static int groupNotAllSelected = 30;
-    public final static int allGroupSelected = 40;
+    public final static int REQUEST_IMAGE_CAPTURE = 100;
+    public final static int REQUEST_TAKE_PHOTO = 101;
 
     public enum MODE {MODE_NORMAL, MODE_SELECT}
 }
