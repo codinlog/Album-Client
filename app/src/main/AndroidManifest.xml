@@ -21,7 +21,7 @@
         <activity
             android:name=".controller.Activity.PhotoDetailActivity"
             android:label="@string/title_activity_photo_detail"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/SteepTheme"
             android:parentActivityName=".controller.Activity.MainActivity"
             android:launchMode="singleTop"/>
         <activity

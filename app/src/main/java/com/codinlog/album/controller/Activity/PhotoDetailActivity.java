@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.codinlog.album.R;
 import com.codinlog.album.bean.ClassifiedResBean;
@@ -30,7 +31,12 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
 
     @Override
     protected void doInitListener() {
-
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+            }
+        });
     }
 
     @Override
