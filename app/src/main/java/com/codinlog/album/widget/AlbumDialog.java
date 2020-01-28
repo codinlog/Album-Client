@@ -4,10 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -44,9 +41,9 @@ public class AlbumDialog extends Dialog {
         setContentView(R.layout.addto_album_dialog);
         setCancelable(false);
         setOnKeyListener(new OnKeyDownListener());
-        tvTitle = findViewById(R.id.tv_title);
-        btn_cancel = findViewById(R.id.btn_cancel);
-        btn_ok = findViewById(R.id.btn_ok);
+        tvTitle = findViewById(R.id.tvTitle);
+        btn_cancel = findViewById(R.id.btnCancel);
+        btn_ok = findViewById(R.id.btnOk);
         doInit();
     }
 

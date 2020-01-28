@@ -13,7 +13,7 @@ public class WorthStoreUtil {
     public static int loaderManager_ID = 200;
 
     public static Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    public static String orderRule = MediaStore.Images.Media.DATE_MODIFIED + " desc";
+    public static String orderRule = MediaStore.Images.Media.DATE_TAKEN + " desc";
     public static String selectionRule = MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "= ?";
     public static String[] imageProjection = {
 //            MediaStore.Images.Media.DISPLAY_NAME,

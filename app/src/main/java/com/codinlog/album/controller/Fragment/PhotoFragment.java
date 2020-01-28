@@ -1,10 +1,14 @@
 package com.codinlog.album.controller.Fragment;
 
+import android.content.Intent;
+import android.util.Log;
+
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoRVAdpater;
+import com.codinlog.album.controller.Activity.PhotoDetailActivity;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.PhotoFragmentBinding;
 import com.codinlog.album.listener.BaseListener;
@@ -42,7 +46,13 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
         }, new BaseListener() {
             @Override
             public void handleEvent(int position) {
-                selectPhotoChanged(position, false, false, false);
+                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+                    selectPhotoChanged(position, false, false, false);
+                else {
+                    Log.d("position", "handleEvent: " + position);
+                    Intent intent = new Intent(getContext(), PhotoDetailActivity.class);
+                    startActivity(intent);
+                }
             }
         }, new BaseListener() {
             @Override
@@ -69,22 +79,12 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     @Override
     protected void doInitListener() {
         viewModel.getClassifiedResListMutableLiveData().observe(getViewLifecycleOwner(), objects -> photoRVAdpater.setData(objects));
-
-//        viewModel.getClassifiedPhotoResNumMapMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Map<String, PhotoSelectedNumBean>>() {
-//            @Override
-//            public void onChanged(Map<String, PhotoSelectedNumBean> stringPhotoSelectNumBeanMap) {
-//                viewModel.selectChangeCount("null",false);
-//            }
-//        });
-
         viewModel.getSelectedMutableLiveData().observe(getViewLifecycleOwner(), integers -> photoRVAdpater.notifyChange(null, true));
-
         viewModel.mainViewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), mode -> {
             if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
                 viewModel.modeChangeToNormal();
             photoRVAdpater.setMode(mode);
         });
-
         viewModel.getIsSelectedAllGroupMutableLiveData().observe(getViewLifecycleOwner(), aBoolean -> photoRVAdpater.notifyChange(null, true));
     }
 

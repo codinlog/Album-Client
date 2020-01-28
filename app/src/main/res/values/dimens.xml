@@ -8,4 +8,5 @@
     <dimen name="normal_marign">5dp</dimen>
     <dimen name="dialog_marign">20dp</dimen>
     <dimen name="dialog_height">250dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

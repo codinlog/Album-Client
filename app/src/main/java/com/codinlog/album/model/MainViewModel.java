@@ -1,7 +1,5 @@
 package com.codinlog.album.model;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -20,7 +18,7 @@ import static com.codinlog.album.util.WorthStoreUtil.timePager;
 
 public class MainViewModel extends ViewModel {
     private MutableLiveData<ArrayList<FragmentBean>> fragmentMutableLiveData;//界面
-    private MutableLiveData<ArrayList<PhotoBean>> photoMutableLiveData;//图片数据
+    private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanMutableLiveData;//图片数据
     private MutableLiveData<WorthStoreUtil.MODE> modeMutableLiveData;//选择模式
     private MutableLiveData<Boolean> isSelectAllMutableLiveData;//是否选择所有
     private MutableLiveData<Integer> currentPagerMutableLiveData;//当前页面
@@ -41,16 +39,16 @@ public class MainViewModel extends ViewModel {
     }
 
 
-    public MutableLiveData<ArrayList<PhotoBean>> getPhotoMutableLiveData() {
-        if(photoMutableLiveData == null){
-            photoMutableLiveData = new MutableLiveData<>();
-            photoMutableLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<List<PhotoBean>> getClassifiedPhotoBeanMutableLiveData() {
+        if(classifiedPhotoBeanMutableLiveData == null){
+            classifiedPhotoBeanMutableLiveData = new MutableLiveData<>();
+            classifiedPhotoBeanMutableLiveData.setValue(new ArrayList<>());
         }
-        return photoMutableLiveData;
+        return classifiedPhotoBeanMutableLiveData;
     }
 
-    public void setPhotoMutableLiveData(ArrayList<PhotoBean> value){
-        getPhotoMutableLiveData().setValue(value);
+    public void setClassifiedPhotoBeanMutableLiveData(List<PhotoBean> value){
+        getClassifiedPhotoBeanMutableLiveData().setValue(value);
     }
 
     public MutableLiveData<WorthStoreUtil.MODE> getModeMutableLiveData() {
@@ -96,7 +94,7 @@ public class MainViewModel extends ViewModel {
     }
 
     public void setPhotoViewModelMapNumData(Map<String, PhotoSelectedNumBean> resNumMap){
-        photoViewModel.setClassifiedPhotoResNumMapMutableLiveData(resNumMap);
+        photoViewModel.setClassifiedResNumMapMutableLiveData(resNumMap);
     }
 
     public MutableLiveData<Integer> getCurrentPagerMutableLiveData() {

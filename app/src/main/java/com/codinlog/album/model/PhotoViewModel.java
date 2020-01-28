@@ -18,7 +18,7 @@ public class PhotoViewModel extends ViewModel {
     private MutableLiveData<List<Object>> classifiedResListMutableLiveData; //图片+分组数据
     private MutableLiveData<Map<String, List<PhotoBean>>> classifiedResMapMutableLiveData;//归类的图片数据
     private MutableLiveData<List<Integer>> selectedMutableLiveData;//已选择
-    private MutableLiveData<Map<String, PhotoSelectedNumBean>> classifiedPhotoResNumMapMutableLiveData;//选择数量变化
+    private MutableLiveData<Map<String, PhotoSelectedNumBean>> classifiedResNumMapMutableLiveData;//选择数量变化
     private MutableLiveData<Boolean> isSelectedAllGroupMutableLiveData;
     private MutableLiveData<Boolean> isSelectedGroupAllMutableLiveData;
     public MainViewModel mainViewModel;
@@ -73,7 +73,7 @@ public class PhotoViewModel extends ViewModel {
                 groupBean.setSelected(false);
             }
         }
-        for (Map.Entry<String, PhotoSelectedNumBean> entry : getClassifiedPhotoResNumMapMutableLiveData().getValue().entrySet())
+        for (Map.Entry<String, PhotoSelectedNumBean> entry : getClassifiedResNumMapMutableLiveData().getValue().entrySet())
             entry.getValue().setSelected(0);
         getSelectedMutableLiveData().getValue().clear();
         getSelectedMutableLiveData().setValue(getSelectedMutableLiveData().getValue());
@@ -151,35 +151,32 @@ public class PhotoViewModel extends ViewModel {
         classifiedResMapMutableLiveData.setValue(value);
     }
 
-    public MutableLiveData<Map<String, PhotoSelectedNumBean>> getClassifiedPhotoResNumMapMutableLiveData() {
-        if (classifiedPhotoResNumMapMutableLiveData == null) {
-            classifiedPhotoResNumMapMutableLiveData = new MutableLiveData<>();
-            classifiedPhotoResNumMapMutableLiveData.setValue(new HashMap<>());
+    public MutableLiveData<Map<String, PhotoSelectedNumBean>> getClassifiedResNumMapMutableLiveData() {
+        if (classifiedResNumMapMutableLiveData == null) {
+            classifiedResNumMapMutableLiveData = new MutableLiveData<>();
+            classifiedResNumMapMutableLiveData.setValue(new HashMap<>());
         }
-        return classifiedPhotoResNumMapMutableLiveData;
+        return classifiedResNumMapMutableLiveData;
     }
 
-    public void setClassifiedPhotoResNumMapMutableLiveData(Map<String, PhotoSelectedNumBean> value) {
-        Map<String, PhotoSelectedNumBean> oldValue = getClassifiedPhotoResNumMapMutableLiveData().getValue();
-        int countFlag = 0;
+    public void setClassifiedResNumMapMutableLiveData(Map<String, PhotoSelectedNumBean> value) {
+        Map<String, PhotoSelectedNumBean> oldValue = getClassifiedResNumMapMutableLiveData().getValue();
         for (Map.Entry<String, PhotoSelectedNumBean> entry : value.entrySet()) {
             if (oldValue.containsKey(entry.getKey()))
                 if (entry.getValue().getSize() < oldValue.get(entry.getKey()).getSelected()) {
                     entry.getValue().setSelected(entry.getValue().getSize());
-                    countFlag += entry.getValue().getSize();
                 }
                 else {
                     entry.getValue().setSelected(oldValue.get(entry.getKey()).getSelected());
-                    countFlag += oldValue.get(entry.getKey()).getSelected();
                 }
         }
-        getClassifiedPhotoResNumMapMutableLiveData().setValue(value);
+        getClassifiedResNumMapMutableLiveData().setValue(value);
         selectChangeCount("null", false);
     }
 
     public void selectChangeCount(String key, boolean isAdd) {
-        if (key != null && getClassifiedPhotoResNumMapMutableLiveData().getValue().containsKey(key)) {
-            PhotoSelectedNumBean photoSelectedNumBean = getClassifiedPhotoResNumMapMutableLiveData().getValue().get(key);
+        if (key != null && getClassifiedResNumMapMutableLiveData().getValue().containsKey(key)) {
+            PhotoSelectedNumBean photoSelectedNumBean = getClassifiedResNumMapMutableLiveData().getValue().get(key);
             if (isAdd)
                 photoSelectedNumBean.add();
             else
@@ -191,8 +188,8 @@ public class PhotoViewModel extends ViewModel {
             Object o = iterator.next();
             if (o instanceof GroupBean) {
                 GroupBean groupBean = (GroupBean) o;
-                if (getClassifiedPhotoResNumMapMutableLiveData().getValue().containsKey(groupBean.getGroupId())) {
-                    PhotoSelectedNumBean photoSelectedNumBean = getClassifiedPhotoResNumMapMutableLiveData().getValue().get(groupBean.getGroupId());
+                if (getClassifiedResNumMapMutableLiveData().getValue().containsKey(groupBean.getGroupId())) {
+                    PhotoSelectedNumBean photoSelectedNumBean = getClassifiedResNumMapMutableLiveData().getValue().get(groupBean.getGroupId());
                     if (photoSelectedNumBean.getSize() <= photoSelectedNumBean.getSelected())
                         groupBean.setSelected(true);
                     else {
@@ -211,8 +208,8 @@ public class PhotoViewModel extends ViewModel {
     }
 
     public void resetSelectChangeCount() {
-        if (getClassifiedPhotoResNumMapMutableLiveData().getValue() != null) {
-            for (PhotoSelectedNumBean photoSelectedNumBean : getClassifiedPhotoResNumMapMutableLiveData().getValue().values())
+        if (getClassifiedResNumMapMutableLiveData().getValue() != null) {
+            for (PhotoSelectedNumBean photoSelectedNumBean : getClassifiedResNumMapMutableLiveData().getValue().values())
                 photoSelectedNumBean.setSelected(0);
         }
     }

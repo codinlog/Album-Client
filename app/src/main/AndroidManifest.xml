@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.codinlog.album">
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".application.AlbumApplication"
@@ -15,6 +18,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".controller.Activity.PhotoDetailActivity"
+            android:label="@string/title_activity_photo_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".controller.Activity.MainActivity"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".controller.Activity.MainActivity"
             android:screenOrientation="portrait">
@@ -32,9 +41,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/pic_dir"></meta-data>
+                android:resource="@xml/pic_dir" />
         </provider>
-
     </application>
 
 </manifest>

@@ -21,7 +21,6 @@ import static com.codinlog.album.util.WorthStoreUtil.permission_RequestCode;
 public abstract class BaseActivityController<T extends ViewModel> extends AppCompatActivity {
     protected static final String TAG = "BaseActivityController";
     protected T viewModel;
-    protected ViewDataBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,12 +66,12 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
         }
     }
 
-    protected abstract void showPermissionDialog(ArrayList<Integer> notAllowPermissions);
-
-    protected abstract void doInitData();
-
     protected abstract void doInitVew();
 
     protected abstract void doInitListener();
+
+    protected abstract void showPermissionDialog(ArrayList<Integer> notAllowPermissions);
+
+    protected abstract void doInitData();
 
 }

@@ -16,7 +16,7 @@
         tools:context=".controller.Activity.MainActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/innner_consLayout"
+            android:id="@+id/innnerConsLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
+                android:id="@+id/guideLine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -36,24 +36,24 @@
                 android:layout_height="wrap_content"
                 android:scrollbarStyle="insideInset"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_photo"
+                    android:id="@+id/tabPhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/photo" />
 
                 <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_album"
+                    android:id="@+id/tabAlbum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/album" />
 
                 <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_time"
+                    android:id="@+id/tabTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/time" />
@@ -61,7 +61,7 @@
             </com.google.android.material.tabs.TabLayout>
 
             <TextView
-                android:id="@+id/top_bar_select_notice"
+                android:id="@+id/topBarSelectNotice"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center"
@@ -69,26 +69,26 @@
                 android:textSize="@dimen/top_bar_font_size"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine"
                 app:layout_constraintStart_toStartOf="@+id/tabLayout"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/btn_operation"
+                android:id="@+id/btnOperation"
                 android:layout_width="@dimen/top_bar_width"
                 android:layout_height="0dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/search"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_more"
-                app:layout_constraintEnd_toStartOf="@+id/btn_more"
+                app:layout_constraintBottom_toBottomOf="@+id/btnMore"
+                app:layout_constraintEnd_toStartOf="@+id/btnMore"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toTopOf="@+id/btn_more"
+                app:layout_constraintStart_toStartOf="@+id/guideLine"
+                app:layout_constraintTop_toTopOf="@+id/btnMore"
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/ic_camera_black_24dp" />
 
             <ImageButton
-                android:id="@+id/btn_more"
+                android:id="@+id/btnMore"
                 android:layout_width="@dimen/top_bar_width"
                 android:layout_height="0dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -105,15 +105,15 @@
             android:id="@+id/viewPager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/innner_consLayout" >
+            app:layout_constraintTop_toBottomOf="@+id/innnerConsLayout" >
 
         </com.codinlog.album.widget.AlbumViewPager>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
+            android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"

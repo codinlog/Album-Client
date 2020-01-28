@@ -20,9 +20,9 @@ import static com.codinlog.album.util.WorthStoreUtil.photoIsNew;
 import static com.codinlog.album.util.WorthStoreUtil.photoIsRepeat;
 
 public class ClassifyUtil {
-    public static ClassifiedResBean PhotoClassification(List<PhotoBean> classifications) {
+    public static void PhotoClassification(List<PhotoBean> classifications) {
         if (classifications == null)
-            return ClassifiedResBean.getInstance();
+            return;
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<Object> classifiedPhotoResList = new ArrayList<>();
         Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap = new HashMap<>();
@@ -36,9 +36,8 @@ public class ClassifyUtil {
                 return 1;
             }
         });
-        Iterator<PhotoBean> iterator = classifications.iterator();
-        while (iterator.hasNext()) {
-            PhotoBean photoBean = iterator.next();
+        Collections.sort(classifications);
+        for (PhotoBean photoBean : classifications) {
             String key = simpleDateFormat.format(photoBean.getTokenDate());
             boolean keyContains = false;
             for (Map.Entry<String, List<PhotoBean>> entry : classifiedPhotoResMap.entrySet()) {
@@ -65,13 +64,14 @@ public class ClassifyUtil {
                 classifiedPhotoResList.add(photoBean.setGroupId(key));
             }
         }
-        ClassifiedResBean.getInstance().setClassifiedPhotoResList(classifiedPhotoResList)
+        ClassifiedResBean.getInstance()
+                .setClassifiedPhotoBeanResList(classifications)
+                .setClassifiedPhotoResList(classifiedPhotoResList)
                 .setClassifiedPhotoResMap(classifiedPhotoResMap)
                 .setClassifiedPhotoResNumMap(classifiedPhotoResNumMap);
-        return ClassifiedResBean.getInstance();
     }
 
-    public static int isPhotoRepeat(ArrayList<PhotoBean> photoBeans, String path) {
+    public static int isPhotoRepeat(List<PhotoBean> photoBeans, String path) {
         if (photoBeans == null)
             return errorCode;
         Iterator<PhotoBean> iterator = photoBeans.iterator();
@@ -85,7 +85,7 @@ public class ClassifyUtil {
         return photoIsNew;
     }
 
-    public static void removeDeleteImage(ArrayList<PhotoBean> photoBeans, boolean isResetStatus) {
+    public static void removeDeleteImage(List<PhotoBean> photoBeans, boolean isResetStatus) {
         if (photoBeans == null)
             return;
         Iterator<PhotoBean> iterator = photoBeans.iterator();

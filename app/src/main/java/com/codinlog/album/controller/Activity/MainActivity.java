@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -25,7 +25,6 @@ import com.codinlog.album.adapter.MainVPAdapter;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
@@ -47,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
@@ -60,6 +60,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
     private MainVPAdapter mainVPAdapter;
     private ActivityMainBinding binding;
     private String currentPhotoPath;
+    private PopupMenu popupMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +71,16 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
     protected void doInitVew() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
+        binding.setData(viewModel);
+        binding.bottomNavigation.setVisibility(View.GONE);
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
         viewModel.albumViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
         viewModel.timeViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
-        binding.setData(viewModel);
+        popupMenu = new PopupMenu(this,binding.btnMore);
+        popupMenu.getMenuInflater().inflate(R.menu.top_menu,popupMenu.getMenu());
         fragmentBeans = new ArrayList<>();
         mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        binding.bottomNavigation.setVisibility(View.GONE);
     }
 
     @Override
@@ -97,8 +100,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             mainVPAdapter.setList(MainActivity.this.fragmentBeans);
             mainVPAdapter.notifyDataSetChanged();
         });
-        viewModel.getPhotoMutableLiveData().observe(this, photoBeans -> {
-            ClassifiedResBean.getInstance().loadClassifiedRes(photoBeans);
+        viewModel.getClassifiedPhotoBeanMutableLiveData().observe(this, photoBeans -> {
             viewModel.setPhotoViewModelListData(ClassifiedResBean.getInstance().getClassifiedPhotoResList());
             viewModel.setPhotoViewModelMapData(ClassifiedResBean.getInstance().getClassifiedPhotoResMap());
             viewModel.setPhotoViewModelMapNumData(ClassifiedResBean.getInstance().getClassifiedPhotoResNumMap());
@@ -111,24 +113,27 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
             binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
         });
-        viewModel.getIsSelectAllMutableLiveData().observe(this, aBoolean -> binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel):getString(R.string.btn_all)));
+        viewModel.getIsSelectAllMutableLiveData().observe(this, aBoolean -> binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel) : getString(R.string.btn_all)));
         viewModel.photoViewModel.getSelectedMutableLiveData().observe(this, integers -> {
             if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
                 binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
-            int countFlag = 0;
-            for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedPhotoResNumMapMutableLiveData().getValue().values()){
-                countFlag = countFlag + photoSelectedNumBean.getSize();
-            }
-            if(integers.size() == countFlag)
-                viewModel.setIsSelectAllMutableLiveData(true);
-            else
-                viewModel.setIsSelectAllMutableLiveData(false);
+//            int countFlag = 0;
+//            for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedResNumMapMutableLiveData().getValue().values()){
+//                countFlag = countFlag + photoSelectedNumBean.getSize();
+//            }
+//            if(integers.size() == countFlag)
+//                viewModel.setIsSelectAllMutableLiveData(true);
+//            else
+//                viewModel.setIsSelectAllMutableLiveData(false);
         });
         viewModel.getCurrentPagerMutableLiveData().observe(this, integer -> {
-            switch (integer){
-                case WorthStoreUtil.photoPager:;break;
-                case WorthStoreUtil.albumPager:break;
-                case WorthStoreUtil.timePager:break;
+            switch (integer) {
+                case WorthStoreUtil.photoPager:
+                    break;
+                case WorthStoreUtil.albumPager:
+                    break;
+                case WorthStoreUtil.timePager:
+                    break;
             }
         });
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -168,19 +173,27 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         });
 
         binding.btnOperation.setOnClickListener(v -> {
-            switch (viewModel.getCurrentPagerMutableLiveData().getValue()){
+            switch (viewModel.getCurrentPagerMutableLiveData().getValue()) {
                 case photoPager:
-                    if(viewModel.getModeMutableLiveData().getValue() == MODE_NORMAL) {
+                    if (viewModel.getModeMutableLiveData().getValue() == MODE_NORMAL) {
                         try {
                             dispatchTakePictureIntent();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }else{
+                    } else {
 
                     }
                     break;
             }
+        });
+
+        binding.btnMore.setOnClickListener(v -> popupMenu.show());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()){
+                case R.id.setting_1:break;
+            }
+            return false;
         });
     }
 
@@ -221,11 +234,11 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
             @Override
             public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-                ArrayList<PhotoBean> photoBeanArrayList = viewModel.getPhotoMutableLiveData().getValue();
+                List<PhotoBean> photoBeans = viewModel.getClassifiedPhotoBeanMutableLiveData().getValue();
                 if (isFirstScanner)
-                    photoBeanArrayList = new ArrayList<>();
+                    photoBeans = new ArrayList<>();
                 else
-                    ClassifyUtil.removeDeleteImage(photoBeanArrayList, true);
+                    ClassifyUtil.removeDeleteImage(photoBeans, true);
                 if (data != null) {
                     data.moveToFirst();
                     do {
@@ -233,17 +246,18 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
                         String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
                         String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
-                        if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeanArrayList, path) == WorthStoreUtil.photoIsNew)) {
+                        if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
                             PhotoBean photoBean = PhotoBean.newInstance();
                             photoBean.setPath(path).setSize(Long.parseLong(size)).setPhotoId(Integer.parseInt(id)).setTokenDate(Long.parseLong(tokenData));
-                            photoBeanArrayList.add(photoBean);
+                            photoBeans.add(photoBean);
                         }
                     } while (data.moveToNext());
                     if (!isFirstScanner)
-                        ClassifyUtil.removeDeleteImage(photoBeanArrayList, false);
+                        ClassifyUtil.removeDeleteImage(photoBeans, false);
                     else
                         isFirstScanner = false;
-                    viewModel.setPhotoMutableLiveData(photoBeanArrayList);
+                    ClassifiedResBean.getInstance().loadClassifiedRes(photoBeans);
+                    viewModel.setClassifiedPhotoBeanMutableLiveData(ClassifiedResBean.getInstance().getClassifiedPhotoBeanResList());
                 }
             }
 
@@ -285,7 +299,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = new File(Environment.getExternalStorageDirectory() + File.separator + "MyAlbum/Pictures");
-        if(!storageDir.exists())
+        if (!storageDir.exists())
             storageDir.mkdirs();
         File photoFile = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -296,17 +310,14 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         return photoFile;
     }
 
-    private boolean deletePhotos(ArrayList<String> filePaths){
+    private boolean deletePhotos(ArrayList<String> filePaths) {
         final Iterator<String> iterator = filePaths.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             String path = iterator.next();
             File file = new File(path);
-            if(file.exists()){
-                if(file.isFile()){
-                    file.delete();
+            if (file.exists())
+                if (file.isFile() & file.delete())
                     iterator.remove();
-                }
-            }
         }
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
