@@ -1,6 +1,9 @@
 package com.codinlog.album.controller.Activity;
 
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -12,6 +15,7 @@ import com.codinlog.album.adapter.PhotoDetailVPAdapter;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoDetailBindingImpl;
+import com.codinlog.album.listener.BaseListener;
 import com.codinlog.album.model.PhotoDetailViewModel;
 
 import java.util.ArrayList;
@@ -19,6 +23,8 @@ import java.util.ArrayList;
 public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewModel> {
     ActivityPhotoDetailBindingImpl binding;
     private PhotoDetailVPAdapter photoDetailVPAdapter;
+    private static boolean isShowAppBar = false;
+    private TranslateAnimation animation;
 
     @Override
     protected void doInitVew() {
@@ -44,7 +50,7 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
             photoDetailVPAdapter.setData(photoBeans);
             viewModel.setCurrentPositionMutableLiveData(getIntent().getIntExtra("currentPosition", 1));
         });
-        viewModel.getCurrentPositionMutableLiveData().observe(this, integer -> binding.viewPager.setCurrentItem(integer,false));
+        viewModel.getCurrentPositionMutableLiveData().observe(this, integer -> binding.viewPager.setCurrentItem(integer, false));
     }
 
     @Override
@@ -54,7 +60,25 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
 
     @Override
     protected void doInitData() {
-        photoDetailVPAdapter = new PhotoDetailVPAdapter();
+        photoDetailVPAdapter = new PhotoDetailVPAdapter(new BaseListener() {
+            @Override
+            public void handleEvent(int position) {
+                if (animation == null || animation.hasEnded()) {
+                    animation = isShowAppBar ?
+                            new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                                    -1.0f, Animation.RELATIVE_TO_SELF, 0.0f) :
+                            new TranslateAnimation(Animation.RELATIVE_TO_SELF,
+                                    0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                                    -1.0f);
+                    animation.setDuration(500);
+                    binding.appBarLayout.startAnimation(animation);
+                    binding.appBarLayout.setVisibility(isShowAppBar ? View.VISIBLE : View.GONE);
+                    isShowAppBar = !isShowAppBar;
+                }
+            }
+        });
         binding.viewPager.setAdapter(photoDetailVPAdapter);
         viewModel.setClassifiedPhotoBeanResListMutableLiveData(ClassifiedResBean.getInstance().getClassifiedPhotoBeanResList());
     }
