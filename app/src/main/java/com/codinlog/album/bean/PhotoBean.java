@@ -22,7 +22,7 @@ public class PhotoBean implements Comparable{
     @NonNull
     @Override
     public String toString() {
-        return "isSelected:" + isSelected;
+        return "isSelected:" + isSelected + ";Path:" + path;
     }
 
     public static PhotoBean newInstance() {

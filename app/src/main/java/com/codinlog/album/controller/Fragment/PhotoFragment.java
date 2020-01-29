@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoRVAdpater;
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.Activity.PhotoDetailActivity;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.PhotoFragmentBinding;
@@ -46,11 +47,19 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
         }, new BaseListener() {
             @Override
             public void handleEvent(int position) {
-                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+                if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
                     selectPhotoChanged(position, false, false, false);
-                else {
-                    Log.d("position", "handleEvent: " + position);
+                } else {
                     Intent intent = new Intent(getContext(), PhotoDetailActivity.class);
+                    PhotoBean photoBean = (PhotoBean) viewModel.getClassifiedResListMutableLiveData().getValue().get(position);
+                    int currentPosition = 0;
+                    for (PhotoBean p : viewModel.mainViewModel.getClassifiedPhotoBeanMutableLiveData().getValue()) {
+                        if (p.getPhotoId() == photoBean.getPhotoId()) {
+                            intent.putExtra("currentPosition", currentPosition);
+                            break;
+                        }
+                        currentPosition++;
+                    }
                     startActivity(intent);
                 }
             }

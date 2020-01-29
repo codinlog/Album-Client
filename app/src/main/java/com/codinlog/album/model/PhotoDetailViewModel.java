@@ -9,17 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoDetailViewModel extends ViewModel {
-    private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanResList;
+    private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanResListMutableLiveData;
+    private MutableLiveData<Integer> currentPositionMutableLiveData;
 
-    public MutableLiveData<List<PhotoBean>> getClassifiedPhotoBeanResList() {
-        if(classifiedPhotoBeanResList == null){
-            classifiedPhotoBeanResList = new MutableLiveData<>();
-            classifiedPhotoBeanResList.setValue(new ArrayList<>());
+    public MutableLiveData<List<PhotoBean>> getClassifiedPhotoBeanResListMutableLiveData() {
+        if(classifiedPhotoBeanResListMutableLiveData == null){
+            classifiedPhotoBeanResListMutableLiveData = new MutableLiveData<>();
+            classifiedPhotoBeanResListMutableLiveData.setValue(new ArrayList<>());
         }
-        return classifiedPhotoBeanResList;
+        return classifiedPhotoBeanResListMutableLiveData;
     }
 
-    public void setPhotoMutableLiveData(List<PhotoBean> value) {
-        getClassifiedPhotoBeanResList().setValue(value);
+    public void setClassifiedPhotoBeanResListMutableLiveData(List<PhotoBean> value) {
+        getClassifiedPhotoBeanResListMutableLiveData().setValue(value);
+    }
+
+    public MutableLiveData<Integer> getCurrentPositionMutableLiveData() {
+        if(currentPositionMutableLiveData == null){
+            currentPositionMutableLiveData = new MutableLiveData<>();
+            currentPositionMutableLiveData.setValue(1);
+        }
+        return currentPositionMutableLiveData;
+    }
+
+    public void setCurrentPositionMutableLiveData(int value) {
+        getCurrentPositionMutableLiveData().setValue(value);
     }
 }
