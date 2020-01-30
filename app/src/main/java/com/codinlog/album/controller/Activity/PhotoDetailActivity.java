@@ -27,8 +27,13 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
     private TranslateAnimation animation;
 
     @Override
-    protected void doInitVew() {
+    protected void onStart() {
+        super.onStart();
         overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
+    }
+
+    @Override
+    protected void doInitVew() {
         viewModel = new ViewModelProvider(this).get(PhotoDetailViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_photo_detail);
         setSupportActionBar(binding.toolbar);
@@ -91,5 +96,11 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
     }
 }
