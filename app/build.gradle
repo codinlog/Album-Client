@@ -50,4 +50,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
+
+    compile 'com.github.cnlkl:TransformativeImageView:1.1.3'
+
 }

@@ -5,10 +5,8 @@ import androidx.annotation.NonNull;
 public class PhotoBean implements Comparable{
 
 //    private String thumbnail;               // 缩略图
-//    private int imageWidth;                 // 图片宽度
-//    private int imageHeight;                // 图片高度
 //    private long modified;                  // 图片修改时间
-//    private double latitude;                // 纬度
+    //    private double latitude;                // 纬度
 //    private double longitude;               // 经度
 //    private double altitude;                // 海拔
     private String path;                    // 路径
@@ -18,6 +16,8 @@ public class PhotoBean implements Comparable{
     private long tokenDate;                  // 拍摄时间
     private boolean isSelected = false;
     private boolean isDelete = false;
+    private int width;                 // 图片宽度
+    private int height;                // 图片高度
 
     @NonNull
     @Override
@@ -25,8 +25,29 @@ public class PhotoBean implements Comparable{
         return "isSelected:" + isSelected + ";Path:" + path;
     }
 
+
+
+
     public static PhotoBean newInstance() {
         return new PhotoBean();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public PhotoBean setWidth(int width) {
+        this.width = width;
+        return this;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public PhotoBean setHeight(int height) {
+        this.height = height;
+        return this;
     }
 
     public String getPath() {

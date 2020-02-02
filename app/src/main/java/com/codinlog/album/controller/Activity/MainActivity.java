@@ -77,8 +77,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         viewModel.photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
         viewModel.albumViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
         viewModel.timeViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
-        popupMenu = new PopupMenu(this,binding.btnMore);
-        popupMenu.getMenuInflater().inflate(R.menu.top_menu,popupMenu.getMenu());
+        popupMenu = new PopupMenu(this, binding.btnMore);
+        popupMenu.getMenuInflater().inflate(R.menu.top_menu, popupMenu.getMenu());
         fragmentBeans = new ArrayList<>();
         mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
@@ -190,8 +190,9 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
         binding.btnMore.setOnClickListener(v -> popupMenu.show());
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()){
-                case R.id.setting_1:break;
+            switch (item.getItemId()) {
+                case R.id.setting_1:
+                    break;
             }
             return false;
         });
@@ -243,13 +244,26 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                     data.moveToFirst();
                     do {
                         String path = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[0]));
-                        String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
-                        String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
-                        String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
-                        if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
-                            PhotoBean photoBean = PhotoBean.newInstance();
-                            photoBean.setPath(path).setSize(Long.parseLong(size)).setPhotoId(Integer.parseInt(id)).setTokenDate(Long.parseLong(tokenData));
-                            photoBeans.add(photoBean);
+                        boolean isContinue = true;
+                        for (String str:WorthStoreUtil.disAllowScanning)
+                            if(path.contains(str)){
+                                isContinue = false;
+                                break;
+                            }
+                        File file = new File(path);
+                        if(file.exists() && isContinue) {
+                            String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
+                            String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
+                            String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
+                            String width = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[4]));
+                            String height = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5]));
+                            if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
+                                PhotoBean photoBean = PhotoBean.newInstance();
+                                photoBean.setPath(path).setSize(Long.parseLong(size)).setPhotoId(Integer.parseInt(id)).setTokenDate(Long.parseLong(tokenData))
+                                        .setWidth(width == null ? 0 : Integer.parseInt(width))
+                                        .setHeight(height == null ? 0 : Integer.parseInt(height));
+                                photoBeans.add(photoBean);
+                            }
                         }
                     } while (data.moveToNext());
                     if (!isFirstScanner)

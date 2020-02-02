@@ -11,18 +11,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.PhotoDetailVPAdapter;
+import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
+import com.codinlog.album.anim.ZoomOutPageTransformer;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoDetailBindingImpl;
-import com.codinlog.album.listener.BaseListener;
+import com.codinlog.album.listener.CustomerListener;
 import com.codinlog.album.model.PhotoDetailViewModel;
 
 import java.util.ArrayList;
 
 public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewModel> {
     ActivityPhotoDetailBindingImpl binding;
-    private PhotoDetailVPAdapter photoDetailVPAdapter;
+    private PhotoPreviewVPAdapter photoPreviewVPAdapter;
     private static boolean isShowAppBar = false;
     private TranslateAnimation animation;
 
@@ -52,7 +53,7 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
             }
         });
         viewModel.getClassifiedPhotoBeanResListMutableLiveData().observe(this, photoBeans -> {
-            photoDetailVPAdapter.setData(photoBeans);
+            photoPreviewVPAdapter.setData(photoBeans);
             viewModel.setCurrentPositionMutableLiveData(getIntent().getIntExtra("currentPosition", 1));
         });
         viewModel.getCurrentPositionMutableLiveData().observe(this, integer -> binding.viewPager.setCurrentItem(integer, false));
@@ -65,9 +66,9 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
 
     @Override
     protected void doInitData() {
-        photoDetailVPAdapter = new PhotoDetailVPAdapter(new BaseListener() {
+        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(new CustomerListener() {
             @Override
-            public void handleEvent(int position) {
+            public void handleEvent() {
                 if (animation == null || animation.hasEnded()) {
                     animation = isShowAppBar ?
                             new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
@@ -84,7 +85,8 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
                 }
             }
         });
-        binding.viewPager.setAdapter(photoDetailVPAdapter);
+        binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
+        binding.viewPager.setAdapter(photoPreviewVPAdapter);
         viewModel.setClassifiedPhotoBeanResListMutableLiveData(ClassifiedResBean.getInstance().getClassifiedPhotoBeanResList());
     }
 

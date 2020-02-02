@@ -20,15 +20,17 @@ public class WorthStoreUtil {
 //            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
 //            MediaStore.Images.Media.BUCKET_ID,
 //            MediaStore.Images.Media.DATE_ADDED,
-//            MediaStore.Images.Media.HEIGHT,
-//            MediaStore.Images.Media.WIDTH,
 //            MediaStore.Images.Media.TITLE,
             MediaStore.Images.Media.DATA,
             MediaStore.Images.Media.SIZE,
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DATE_TAKEN,
+            MediaStore.Images.Media.WIDTH,
+            MediaStore.Images.Media.HEIGHT,
 
     };
+
+    public static String[] disAllowScanning = {"amap/data/",};
     public static String[] selectionArgs = {"image/jpeg", "image/png"};
     public static boolean isFirstScanner = true;
     public final static int photoPager = 0;
