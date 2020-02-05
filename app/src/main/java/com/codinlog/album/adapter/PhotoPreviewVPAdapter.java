@@ -1,11 +1,8 @@
 package com.codinlog.album.adapter;
 
-import android.graphics.Matrix;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,21 +11,18 @@ import com.bumptech.glide.Glide;
 import com.codinlog.album.R;
 import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.listener.CustomerListener;
-import com.codinlog.album.util.WindowUtil;
+import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.widget.AlbumImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.lkllkllkl.transformativeimageview.TransformativeImageView;
-
 public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAdapter.ViewHolder> {
     private List<PhotoBean> photoBeans;
-    private CustomerListener customerListener;
+    private CommonListener commonListener;
 
-    public PhotoPreviewVPAdapter(CustomerListener customerListener) {
-        this.customerListener = customerListener;
+    public PhotoPreviewVPAdapter(CommonListener commonListener) {
+        this.commonListener = commonListener;
     }
 
     @NonNull
@@ -40,7 +34,7 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //holder.imageView.setOnClickListener(v -> photoCheckListener.handleEvent(position));
-        holder.imageView.setCustomerListener(customerListener);
+        holder.imageView.setCommonListener(commonListener);
         Glide.with(AlbumApplication.mContext).load(getPhotoBeans().get(position).getPath()).error(R.drawable.ic_photo_black_24dp).into(holder.imageView);
     }
 

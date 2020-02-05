@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.PhotoSelectedNumBean;
+import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<WorthStoreUtil.MODE> modeMutableLiveData;//选择模式
     private MutableLiveData<Boolean> isSelectAllMutableLiveData;//是否选择所有
     private MutableLiveData<Integer> currentPagerMutableLiveData;//当前页面
+    public AlbumDatabase albumDatabase;
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
     public TimeViewModel timeViewModel;
@@ -109,5 +111,11 @@ public class MainViewModel extends ViewModel {
         getCurrentPagerMutableLiveData().setValue(value);
     }
 
+    public AlbumDatabase getAlbumDatabase() {
+        return albumDatabase;
+    }
 
+    public void setAlbumDatabase(AlbumDatabase albumDatabase) {
+        this.albumDatabase = albumDatabase;
+    }
 }

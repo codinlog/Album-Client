@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.Activity.PhotoDetailActivity"
+            android:name=".controller.Activity.PhotoPreviewActivity"
             android:label="@string/title_activity_photo_detail"
             android:theme="@style/SteepTheme"
             android:parentActivityName=".controller.Activity.MainActivity"

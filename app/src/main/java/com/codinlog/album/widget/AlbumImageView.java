@@ -6,19 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
-import com.codinlog.album.listener.CustomerListener;
-import com.codinlog.album.util.WindowUtil;
+import com.codinlog.album.listener.CommonListener;
 
 @SuppressLint("AppCompatCustomView")
 public class AlbumImageView extends ImageView {
     private boolean disallowIntercept = false;
-    private CustomerListener customerListener;
+    private CommonListener commonListener;
     private PointF pointStart = new PointF(), pointMid = new PointF(), pointEnd = new PointF(), poinCenter = new PointF();
     private Matrix currentMatrix = new Matrix(), oldMatrix = null;
     private float currentRotation = 0f, oldRotation = 0f, rotation = 0f;
@@ -38,8 +36,8 @@ public class AlbumImageView extends ImageView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setCustomerListener(CustomerListener customerListener) {
-        this.customerListener = customerListener;
+    public void setCommonListener(CommonListener commonListener) {
+        this.commonListener = commonListener;
     }
 
     @Override
@@ -87,8 +85,8 @@ public class AlbumImageView extends ImageView {
                 currentMode = MODE.NONE;
                 break;
             case MotionEvent.ACTION_UP:
-                if (customerListener != null && !disallowIntercept)
-                    customerListener.handleEvent();
+                if (commonListener != null && !disallowIntercept)
+                    commonListener.handleEvent(null);
                 pointEnd.set(event.getX(), event.getY());
                 break;
         }

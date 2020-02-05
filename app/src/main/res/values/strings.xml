@@ -24,6 +24,8 @@
     <string name="btn_all_cancel">全不选</string>
     <string name="token_photo">拍照</string>
     <string name="photo_detail_title">%d/%d</string>
+    <string name="albumDB">albumDB</string>
+    <string name="albumItemDB">albumItemDB</string>
 
     <string name="title_activity_photo_detail">PhotoDetailActivity</string>
     <string name="dummy_button">Dummy Button</string>

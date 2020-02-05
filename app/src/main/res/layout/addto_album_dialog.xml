@@ -29,7 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/editTextAlbum"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,6 +38,9 @@
         android:layout_marginEnd="@dimen/dialog_marign"
         android:autofillHints=""
         android:ems="10"
+        android:focusable="true"
+        android:focusedByDefault="true"
+        android:focusableInTouchMode="true"
         android:hint="@string/enter_album_name"
         android:inputType="textPersonName"
         android:textColor="@android:color/black"
@@ -52,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackground"
         android:text="@string/btn_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
@@ -67,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackground"
         android:text="@string/btn_ok"
         app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
         app:layout_constraintEnd_toEndOf="parent"

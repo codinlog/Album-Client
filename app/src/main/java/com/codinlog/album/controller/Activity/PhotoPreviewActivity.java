@@ -4,25 +4,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
 import com.codinlog.album.bean.ClassifiedResBean;
 import com.codinlog.album.controller.BaseActivityController;
-import com.codinlog.album.databinding.ActivityPhotoDetailBindingImpl;
-import com.codinlog.album.listener.CustomerListener;
-import com.codinlog.album.model.PhotoDetailViewModel;
+import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
+import com.codinlog.album.listener.CommonListener;
+import com.codinlog.album.model.PhotoPreviewViewModel;
 
 import java.util.ArrayList;
 
-public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewModel> {
-    ActivityPhotoDetailBindingImpl binding;
+public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel> {
+    ActivityPhotoPreviewBinding binding;
     private PhotoPreviewVPAdapter photoPreviewVPAdapter;
     private static boolean isShowAppBar = false;
     private TranslateAnimation animation;
@@ -35,8 +33,8 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
 
     @Override
     protected void doInitVew() {
-        viewModel = new ViewModelProvider(this).get(PhotoDetailViewModel.class);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_photo_detail);
+        viewModel = new ViewModelProvider(this).get(PhotoPreviewViewModel.class);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_photo_preview);
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//添加默认的返回图标
         getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -66,9 +64,9 @@ public class PhotoDetailActivity extends BaseActivityController<PhotoDetailViewM
 
     @Override
     protected void doInitData() {
-        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(new CustomerListener() {
+        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(new CommonListener() {
             @Override
-            public void handleEvent() {
+            public void handleEvent(Object o) {
                 if (animation == null || animation.hasEnded()) {
                     animation = isShowAppBar ?
                             new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,

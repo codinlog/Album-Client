@@ -15,8 +15,4 @@ public class AlbumApplication extends Application {
         AlbumApplication.mContext = getApplicationContext();
         AlbumApplication.mApplictaion = this;
     }
-
-    public void Log(String TAG, String MSG){
-        Log.d(TAG, "Log: " + MSG);
-    }
 }

@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 
@@ -14,10 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
@@ -29,14 +33,17 @@ import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
 import com.codinlog.album.controller.Fragment.TimeFragment;
+import com.codinlog.album.dao.AlbumDAO;
+import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.databinding.ActivityMainBinding;
-import com.codinlog.album.listener.AlbumDialogBtnCancelListener;
-import com.codinlog.album.listener.AlbumDialogBtnOkListener;
+import com.codinlog.album.entity.AlbumEntity;
+import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
+import com.codinlog.album.util.DatabaseUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
@@ -73,24 +80,26 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.setLifecycleOwner(this);
         binding.setData(viewModel);
         binding.bottomNavigation.setVisibility(View.GONE);
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.photoViewModel = ViewModelProviders.of(this).get(PhotoViewModel.class);
-        viewModel.albumViewModel = ViewModelProviders.of(this).get(AlbumViewModel.class);
-        viewModel.timeViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.photoViewModel = new ViewModelProvider(this).get(PhotoViewModel.class);
+        viewModel.albumViewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
+        viewModel.timeViewModel = new ViewModelProvider(this).get(TimeViewModel.class);
+        viewModel.photoViewModel.mainViewModel = viewModel;
         popupMenu = new PopupMenu(this, binding.btnMore);
         popupMenu.getMenuInflater().inflate(R.menu.top_menu, popupMenu.getMenu());
-        fragmentBeans = new ArrayList<>();
-        mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     @Override
     protected void doInitData() {
+        mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        fragmentBeans = new ArrayList<>();
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
+        viewModel.albumDatabase= AlbumDatabase.getInstance();
+        viewModel.setFragmentMutableLiveData(fragmentBeans);
         binding.viewPager.setAdapter(mainVPAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-        viewModel.setFragmentMutableLiveData(fragmentBeans);
         loadImageData();
     }
 
@@ -117,14 +126,6 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         viewModel.photoViewModel.getSelectedMutableLiveData().observe(this, integers -> {
             if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
                 binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
-//            int countFlag = 0;
-//            for(PhotoSelectedNumBean photoSelectedNumBean:viewModel.photoViewModel.getClassifiedResNumMapMutableLiveData().getValue().values()){
-//                countFlag = countFlag + photoSelectedNumBean.getSize();
-//            }
-//            if(integers.size() == countFlag)
-//                viewModel.setIsSelectAllMutableLiveData(true);
-//            else
-//                viewModel.setIsSelectAllMutableLiveData(false);
         });
         viewModel.getCurrentPagerMutableLiveData().observe(this, integer -> {
             switch (integer) {
@@ -156,8 +157,41 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             switch (menuItem.getItemId()) {
                 case R.id.menu_addto_album:
                     AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
-                            .setBtnOkListener(new AlbumDialogBtnOkListener())
-                            .setBtnCancelListener(new AlbumDialogBtnCancelListener())
+                            .setBtnCancelListener(new CommonListener() {
+                                @Override
+                                public void handleEvent(Object o) {
+                                    AlbumDialog dialog = (AlbumDialog) o;
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setBtnOkListener(new CommonListener() {
+                                @Override
+                                public void handleEvent(Object o) {
+                                    AlbumDialog dialog = (AlbumDialog) o;
+                                    String albumName = dialog.getInputContent();
+                                    AlbumDAO albumDAO = viewModel.albumDatabase.getAlbumDAO();
+                                    AlbumEntity albumEntity = new AlbumEntity();
+                                    albumEntity.setAlbumName(albumName);
+                                    albumDAO.addAlbum(albumEntity);
+                                    Log.d("name", "handleEvent: " + albumName);
+                                }
+                            })
+                            .setEditTextInputChangeListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+
+                                }
+                            })
                             .setTvTitle(getString(R.string.addto_album));
                     albumDialog.show();
                     break;
@@ -227,9 +261,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             @NonNull
             @Override
             public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-                if (id == loaderManager_ID) {
+                if (id == loaderManager_ID)
                     return new CursorLoader(MainActivity.this, WorthStoreUtil.imageUri, WorthStoreUtil.imageProjection, WorthStoreUtil.selectionRule, WorthStoreUtil.selectionArgs, WorthStoreUtil.orderRule);
-                }
                 return null;
             }
 
@@ -245,13 +278,13 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                     do {
                         String path = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[0]));
                         boolean isContinue = true;
-                        for (String str:WorthStoreUtil.disAllowScanning)
-                            if(path.contains(str)){
+                        for (String str : WorthStoreUtil.disAllowScanning)
+                            if (path.contains(str)) {
                                 isContinue = false;
                                 break;
                             }
                         File file = new File(path);
-                        if(file.exists() && isContinue) {
+                        if (file.exists() && isContinue) {
                             String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
                             String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
                             String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));

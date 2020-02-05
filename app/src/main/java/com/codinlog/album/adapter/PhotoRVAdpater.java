@@ -17,8 +17,8 @@ import com.codinlog.album.R;
 import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.listener.BaseListener;
 import com.codinlog.album.listener.PhotoGroupListener;
+import com.codinlog.album.listener.PhotoItemListener;
 import com.codinlog.album.util.WindowUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 
@@ -30,10 +30,11 @@ import static android.view.View.VISIBLE;
 public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> objectClassifiedResList;
     private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
-    private BaseListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener, photoGroupCheckBoxListener, photoGroupTVOnLongListener;
+    private PhotoItemListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener;
+    private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
-    public PhotoRVAdpater(BaseListener photoItemIVOnLongListener, BaseListener photoItemIVOnClickListener, BaseListener photoItemCheckBoxListener,
-                          BaseListener photoGroupCheckBoxListener, BaseListener photoGroupTVOnLongListener) {
+    public PhotoRVAdpater(PhotoItemListener photoItemIVOnLongListener, PhotoItemListener photoItemIVOnClickListener, PhotoItemListener photoItemCheckBoxListener,
+                          PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener) {
         this.photoItemIVOnLongListener = photoItemIVOnLongListener;
         this.photoItemIVOnClickListener = photoItemIVOnClickListener;
         this.photoItemCheckBoxListener = photoItemCheckBoxListener;
@@ -80,10 +81,10 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
             GroupBean groupBean = (GroupBean) objectClassifiedResList.get(position);
             photoGroupViewHolder.textView.setText(groupBean.getGroupId());
-            photoGroupViewHolder.checkBox.setOnClickListener(v -> ((PhotoGroupListener)photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked()));
+            photoGroupViewHolder.checkBox.setOnClickListener(v -> (photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked()));
             photoGroupViewHolder.textView.setOnLongClickListener(v -> {
                 CheckBox checkBox = ((View)v.getParent()).findViewById(R.id.checkBox);
-                ((PhotoGroupListener)photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());
+                (photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());
                 return true;
             });
         }

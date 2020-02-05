@@ -8,7 +8,7 @@ import com.codinlog.album.bean.PhotoBean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoDetailViewModel extends ViewModel {
+public class PhotoPreviewViewModel extends ViewModel {
     private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanResListMutableLiveData;
     private MutableLiveData<Integer> currentPositionMutableLiveData;
 
