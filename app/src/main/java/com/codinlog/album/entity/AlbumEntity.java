@@ -32,4 +32,11 @@ public class AlbumEntity {
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
     }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "albumName:" + albumName + ",id:" + id + "\n";
+    }
 }

@@ -1,5 +1,6 @@
 package com.codinlog.album.controller.Fragment;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -32,8 +33,7 @@ public class TimeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(TimeViewModel.class);
-        // TODO: Use the ViewModel
+        mViewModel =  new ViewModelProvider(getActivity()).get(TimeViewModel.class);
     }
 
 }

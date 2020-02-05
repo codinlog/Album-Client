@@ -62,7 +62,7 @@ public class AlbumDialog extends Dialog {
     private void doInit() {
         btn_ok.setOnClickListener(v -> btnOkListener.handleEvent(AlbumDialog.this));
         btn_cancel.setOnClickListener(v -> btnCancelListener.handleEvent(AlbumDialog.this));
-        autoCompleteTextView.addTextChangedListener(watcher);
+        //autoCompleteTextView.addTextChangedListener(watcher);
         autoCompleteTextView.setAdapter(arrayAdapter);
         autoCompleteTextView.setThreshold(1);
         if (title != null)

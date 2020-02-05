@@ -33,8 +33,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     @Override
     protected void doInitView() {
         viewModel = new ViewModelProvider(getActivity()).get(PhotoViewModel.class);
-        //viewModel.mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
-        photoFragmentBinding = (PhotoFragmentBinding) binding;
+        photoFragmentBinding = (PhotoFragmentBinding) super.binding;
     }
 
     @Override

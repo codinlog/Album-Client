@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface AlbumDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void addAlbum(AlbumEntity albumEntities);
+    void insertAlbum(AlbumEntity... albumEntities);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     int updateAlbum(AlbumEntity... albumEntities);
@@ -22,5 +22,5 @@ public interface AlbumDAO {
     LiveData<List<AlbumEntity>> queryAllAlbum();
 
     @Query("select * from albumTB where albumName == :albumName")
-    LiveData<List<AlbumEntity>> queryByAlbumName(String albumName);
+    LiveData<List<AlbumEntity>> queryByAlbumName(String ... albumName);
 }

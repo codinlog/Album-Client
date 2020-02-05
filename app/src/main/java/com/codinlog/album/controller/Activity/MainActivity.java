@@ -29,7 +29,6 @@ import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
 import com.codinlog.album.controller.Fragment.TimeFragment;
-import com.codinlog.album.dao.AlbumDAO;
 import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.entity.AlbumEntity;
@@ -40,6 +39,7 @@ import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
 import com.codinlog.album.util.WorthStoreUtil;
+import com.codinlog.album.util.kotlin.AlbumInsertDBUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
 import java.io.File;
@@ -77,6 +77,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         viewModel.albumViewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
         viewModel.timeViewModel = new ViewModelProvider(this).get(TimeViewModel.class);
         viewModel.photoViewModel.mainViewModel = viewModel;
+        viewModel.albumViewModel.mainViewModel = viewModel;
+        viewModel.timeViewModel.mainViewModel = viewModel;
         popupMenu = new PopupMenu(this, binding.btnMore);
         popupMenu.getMenuInflater().inflate(R.menu.top_menu, popupMenu.getMenu());
     }
@@ -88,11 +90,14 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
-        viewModel.albumDatabase= AlbumDatabase.getInstance();
         viewModel.setFragmentMutableLiveData(fragmentBeans);
+        viewModel.albumDatabase= AlbumDatabase.getInstance();
+        viewModel.albumViewModel.albumDAO = viewModel.albumDatabase.getAlbumDAO();
+        viewModel.albumViewModel.albumItemDAO = viewModel.albumDatabase.getAlbumItemDAO();
+        viewModel.albumViewModel.setAlbumEntityLiveData();
         binding.viewPager.setAdapter(mainVPAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-        loadImageData();
+        loadPhotoData();
     }
 
     @Override
@@ -161,26 +166,10 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                 public void handleEvent(Object o) {
                                     AlbumDialog dialog = (AlbumDialog) o;
                                     String albumName = dialog.getInputContent();
-                                    AlbumDAO albumDAO = viewModel.albumDatabase.getAlbumDAO();
                                     AlbumEntity albumEntity = new AlbumEntity();
                                     albumEntity.setAlbumName(albumName);
-                                    albumDAO.addAlbum(albumEntity);
-                                }
-                            })
-                            .setEditTextInputChangeListener(new TextWatcher() {
-                                @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                }
-
-                                @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                }
-
-                                @Override
-                                public void afterTextChanged(Editable s) {
-
+                                    viewModel.albumViewModel.insertAlbum(albumEntity);
+                                    dialog.dismiss();
                                 }
                             })
                             .setTvTitle(getString(R.string.addto_album));
@@ -246,7 +235,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             super.onBackPressed();
     }
 
-    private void loadImageData() {
+    private void loadPhotoData() {
         LoaderManager loaderManager = LoaderManager.getInstance(this);
         loaderManager.initLoader(loaderManager_ID, null, new LoaderManager.LoaderCallbacks<Cursor>() {
             @NonNull
