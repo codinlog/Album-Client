@@ -9,10 +9,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -21,9 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
-
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.MainVPAdapter;
 import com.codinlog.album.bean.ClassifiedResBean;
@@ -43,7 +39,6 @@ import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
-import com.codinlog.album.util.DatabaseUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
@@ -57,10 +52,7 @@ import java.util.List;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
-import static com.codinlog.album.util.WorthStoreUtil.REQUEST_TAKE_PHOTO;
-import static com.codinlog.album.util.WorthStoreUtil.isFirstScanner;
-import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
-import static com.codinlog.album.util.WorthStoreUtil.photoPager;
+import static com.codinlog.album.util.WorthStoreUtil.*;
 
 public class MainActivity extends BaseActivityController<MainViewModel> {
     private ArrayList<FragmentBean> fragmentBeans;
@@ -173,7 +165,6 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                     AlbumEntity albumEntity = new AlbumEntity();
                                     albumEntity.setAlbumName(albumName);
                                     albumDAO.addAlbum(albumEntity);
-                                    Log.d("name", "handleEvent: " + albumName);
                                 }
                             })
                             .setEditTextInputChangeListener(new TextWatcher() {
