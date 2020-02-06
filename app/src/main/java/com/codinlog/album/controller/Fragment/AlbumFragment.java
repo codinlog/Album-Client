@@ -16,10 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import com.codinlog.album.R;
+import com.codinlog.album.adapter.kotlin.AlbumRVAdapter;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.AlbumFragmentBinding;
 import com.codinlog.album.entity.AlbumEntity;
+import com.codinlog.album.listener.kotlin.AlbumItemListener;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.util.WorthStoreUtil;
 
@@ -27,6 +30,7 @@ import java.util.List;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
     private AlbumFragmentBinding binding;
+    private AlbumRVAdapter albumRVAdapter;
 
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
@@ -51,6 +55,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
                 for (AlbumEntity albumEntity : albumEntities) {
                     Log.d("album", "onChanged: " + albumEntity.toString());
                 }
+                albumRVAdapter.setAlbumEntities(albumEntities);
                 viewModel.mainViewModel.setModeMutableLiveData(WorthStoreUtil.MODE.MODE_NORMAL);
                 Toast.makeText(getContext(),"创建成功",Toast.LENGTH_SHORT).show();
             }
@@ -59,6 +64,13 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
 
     @Override
     protected void doInitData() {
-
+        albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
+            @Override
+            public void handleEvent(int position) {
+                Log.d("album", "handleEvent: " + position);
+            }
+        });
+        binding.rv.setLayoutManager(new GridLayoutManager(getContext(),WorthStoreUtil.albumItemNum));
+        binding.rv.setAdapter(albumRVAdapter);
     }
 }

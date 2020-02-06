@@ -17,6 +17,9 @@ public class AlbumEntity {
     @ColumnInfo(name = "albumName")
     private String albumName;
 
+    @ColumnInfo(name = "displayPhotoPath")
+    private String displayPhotoPath;
+
     public int getId() {
         return id;
     }
@@ -33,6 +36,13 @@ public class AlbumEntity {
         this.albumName = albumName;
     }
 
+    public String getDisplayPhotoPath() {
+        return displayPhotoPath;
+    }
+
+    public void setDisplayPhotoPath(String displayPhotoPath) {
+        this.displayPhotoPath = displayPhotoPath;
+    }
 
     @NonNull
     @Override

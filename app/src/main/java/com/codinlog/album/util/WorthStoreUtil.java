@@ -7,8 +7,8 @@ import android.provider.MediaStore;
 import com.codinlog.album.R;
 
 public class WorthStoreUtil {
-    public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET, Manifest.permission.CAMERA};
-    public static int[] permissionsDetails = {R.string.permission_storage_read,R.string.permission_storage_write, R.string.permission_network, R.string.permission_camera};
+    public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.CAMERA};
+    public static int[] permissionsDetails = {R.string.permission_storage_read, R.string.permission_storage_write, R.string.permission_network, R.string.permission_camera};
     public static int permission_RequestCode = 100;
     public static int loaderManager_ID = 200;
 
@@ -36,7 +36,7 @@ public class WorthStoreUtil {
     public final static int photoPager = 0;
     public final static int albumPager = 1;
     public final static int timePager = 2;
-    public  final static int thumbnailGroupNum = 1;
+    public final static int thumbnailGroupNum = 1;
     public final static int thumbnailPhotoNum = 4;
     public final static int viewHolderNoType = 501;
     public final static int photoItemType = 501;
@@ -44,6 +44,7 @@ public class WorthStoreUtil {
     public final static int photoIsRepeat = 10;
     public final static int photoIsNew = 11;
     public final static int errorCode = 404;
+    public final static int albumItemNum = 3;
     public final static int REQUEST_IMAGE_CAPTURE = 100;
     public final static int REQUEST_TAKE_PHOTO = 101;
 
