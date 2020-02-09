@@ -2,6 +2,8 @@ package com.codinlog.album.bean;
 
 import androidx.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
+
 public class PhotoBean implements Comparable{
 
 //    private String thumbnail;               // 缩略图
@@ -22,7 +24,7 @@ public class PhotoBean implements Comparable{
     @NonNull
     @Override
     public String toString() {
-        return "isSelected:" + isSelected + ";Path:" + path;
+        return "isSelected:" + isSelected + ";Path:" + path + "; Id :" + photoId + ";tokenDate:" +  new SimpleDateFormat("yyyy-MM-dd").format(tokenDate);
     }
 
 

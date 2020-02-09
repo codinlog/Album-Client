@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.kotlin.AlbumRVAdapter;
 import com.codinlog.album.controller.BaseFragmentController;
@@ -52,12 +53,24 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
         viewModel.getAlbumEntityLiveData().observe(getViewLifecycleOwner(), new Observer<List<AlbumEntity>>() {
             @Override
             public void onChanged(List<AlbumEntity> albumEntities) {
-                for (AlbumEntity albumEntity : albumEntities) {
-                    Log.d("album", "onChanged: " + albumEntity.toString());
-                }
                 albumRVAdapter.setAlbumEntities(albumEntities);
+            }
+        });
+        viewModel.getAlbumExistLiveData().observe(getViewLifecycleOwner(), new Observer<List<AlbumEntity>>() {
+            @Override
+            public void onChanged(List<AlbumEntity> albumEntities) {
+                if (albumEntities.size() > 0) {
+                    Toast.makeText(getContext(), "已经添加到已有相册", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (viewModel.getDiaplayPhotoBean() == null)
+                        return;
+                    AlbumEntity albumEntity = new AlbumEntity();
+                    albumEntity.setAlbumName(viewModel.getAlbumName());
+                    albumEntity.setDisplayPhotoPath(viewModel.getDiaplayPhotoBean().getPath());
+                    viewModel.insertAlbum(albumEntity);
+                    Toast.makeText(getContext(), "已经添创建相册", Toast.LENGTH_SHORT).show();
+                }
                 viewModel.mainViewModel.setModeMutableLiveData(WorthStoreUtil.MODE.MODE_NORMAL);
-                Toast.makeText(getContext(),"创建成功",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -70,7 +83,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
                 Log.d("album", "handleEvent: " + position);
             }
         });
-        binding.rv.setLayoutManager(new GridLayoutManager(getContext(),WorthStoreUtil.albumItemNum));
+        binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.albumItemNum));
         binding.rv.setAdapter(albumRVAdapter);
     }
 }

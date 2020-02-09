@@ -9,8 +9,11 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -20,6 +23,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.viewpager.widget.ViewPager;
+
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.MainVPAdapter;
 import com.codinlog.album.bean.ClassifiedResBean;
@@ -49,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
@@ -91,7 +96,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
         viewModel.setFragmentMutableLiveData(fragmentBeans);
-        viewModel.albumDatabase= AlbumDatabase.getInstance();
+        viewModel.albumDatabase = AlbumDatabase.getInstance();
         viewModel.albumViewModel.albumDAO = viewModel.albumDatabase.getAlbumDAO();
         viewModel.albumViewModel.albumItemDAO = viewModel.albumDatabase.getAlbumItemDAO();
         viewModel.albumViewModel.setAlbumEntityLiveData();
@@ -153,6 +158,10 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.menu_addto_album:
+                    if(viewModel.photoViewModel.getSelectedMutableLiveData().getValue().size() <= 0) {
+                        Toast.makeText(MainActivity.this, getString(R.string.choice_item), Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
                             .setBtnCancelListener(new CommonListener() {
                                 @Override
@@ -164,14 +173,21 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                             .setBtnOkListener(new CommonListener() {
                                 @Override
                                 public void handleEvent(Object o) {
+                                    PhotoBean photoBean = null;
+                                    Integer id  =  viewModel.photoViewModel.getSelectedMutableLiveData().getValue().get(0);
+                                    for (PhotoBean bean : viewModel.getClassifiedPhotoBeanMutableLiveData().getValue()) {
+                                        photoBean = bean;
+                                        if (photoBean.getPhotoId() == id)
+                                            break;
+                                    }
                                     AlbumDialog dialog = (AlbumDialog) o;
                                     String albumName = dialog.getInputContent();
-                                    AlbumEntity albumEntity = new AlbumEntity();
-                                    albumEntity.setAlbumName(albumName);
-                                    viewModel.albumViewModel.insertAlbum(albumEntity);
+                                    viewModel.albumViewModel.setDiaplayPhotoBean(photoBean);
+                                    viewModel.albumViewModel.queryByNameAlbum(albumName);
                                     dialog.dismiss();
                                 }
                             })
+                            .setNoticeAdapterData(viewModel.albumViewModel.getAlbumEntityLiveData().getValue().stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList()))
                             .setTvTitle(getString(R.string.addto_album));
                     albumDialog.show();
                     break;
