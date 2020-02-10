@@ -3,6 +3,8 @@ package com.codinlog.album.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import com.codinlog.album.entity.AlbumItemEntity;
 
@@ -10,6 +12,9 @@ import java.util.List;
 
 @Dao
 public interface AlbumItemDAO {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAlbumItem(AlbumItemEntity... albumItemEntities);
+
     @Delete
     void deleteAlbumItem(AlbumItemEntity... albumItemEntities);
 

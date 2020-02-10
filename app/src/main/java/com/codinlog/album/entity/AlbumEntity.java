@@ -3,29 +3,47 @@ package com.codinlog.album.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
-@Entity(tableName = "albumTB",indices = {@Index(value = {"albumName"},unique = true)})
+import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.util.TypeConverterUtitl;
+
+import java.util.Date;
+@TypeConverters(TypeConverterUtitl.class)
+@Entity(tableName = "albumTB",indices = {@Index(value = {"albumName","albumId"},unique = true)})
 public class AlbumEntity {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "albumId")
-    private int id;
+    private int albumId;
+
+    @ColumnInfo(name = "createDate")
+    private Date date;
 
     @NonNull
     @ColumnInfo(name = "albumName")
     private String albumName;
 
-    @ColumnInfo(name = "displayPhotoPath")
-    private String displayPhotoPath;
+    @Embedded
+    private PhotoBean photoBean;
 
-    public int getId() {
-        return id;
+    public int getAlbumId() {
+        return albumId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAlbumId(int albumId) {
+        this.albumId = albumId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getAlbumName() {
@@ -34,19 +52,25 @@ public class AlbumEntity {
 
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
+        setAlbumId(this.hashCode());
     }
 
-    public String getDisplayPhotoPath() {
-        return displayPhotoPath;
+    public PhotoBean getPhotoBean() {
+        return photoBean;
     }
 
-    public void setDisplayPhotoPath(String displayPhotoPath) {
-        this.displayPhotoPath = displayPhotoPath;
+    public void setPhotoBean(PhotoBean photoBean) {
+        this.photoBean = photoBean;
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "albumName:" + albumName + ",id:" + id + "\n";
+        return "albumName:" + albumName + ",albumId:" + albumId + "\n";
+    }
+
+    @Override
+    public int hashCode() {
+        return albumName.hashCode();
     }
 }

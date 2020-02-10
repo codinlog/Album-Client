@@ -1,6 +1,6 @@
 package com.codinlog.album.util;
 
-import com.codinlog.album.bean.ClassifiedResBean;
+import com.codinlog.album.bean.ClassifiedBean;
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.PhotoSelectedNumBean;
@@ -61,10 +61,11 @@ public class ClassifyUtil {
             classifiedPhotoResList.add(new GroupBean().setGroupId(key));
             classifiedPhotoResNumMap.put(key, PhotoSelectedNumBean.newInstance().setSize(tempArrayList.size()));
             for (PhotoBean photoBean : tempArrayList) {
-                classifiedPhotoResList.add(photoBean.setGroupId(key));
+                photoBean.setGroupId(key);
+                classifiedPhotoResList.add(photoBean);
             }
         }
-        ClassifiedResBean.getInstance()
+        ClassifiedBean.getInstance()
                 .setClassifiedPhotoBeanResList(classifications)
                 .setClassifiedPhotoResList(classifiedPhotoResList)
                 .setClassifiedPhotoResMap(classifiedPhotoResMap)
@@ -77,7 +78,7 @@ public class ClassifyUtil {
         Iterator<PhotoBean> iterator = photoBeans.iterator();
         while (iterator.hasNext()) {
             PhotoBean photoBean = iterator.next();
-            if (photoBean.getPath().equals(path)) {
+            if (photoBean.getPhotoPath().equals(path)) {
                 photoBean.setDelete(false);
                 return photoIsRepeat;
             }

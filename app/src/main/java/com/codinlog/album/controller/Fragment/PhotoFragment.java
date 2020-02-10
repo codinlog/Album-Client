@@ -39,7 +39,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     @Override
     protected void doInitListener() {
         viewModel.getClassifiedResListMutableLiveData().observe(getViewLifecycleOwner(), objects -> photoRVAdpater.setData(objects));
-        viewModel.getSelectedMutableLiveData().observe(getViewLifecycleOwner(), integers -> photoRVAdpater.notifyChange(null, true));
+        viewModel.getSelectedPhotoBeanMutableLiveData().observe(getViewLifecycleOwner(), integers -> photoRVAdpater.notifyChange(null, true));
         viewModel.mainViewModel.getModeMutableLiveData().observe(getViewLifecycleOwner(), mode -> {
             if (viewModel.mainViewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
                 viewModel.modeChangeToNormal();

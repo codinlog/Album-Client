@@ -12,8 +12,6 @@ import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.listener.kotlin.AlbumItemListener
 import com.codinlog.album.util.WindowUtil
-import com.codinlog.album.util.WorthStoreUtil
-import kotlinx.android.synthetic.main.album_item.view.*
 
 class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
     val albumItemListener: AlbumItemListener = albumItemListener
@@ -38,7 +36,7 @@ class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.setText(albumEntities[position].albumName)
         holder.imageView.setOnClickListener { v -> albumItemListener.handleEvent(position) }
-        Glide.with(AlbumApplication.mContext).load(albumEntities[position].displayPhotoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
+        Glide.with(AlbumApplication.mContext).load(albumEntities[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
     }
 
     inner class ViewHolder : RecyclerView.ViewHolder {

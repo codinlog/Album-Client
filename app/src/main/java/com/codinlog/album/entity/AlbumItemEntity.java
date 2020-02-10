@@ -2,29 +2,20 @@ package com.codinlog.album.entity;
 
 import androidx.room.*;
 
+import com.codinlog.album.bean.PhotoBean;
+
 import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "albumItemTB",foreignKeys = @ForeignKey(entity = AlbumEntity.class,
         parentColumns = "albumId",childColumns = "belongToId",onDelete = CASCADE),
 indices = {@Index(value = "belongToId")})
 public class AlbumItemEntity {
-    @ColumnInfo(name = "Id")
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
+    @PrimaryKey
     @ColumnInfo(name = "belongToId")
     private int belongToId;
 
-    @ColumnInfo(name = "photoId")
-    private int photoId;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    @Embedded
+    private PhotoBean photoBean;
 
     public int getBelongToId() {
         return belongToId;
@@ -34,11 +25,11 @@ public class AlbumItemEntity {
         this.belongToId = belongToId;
     }
 
-    public int getPhotoId() {
-        return photoId;
+    public PhotoBean getPhotoBean() {
+        return photoBean;
     }
 
-    public void setPhotoId(int photoId) {
-        this.photoId = photoId;
+    public void setPhotoBean(PhotoBean photoBean) {
+        this.photoBean = photoBean;
     }
 }

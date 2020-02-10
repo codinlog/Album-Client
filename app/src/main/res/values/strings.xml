@@ -16,6 +16,7 @@
     <string name="navigtion_more_notice">navigtion more</string>
     <string name="top_bar_select_notice">已选择%d个项目</string>
     <string name="addto_album">添加到相册</string>
+    <string name="addto_album_success">成功添加到相册</string>
     <string name="album_name">相册名:</string>
     <string name="enter_album_name">请输入相册名</string>
     <string name="btn_cancel">取消</string>

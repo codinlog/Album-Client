@@ -76,7 +76,7 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
             photoItemViewHolder.imageView.setOnClickListener(v -> photoItemIVOnClickListener.handleEvent(position));
             photoItemViewHolder.checkBox.setOnClickListener(v -> photoItemCheckBoxListener.handleEvent(position));
-            Glide.with(AlbumApplication.mContext).load(photoBean.getPath()).thumbnail(0.1f).error(R.drawable.ic_photo_black_24dp).into(photoItemViewHolder.imageView);
+            Glide.with(AlbumApplication.mContext).load(photoBean.getPhotoPath()).thumbnail(0.1f).error(R.drawable.ic_photo_black_24dp).into(photoItemViewHolder.imageView);
         } else if (holder instanceof PhotoGroupViewHolder) {
             final PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
             GroupBean groupBean = (GroupBean) objectClassifiedResList.get(position);

@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
-import com.codinlog.album.bean.ClassifiedResBean;
+import com.codinlog.album.bean.ClassifiedBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
 import com.codinlog.album.listener.CommonListener;
@@ -85,7 +85,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
         binding.viewPager.setAdapter(photoPreviewVPAdapter);
-        viewModel.setClassifiedPhotoBeanResListMutableLiveData(ClassifiedResBean.getInstance().getClassifiedPhotoBeanResList());
+        viewModel.setClassifiedPhotoBeanResListMutableLiveData(ClassifiedBean.getInstance().getClassifiedPhotoBeanResList());
     }
 
     @Override

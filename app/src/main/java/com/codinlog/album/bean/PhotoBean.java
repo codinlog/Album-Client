@@ -1,91 +1,79 @@
 package com.codinlog.album.bean;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 
 import java.text.SimpleDateFormat;
 
 public class PhotoBean implements Comparable{
-
-//    private String thumbnail;               // 缩略图
-//    private long modified;                  // 图片修改时间
-    //    private double latitude;                // 纬度
-//    private double longitude;               // 经度
-//    private double altitude;                // 海拔
-    private String path;                    // 路径
-    private double size;                       // 图片大小
+    @ColumnInfo(name = "photoPath")
+    private String photoPath;                    // 路径
+    @ColumnInfo(name = "photoSize")
+    private double photoSize;                       // 图片大小
+    @ColumnInfo(name = "photoId")
     private int photoId;                    // 图片ID
+    @Ignore
     private String groupId;
+    @ColumnInfo(name = "tokenDate")
     private long tokenDate;                  // 拍摄时间
+    @Ignore
     private boolean isSelected = false;
+    @Ignore
     private boolean isDelete = false;
+    @ColumnInfo(name = "photoWidth")
     private int width;                 // 图片宽度
+    @ColumnInfo(name = "photoHeight")
     private int height;                // 图片高度
 
     @NonNull
     @Override
     public String toString() {
-        return "isSelected:" + isSelected + ";Path:" + path + "; Id :" + photoId + ";tokenDate:" +  new SimpleDateFormat("yyyy-MM-dd").format(tokenDate);
+        return "isSelected:" + isSelected + ";Path:" + photoPath + "; Id :" + photoId + ";tokenDate:" +  new SimpleDateFormat("yyyy-MM-dd").format(tokenDate);
     }
-
-
-
 
     public static PhotoBean newInstance() {
         return new PhotoBean();
     }
 
-    public int getWidth() {
-        return width;
+    public String getPhotoPath() {
+        return photoPath;
     }
 
-    public PhotoBean setWidth(int width) {
-        this.width = width;
-        return this;
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 
-    public int getHeight() {
-        return height;
+    public double getPhotoSize() {
+        return photoSize;
     }
 
-    public PhotoBean setHeight(int height) {
-        this.height = height;
-        return this;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public PhotoBean setPath(String path) {
-        this.path = path;
-        return this;
-    }
-
-    public double getSize() {
-        return size;
-    }
-
-    public PhotoBean setSize(double size) {
-        this.size = size;
-        return this;
+    public void setPhotoSize(double photoSize) {
+        this.photoSize = photoSize;
     }
 
     public int getPhotoId() {
         return photoId;
     }
 
-    public PhotoBean setPhotoId(int photoId) {
+    public void setPhotoId(int photoId) {
         this.photoId = photoId;
-        return this;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public long getTokenDate() {
         return tokenDate;
     }
 
-    public PhotoBean setTokenDate(long tokenDate) {
+    public void setTokenDate(long tokenDate) {
         this.tokenDate = tokenDate;
-        return this;
     }
 
     public boolean isSelected() {
@@ -104,13 +92,20 @@ public class PhotoBean implements Comparable{
         isDelete = delete;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public int getWidth() {
+        return width;
     }
 
-    public PhotoBean setGroupId(String groupId) {
-        this.groupId = groupId;
-        return this;
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     @Override

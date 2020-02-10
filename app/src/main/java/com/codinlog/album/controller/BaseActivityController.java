@@ -26,7 +26,6 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         doInitVew();
-        doInitListener();
         checkPermissions();
     }
 
@@ -45,6 +44,7 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
         if (permissions.size() > 0) {
             requestPermissions(WorthStoreUtil.needPermissions, permission_RequestCode);
         } else {
+            doInitListener();
             doInitData();
             doUpgrade();
         }
@@ -61,6 +61,7 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
         if (notAllowPermissions.size() > 0) {
             showPermissionDialog(notAllowPermissions);
         }else{
+            doInitListener();
             doInitData();
             doUpgrade();
         }

@@ -6,26 +6,41 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.entity.AlbumEntity;
+import com.codinlog.album.entity.AlbumItemEntity;
 
+import java.util.Collections;
 import java.util.List;
 
 @Dao
-public interface AlbumDAO {
+public abstract class AlbumDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAlbum(AlbumEntity... albumEntities);
+    public abstract void insertAlbum(AlbumEntity... albumEntities);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    int updateAlbum(AlbumEntity... albumEntities);
+    public abstract int updateAlbum(AlbumEntity... albumEntities);
 
     @Delete
-    int deleteAlbum(AlbumEntity... albumEntities);
+    public abstract int deleteAlbum(AlbumEntity... albumEntities);
 
-    @Query("select * from albumTB order by albumId desc")
-    LiveData<List<AlbumEntity>> queryAllAlbum();
+    @Query("select * from albumTB order by createDate desc")
+    public abstract LiveData<List<AlbumEntity>> queryAllAlbum();
 
-    @Query("select * from albumTB where albumName == :albumName")
-    LiveData<List<AlbumEntity>> queryByAlbumName(String ... albumName);
+    @Query("select * from albumTB where albumId= :id")
+    public abstract AlbumEntity queryByAlbumId(int id);
+
+    @Transaction
+    public void addToAlbumWithPhotoBeans(AlbumItemDAO albumItemDAO, AlbumEntity albumEntity, List<PhotoBean> photoBeans) {
+//        insertAlbum(albumEntity);
+//        albumItemDAO.insertAlbumItem(photoBeans.stream().map(v ->{
+//            AlbumItemEntity albumItemEntity = new AlbumItemEntity();
+//            albumItemEntity.setBelongToId(albumEntity.getId());
+//            albumItemEntity.setPhotoBean(v);
+//            return albumItemEntity;
+//        }).flatMap());
+    }
 }
