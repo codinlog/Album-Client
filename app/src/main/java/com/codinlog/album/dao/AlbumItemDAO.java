@@ -11,13 +11,13 @@ import com.codinlog.album.entity.AlbumItemEntity;
 import java.util.List;
 
 @Dao
-public interface AlbumItemDAO {
+public abstract class AlbumItemDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAlbumItem(AlbumItemEntity... albumItemEntities);
+    abstract List<Long> insertAlbumItem(AlbumItemEntity... albumItemEntities);
 
     @Delete
-    void deleteAlbumItem(AlbumItemEntity... albumItemEntities);
+    abstract void deleteAlbumItem(AlbumItemEntity... albumItemEntities);
 
     @Query("select * from albumItemTB where belongToId == :albumId")
-    LiveData<List<AlbumItemEntity>> queryAllAlbumItem(int albumId);
+    abstract LiveData<List<AlbumItemEntity>> queryAllAlbumItem(int albumId);
 }

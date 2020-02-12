@@ -27,9 +27,13 @@
     <string name="photo_detail_title">%d/%d</string>
     <string name="albumDB">albumDB</string>
     <string name="albumItemDB">albumItemDB</string>
+    <string name="choice_item">请选择项目</string>
 
-    <string name="title_activity_photo_detail">PhotoDetailActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="choice_item">请选择项目</string>
+    <string name="title_activity_photo_preview">photoPreview</string>
+    <string name="title_activity_album_preview">albumPreview</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

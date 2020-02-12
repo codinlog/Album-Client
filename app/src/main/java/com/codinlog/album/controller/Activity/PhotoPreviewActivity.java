@@ -20,7 +20,7 @@ import com.codinlog.album.model.PhotoPreviewViewModel;
 import java.util.ArrayList;
 
 public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel> {
-    ActivityPhotoPreviewBinding binding;
+    private ActivityPhotoPreviewBinding binding;
     private PhotoPreviewVPAdapter photoPreviewVPAdapter;
     private static boolean isShowAppBar = false;
     private TranslateAnimation animation;

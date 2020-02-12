@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/album_preview_nav"
+    app:startDestination="@id/album_preview">
+
+    <fragment
+        android:id="@+id/album_preview"
+        android:name="com.codinlog.album.controller.Fragment.kotlin.album_preview"
+        android:label="fragment_album_preview"
+        tools:layout="@layout/fragment_album_preview" >
+        <action
+            android:id="@+id/action_album_preview_to_photo_select"
+            app:destination="@id/photo_select" />
+    </fragment>
+    <fragment
+        android:id="@+id/photo_select"
+        android:name="com.codinlog.album.controller.Fragment.kotlin.photo_select"
+        android:label="fragment_photo_select"
+        tools:layout="@layout/fragment_photo_select" >
+        <action
+            android:id="@+id/action_photo_select_to_album_preview"
+            app:destination="@id/album_preview" />
+    </fragment>
+</navigation>

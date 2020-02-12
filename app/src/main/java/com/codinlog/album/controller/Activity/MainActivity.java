@@ -70,11 +70,11 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
     @Override
     protected void doInitVew() {
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
         binding.setData(viewModel);
         binding.bottomNavigation.setVisibility(View.GONE);
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.photoViewModel = new ViewModelProvider(this).get(PhotoViewModel.class);
         viewModel.albumViewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
         viewModel.timeViewModel = new ViewModelProvider(this).get(TimeViewModel.class);
@@ -185,17 +185,29 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                         viewModel.albumViewModel.queryByAlbumId(albumEntity.hashCode(), new CommonListener() {
                                             @Override
                                             public void handleEvent(Object o) {
+                                                for (PhotoBean bean : viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue()) {
+                                                    Log.d("err",bean.toString());
+                                                }
                                                 if (o == null) {
-                                                    viewModel.albumViewModel.insertAlbum(albumEntity);
-                                                    Toast.makeText(MainActivity.this,getString(R.string.addto_album_success),Toast.LENGTH_SHORT).show();
+                                                    viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
+                                                        @Override
+                                                        public void handleEvent(Object o) {
+                                                            if(o == null)
+                                                                Log.d("err","false null");
+                                                            else
+                                                                Log.d("err","size = " + ((List<Long>)o).size());
+                                                            if(o != null && ((List<Long>)o).size() > 0)
+                                                                Toast.makeText(MainActivity.this,getString(R.string.addto_album_success),Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
                                                 } else {
                                                     AlbumEntity existAlbumEntity = (AlbumEntity) o;
                                                     Log.d("err",existAlbumEntity.toString());
                                                 }
+                                                viewModel.setModeMutableLiveData(MODE_NORMAL);
+                                                dialog.dismiss();
                                             }
                                         });
-                                        viewModel.setModeMutableLiveData(MODE_NORMAL);
-                                        dialog.dismiss();
                                     }
                                 }
                             })

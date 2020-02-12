@@ -13,8 +13,8 @@ import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Dao
 public abstract class AlbumDAO {
@@ -34,13 +34,8 @@ public abstract class AlbumDAO {
     public abstract AlbumEntity queryByAlbumId(int id);
 
     @Transaction
-    public void addToAlbumWithPhotoBeans(AlbumItemDAO albumItemDAO, AlbumEntity albumEntity, List<PhotoBean> photoBeans) {
-//        insertAlbum(albumEntity);
-//        albumItemDAO.insertAlbumItem(photoBeans.stream().map(v ->{
-//            AlbumItemEntity albumItemEntity = new AlbumItemEntity();
-//            albumItemEntity.setBelongToId(albumEntity.getId());
-//            albumItemEntity.setPhotoBean(v);
-//            return albumItemEntity;
-//        }).flatMap());
+    public List<Long> insertToAlbumWithPhotoBeans(AlbumItemDAO albumItemDAO, AlbumEntity albumEntity, AlbumItemEntity... albumItemEntities) {
+        insertAlbum(albumEntity);
+        return albumItemDAO.insertAlbumItem(albumItemEntities);
     }
 }

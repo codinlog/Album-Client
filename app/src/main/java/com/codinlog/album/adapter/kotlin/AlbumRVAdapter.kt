@@ -39,7 +39,7 @@ class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapte
         Glide.with(AlbumApplication.mContext).load(albumEntities[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
     }
 
-    inner class ViewHolder : RecyclerView.ViewHolder {
+    class ViewHolder : RecyclerView.ViewHolder {
         lateinit var imageView: ImageView
         lateinit var textView: TextView
 
