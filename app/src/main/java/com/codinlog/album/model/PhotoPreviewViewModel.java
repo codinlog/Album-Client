@@ -9,19 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoPreviewViewModel extends ViewModel {
-    private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanResListMutableLiveData;
+    private MutableLiveData<List<PhotoBean>> displayPhotoBeansMutableLiveData;
     private MutableLiveData<Integer> currentPositionMutableLiveData;
 
-    public MutableLiveData<List<PhotoBean>> getClassifiedPhotoBeanResListMutableLiveData() {
-        if(classifiedPhotoBeanResListMutableLiveData == null){
-            classifiedPhotoBeanResListMutableLiveData = new MutableLiveData<>();
-            classifiedPhotoBeanResListMutableLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<List<PhotoBean>> getDisplayPhotoBeansMutableLiveData() {
+        if(displayPhotoBeansMutableLiveData == null){
+            displayPhotoBeansMutableLiveData = new MutableLiveData<>();
+            displayPhotoBeansMutableLiveData.setValue(new ArrayList<>());
         }
-        return classifiedPhotoBeanResListMutableLiveData;
+        return displayPhotoBeansMutableLiveData;
     }
 
-    public void setClassifiedPhotoBeanResListMutableLiveData(List<PhotoBean> value) {
-        getClassifiedPhotoBeanResListMutableLiveData().setValue(value);
+    public void setDisplayPhotoBeansMutableLiveData(List<PhotoBean> value) {
+        getDisplayPhotoBeansMutableLiveData().setValue(value);
     }
 
     public MutableLiveData<Integer> getCurrentPositionMutableLiveData() {

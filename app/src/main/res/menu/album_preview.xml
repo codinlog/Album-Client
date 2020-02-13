@@ -7,5 +7,11 @@
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/album_add_photo"
         android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/album_slide_play"
+        android:icon="@drawable/ic_play_circle_filled_black_24dp"
+        android:title="@string/album_slide_play"
+        android:visible="true"
         app:showAsAction="always" />
 </menu>

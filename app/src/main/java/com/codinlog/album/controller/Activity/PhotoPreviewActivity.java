@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
-import com.codinlog.album.bean.ClassifiedBean;
+import com.codinlog.album.bean.DataStoreBean;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
 import com.codinlog.album.listener.CommonListener;
@@ -47,10 +47,10 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                getSupportActionBar().setTitle(String.format(getString(R.string.photo_detail_title), position + 1, viewModel.getClassifiedPhotoBeanResListMutableLiveData().getValue().size()));
+                getSupportActionBar().setTitle(String.format(getString(R.string.photo_detail_title), position + 1, viewModel.getDisplayPhotoBeansMutableLiveData().getValue().size()));
             }
         });
-        viewModel.getClassifiedPhotoBeanResListMutableLiveData().observe(this, photoBeans -> {
+        viewModel.getDisplayPhotoBeansMutableLiveData().observe(this, photoBeans -> {
             photoPreviewVPAdapter.setData(photoBeans);
             viewModel.setCurrentPositionMutableLiveData(getIntent().getIntExtra("currentPosition", 1));
         });
@@ -85,7 +85,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
         binding.viewPager.setAdapter(photoPreviewVPAdapter);
-        viewModel.setClassifiedPhotoBeanResListMutableLiveData(ClassifiedBean.getInstance().getClassifiedPhotoBeanResList());
+        viewModel.setDisplayPhotoBeansMutableLiveData(DataStoreBean.getInstance().getClassifiedPhotoBeanResList());
     }
 
     @Override

@@ -24,7 +24,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.MainVPAdapter;
-import com.codinlog.album.bean.ClassifiedBean;
+import com.codinlog.album.bean.DataStoreBean;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.BaseActivityController;
@@ -114,9 +114,9 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             mainVPAdapter.notifyDataSetChanged();
         });
         viewModel.getClassifiedPhotoBeanMutableLiveData().observe(this, photoBeans -> {
-            viewModel.setPhotoViewModelListData(ClassifiedBean.getInstance().getClassifiedPhotoResList());
-            viewModel.setPhotoViewModelMapData(ClassifiedBean.getInstance().getClassifiedPhotoResMap());
-            viewModel.setPhotoViewModelMapNumData(ClassifiedBean.getInstance().getClassifiedPhotoResNumMap());
+            viewModel.setPhotoViewModelListData(DataStoreBean.getInstance().getClassifiedPhotoResList());
+            viewModel.setPhotoViewModelMapData(DataStoreBean.getInstance().getClassifiedPhotoResMap());
+            viewModel.setPhotoViewModelMapNumData(DataStoreBean.getInstance().getClassifiedPhotoResNumMap());
         });
         viewModel.getModeMutableLiveData().observe(this, mode -> {
             binding.viewPager.setCanScroll(mode == MODE_NORMAL);
@@ -331,8 +331,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         ClassifyUtil.removeDeleteImage(photoBeans, false);
                     else
                         isFirstScanner = false;
-                    ClassifiedBean.getInstance().loadClassifiedRes(photoBeans);
-                    viewModel.setClassifiedPhotoBeanMutableLiveData(ClassifiedBean.getInstance().getClassifiedPhotoBeanResList());
+                    DataStoreBean.getInstance().loadClassifiedRes(photoBeans);
+                    viewModel.setClassifiedPhotoBeanMutableLiveData(DataStoreBean.getInstance().getClassifiedPhotoBeanResList());
                 }
             }
 

@@ -1,14 +1,12 @@
 package com.codinlog.album.controller.Activity.kotlin
 
-import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
-import com.codinlog.album.entity.AlbumItemEntity
-import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
@@ -50,6 +48,11 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home)
             finish()
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.album_preview,menu)
         return true
     }
 

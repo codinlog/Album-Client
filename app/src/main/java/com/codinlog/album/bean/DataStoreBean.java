@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class ClassifiedBean {
+public class DataStoreBean {
     private Map<String, List<PhotoBean>> classifiedPhotoResMap;
     private Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap;
     private List<Object> classifiedPhotoResList;
@@ -16,17 +16,17 @@ public class ClassifiedBean {
 
     private enum SingletonEnum{
         INSTANCE;
-        ClassifiedBean classifiedBean;
+        DataStoreBean dataStoreBean;
         SingletonEnum(){
-            classifiedBean = new ClassifiedBean();
+            dataStoreBean = new DataStoreBean();
         }
 
-        public ClassifiedBean getClassifiedBean(){
-            return classifiedBean;
+        public DataStoreBean getDataStoreBean(){
+            return dataStoreBean;
         }
     }
-    public static ClassifiedBean getInstance(){
-        return SingletonEnum.INSTANCE.getClassifiedBean();
+    public static DataStoreBean getInstance(){
+        return SingletonEnum.INSTANCE.getDataStoreBean();
     }
 
     public void loadClassifiedRes(List<PhotoBean> photoBeanList){
@@ -37,35 +37,35 @@ public class ClassifiedBean {
         return classifiedPhotoResMap == null ? new TreeMap<>() : classifiedPhotoResMap;
     }
 
-    public ClassifiedBean setClassifiedPhotoResMap(Map<String, List<PhotoBean>> classifiedPhotoResMap) {
+    public DataStoreBean setClassifiedPhotoResMap(Map<String, List<PhotoBean>> classifiedPhotoResMap) {
         this.classifiedPhotoResMap = classifiedPhotoResMap;
-        return SingletonEnum.INSTANCE.getClassifiedBean();
+        return SingletonEnum.INSTANCE.getDataStoreBean();
     }
 
     public List<Object> getClassifiedPhotoResList() {
         return classifiedPhotoResList == null ? new ArrayList<>() : classifiedPhotoResList;
     }
 
-    public ClassifiedBean setClassifiedPhotoResList(List<Object> classifiedPhotoResList) {
+    public DataStoreBean setClassifiedPhotoResList(List<Object> classifiedPhotoResList) {
         this.classifiedPhotoResList = classifiedPhotoResList;
-        return SingletonEnum.INSTANCE.getClassifiedBean();
+        return SingletonEnum.INSTANCE.getDataStoreBean();
     }
 
     public Map<String, PhotoSelectedNumBean> getClassifiedPhotoResNumMap() {
         return classifiedPhotoResNumMap == null ? new HashMap<>() : classifiedPhotoResNumMap;
     }
 
-    public ClassifiedBean setClassifiedPhotoResNumMap(Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap) {
+    public DataStoreBean setClassifiedPhotoResNumMap(Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap) {
         this.classifiedPhotoResNumMap = classifiedPhotoResNumMap;
-        return SingletonEnum.INSTANCE.getClassifiedBean();
+        return SingletonEnum.INSTANCE.getDataStoreBean();
     }
 
     public List<PhotoBean> getClassifiedPhotoBeanResList() {
         return classifiedPhotoBeanResList;
     }
 
-    public ClassifiedBean setClassifiedPhotoBeanResList(List<PhotoBean> classifiedPhotoBeanResList) {
+    public DataStoreBean setClassifiedPhotoBeanResList(List<PhotoBean> classifiedPhotoBeanResList) {
         this.classifiedPhotoBeanResList = classifiedPhotoBeanResList;
-        return SingletonEnum.INSTANCE.getClassifiedBean();
+        return SingletonEnum.INSTANCE.getDataStoreBean();
     }
 }
