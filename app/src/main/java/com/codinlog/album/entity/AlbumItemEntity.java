@@ -9,9 +9,9 @@ import static androidx.room.ForeignKey.CASCADE;
 @Entity(tableName = "albumItemTB",foreignKeys = @ForeignKey(entity = AlbumEntity.class,
         parentColumns = "albumId",childColumns = "belongToId",onDelete = CASCADE),indices = {@Index("belongToId")})
 public class AlbumItemEntity {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
+    @PrimaryKey
+    @ColumnInfo(name = "uuid")
+    private int uuid;
 
     @ColumnInfo(name = "belongToId")
     private int belongToId;
@@ -19,12 +19,12 @@ public class AlbumItemEntity {
     @Embedded
     private PhotoBean photoBean;
 
-    public int getId() {
-        return id;
+    public int getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
     }
 
     public int getBelongToId() {
@@ -40,6 +40,7 @@ public class AlbumItemEntity {
     }
 
     public void setPhotoBean(PhotoBean photoBean) {
+        uuid = photoBean.getPhotoPath().hashCode();
         this.photoBean = photoBean;
     }
 }

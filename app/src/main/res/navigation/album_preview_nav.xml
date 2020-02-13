@@ -7,16 +7,16 @@
 
     <fragment
         android:id="@+id/album_preview"
-        android:name="com.codinlog.album.controller.Fragment.kotlin.album_preview"
+        android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumDisplayFragment"
         android:label="fragment_album_preview"
-        tools:layout="@layout/fragment_album_preview" >
+        tools:layout="@layout/fragment_album_display" >
         <action
             android:id="@+id/action_album_preview_to_photo_select"
-            app:destination="@id/photo_select" />
+            app:destination="@id/album_photo_select" />
     </fragment>
     <fragment
-        android:id="@+id/photo_select"
-        android:name="com.codinlog.album.controller.Fragment.kotlin.photo_select"
+        android:id="@+id/album_photo_select"
+        android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoSelectFragment"
         android:label="fragment_photo_select"
         tools:layout="@layout/fragment_photo_select" >
         <action

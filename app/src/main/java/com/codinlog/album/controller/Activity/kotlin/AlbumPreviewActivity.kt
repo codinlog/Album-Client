@@ -1,18 +1,20 @@
 package com.codinlog.album.controller.Activity.kotlin
 
-import android.net.Uri
 import android.util.Log
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
-import com.codinlog.album.controller.Fragment.kotlin.album_preview
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
+import com.codinlog.album.entity.AlbumItemEntity
+import com.codinlog.album.listener.CommonListener
+import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
+import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
 import java.util.*
 
-class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(), album_preview.OnFragmentInteractionListener {
+class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(){
     private lateinit var binding: ActivityAlbumPreviewBinding
 
     override fun onStart() {
@@ -22,6 +24,8 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(), al
 
     override fun doInitVew() {
         viewModel = ViewModelProvider(this).get(AlbumPreviewViewModel::class.java)
+        viewModel.albumDisplayViewModel = ViewModelProvider(this).get(AlbumDisplayViewModel::class.java)
+        viewModel.albumPhotoSelectViewModel = ViewModelProvider(this).get(AlbumPhotoSelectViewModel::class.java)
         binding = DataBindingUtil.setContentView<ActivityAlbumPreviewBinding>(this, R.layout.activity_album_preview)
         binding.lifecycleOwner = this
         setSupportActionBar(binding.toolbar)
@@ -40,6 +44,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(), al
     override fun doInitData() {
         var albumId = intent.getIntExtra("albumId",0)
         supportActionBar!!.title = intent.getStringExtra("albumName")
+        viewModel.queryAlbumItemByAlbumId(albumId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -57,7 +62,4 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(), al
         overridePendingTransition(R.anim.actitivtyin, R.anim.activityout)
     }
 
-    override fun onFragmentInteraction(uri: Uri) {
-
-    }
 }

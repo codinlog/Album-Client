@@ -38,4 +38,16 @@ public abstract class AlbumDAO {
         insertAlbum(albumEntity);
         return albumItemDAO.insertAlbumItem(albumItemEntities);
     }
+
+    @Transaction
+    public List<Long> insertToExistAlbumWithPhotoBeans(AlbumItemDAO albumItemDAO, AlbumEntity albumEntity, AlbumItemEntity... albumItemEntities) {
+        if(albumItemEntities[0] != null){
+            PhotoBean photoBean = albumItemEntities[0].getPhotoBean();
+            if(photoBean.getTokenDate() > albumEntity.getPhotoBean().getTokenDate()){
+                albumEntity.setPhotoBean(photoBean);
+                updateAlbum(albumEntity);
+            }
+        }
+        return albumItemDAO.insertAlbumItem(albumItemEntities);
+    }
 }

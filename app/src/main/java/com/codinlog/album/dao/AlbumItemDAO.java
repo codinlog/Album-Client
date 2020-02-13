@@ -13,11 +13,11 @@ import java.util.List;
 @Dao
 public abstract class AlbumItemDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract List<Long> insertAlbumItem(AlbumItemEntity... albumItemEntities);
+    public abstract List<Long> insertAlbumItem(AlbumItemEntity... albumItemEntities);
 
     @Delete
-    abstract void deleteAlbumItem(AlbumItemEntity... albumItemEntities);
+    public abstract void deleteAlbumItem(AlbumItemEntity... albumItemEntities);
 
-    @Query("select * from albumItemTB where belongToId == :albumId")
-    abstract LiveData<List<AlbumItemEntity>> queryAllAlbumItem(int albumId);
+    @Query("select * from albumItemTB where belongToId == :albumId order by tokenDate desc")
+    public abstract List<AlbumItemEntity> queryAllAlbumItem(int albumId);
 }

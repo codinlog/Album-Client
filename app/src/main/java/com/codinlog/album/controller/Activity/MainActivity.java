@@ -54,7 +54,10 @@ import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
-import static com.codinlog.album.util.WorthStoreUtil.*;
+import static com.codinlog.album.util.WorthStoreUtil.REQUEST_TAKE_PHOTO;
+import static com.codinlog.album.util.WorthStoreUtil.isFirstScanner;
+import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
+import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 
 public class MainActivity extends BaseActivityController<MainViewModel> {
     private ArrayList<FragmentBean> fragmentBeans;
@@ -186,23 +189,25 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                             @Override
                                             public void handleEvent(Object o) {
                                                 for (PhotoBean bean : viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue()) {
-                                                    Log.d("err",bean.toString());
+                                                    Log.d("err", bean.toString());
                                                 }
                                                 if (o == null) {
                                                     viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
                                                         @Override
                                                         public void handleEvent(Object o) {
-                                                            if(o == null)
-                                                                Log.d("err","false null");
-                                                            else
-                                                                Log.d("err","size = " + ((List<Long>)o).size());
-                                                            if(o != null && ((List<Long>)o).size() > 0)
-                                                                Toast.makeText(MainActivity.this,getString(R.string.addto_album_success),Toast.LENGTH_SHORT).show();
+                                                            if (o != null && ((List<Long>) o).size() > 0)
+                                                                Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                                 } else {
                                                     AlbumEntity existAlbumEntity = (AlbumEntity) o;
-                                                    Log.d("err",existAlbumEntity.toString());
+                                                    viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(existAlbumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
+                                                        @Override
+                                                        public void handleEvent(Object o) {
+                                                            if (o != null && ((List<Long>) o).size() > 0)
+                                                                Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
                                                 }
                                                 viewModel.setModeMutableLiveData(MODE_NORMAL);
                                                 dialog.dismiss();

@@ -15,9 +15,6 @@ class AlbumInsertWithPhotoBeansDBUtil(albumDAO: AlbumDAO, albumItemDAO: AlbumIte
     private var albumEntity : AlbumEntity = albumEntity
     private var commonListener:CommonListener = commonListener
     override fun doInBackground(vararg params: AlbumItemEntity?): List<Long> {
-        for (param in params) {
-            Log.d("err",param.toString())
-        }
         return albumDAO.insertToAlbumWithPhotoBeans(albumItemDAO,albumEntity, *params)
     }
 

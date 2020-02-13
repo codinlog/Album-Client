@@ -35,7 +35,7 @@ class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.setText(albumEntities[position].albumName)
-        holder.imageView.setOnClickListener { v -> albumItemListener.handleEvent(position) }
+        holder.imageView.setOnClickListener { _ -> albumItemListener.handleEvent(position) }
         Glide.with(AlbumApplication.mContext).load(albumEntities[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
     }
 

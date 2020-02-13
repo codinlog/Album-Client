@@ -47,6 +47,7 @@ public class WorthStoreUtil {
     public final static int albumItemNum = 3;
     public final static int REQUEST_IMAGE_CAPTURE = 100;
     public final static int REQUEST_TAKE_PHOTO = 101;
+    public final static int albumPhotoItemNum = 2;
 
     public enum MODE {MODE_NORMAL, MODE_SELECT}
 }
