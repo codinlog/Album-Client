@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_album_display" >
         <action
             android:id="@+id/action_album_preview_to_photo_select"
-            app:destination="@id/album_photo_select" />
+            app:destination="@id/album_photo_select"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/album_photo_select"
@@ -21,6 +25,10 @@
         tools:layout="@layout/fragment_photo_select" >
         <action
             android:id="@+id/action_photo_select_to_album_preview"
-            app:destination="@id/album_preview" />
+            app:destination="@id/album_preview"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>

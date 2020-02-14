@@ -14,6 +14,7 @@ import com.codinlog.album.databinding.PhotoFragmentBinding;
 import com.codinlog.album.listener.PhotoItemListener;
 import com.codinlog.album.listener.PhotoGroupListener;
 import com.codinlog.album.model.PhotoViewModel;
+import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 
 public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
@@ -73,6 +74,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                         }
                         currentPosition++;
                     }
+                    DataStoreUtil.getInstance().setPhotoPreviewDataList(viewModel.mainViewModel.getClassifiedPhotoBeanMutableLiveData().getValue());
                     startActivity(intent);
                 }
             }

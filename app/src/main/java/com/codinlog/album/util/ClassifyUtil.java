@@ -1,6 +1,5 @@
 package com.codinlog.album.util;
 
-import com.codinlog.album.bean.DataStoreBean;
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.PhotoSelectedNumBean;
@@ -65,7 +64,7 @@ public class ClassifyUtil {
                 classifiedPhotoResList.add(photoBean);
             }
         }
-        DataStoreBean.getInstance()
+        DataStoreUtil.getInstance()
                 .setClassifiedPhotoBeanResList(classifications)
                 .setClassifiedPhotoResList(classifiedPhotoResList)
                 .setClassifiedPhotoResMap(classifiedPhotoResMap)

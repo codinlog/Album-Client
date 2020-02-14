@@ -8,7 +8,8 @@ import com.codinlog.album.database.AlbumDatabase
 
 class AlbumDisplayViewModel : ViewModel() {
     var displayData: MutableLiveData<List<PhotoBean>> = MutableLiveData()
-        get() = field
+    var albumPreviewViewModel : AlbumPreviewViewModel? = null
+
     public fun setDisplayData(value : List<PhotoBean>) : Unit{
         displayData.value = value
     }

@@ -24,6 +24,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(){
         viewModel = ViewModelProvider(this).get(AlbumPreviewViewModel::class.java)
         viewModel.albumDisplayViewModel = ViewModelProvider(this).get(AlbumDisplayViewModel::class.java)
         viewModel.albumPhotoSelectViewModel = ViewModelProvider(this).get(AlbumPhotoSelectViewModel::class.java)
+        viewModel.albumDisplayViewModel?.albumPreviewViewModel = viewModel
         binding = DataBindingUtil.setContentView<ActivityAlbumPreviewBinding>(this, R.layout.activity_album_preview)
         binding.lifecycleOwner = this
         setSupportActionBar(binding.toolbar)
@@ -46,8 +47,16 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>(){
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == android.R.id.home)
-            finish()
+        when(item.itemId){
+            android.R.id.home -> finish()
+            R.id.album_add_photo ->{
+
+            }
+            R.id.album_slide_play ->{
+
+            }
+        }
+
         return true
     }
 
