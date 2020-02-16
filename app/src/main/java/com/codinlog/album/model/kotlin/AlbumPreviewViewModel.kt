@@ -23,7 +23,7 @@ class AlbumPreviewViewModel : ViewModel() {
     fun queryAlbumItemByAlbumId(albumId : Int){
         AlbumItemQueryByAlbumIdDBUtil(albumItemDAO,object : CommonListener(){
             override fun handleEvent(o: Any?) {
-                val data = o as List<AlbumItemEntity>
+                val data = o as List<out AlbumItemEntity>
                 albumDisplayViewModel?.setDisplayData(data.map { it.photoBean }.toList())
             }
         }).execute(albumId)
