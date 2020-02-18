@@ -1,6 +1,9 @@
 package com.codinlog.album.entity;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
@@ -15,7 +18,7 @@ import com.codinlog.album.util.TypeConverterUtitl;
 import java.util.Date;
 @TypeConverters(TypeConverterUtitl.class)
 @Entity(tableName = "albumTB",indices = {@Index(value = {"albumName","albumId"},unique = true)})
-public class AlbumEntity {
+public class AlbumEntity implements Parcelable{
     @PrimaryKey
     @ColumnInfo(name = "albumId")
     private int albumId;
@@ -30,10 +33,29 @@ public class AlbumEntity {
     @Embedded
     private PhotoBean photoBean;
 
+    public AlbumEntity(){}
+
+    protected AlbumEntity(Parcel in) {
+        albumId = in.readInt();
+        date = new Date(in.readLong());
+        albumName = in.readString();
+    }
+
+    public static final Creator<AlbumEntity> CREATOR = new Creator<AlbumEntity>() {
+        @Override
+        public AlbumEntity createFromParcel(Parcel in) {
+            return new AlbumEntity(in);
+        }
+
+        @Override
+        public AlbumEntity[] newArray(int size) {
+            return new AlbumEntity[size];
+        }
+    };
+
     public int getAlbumId() {
         return albumId;
     }
-
     public void setAlbumId(int albumId) {
         this.albumId = albumId;
     }
@@ -63,14 +85,30 @@ public class AlbumEntity {
         this.photoBean = photoBean;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return "albumName:" + albumName + ",albumId:" + albumId + "\n";
-    }
-
     @Override
     public int hashCode() {
         return albumName.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "AlbumEntity{" +
+                "albumId=" + albumId +
+                ", date=" + date +
+                ", albumName='" + albumName + '\'' +
+                ", photoBean=" + photoBean +
+                '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(albumId);
+        dest.writeLong(date.getTime());
+        dest.writeString(albumName);
     }
 }

@@ -9,12 +9,10 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
-import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Dao
 public abstract class AlbumDAO {
@@ -41,13 +39,7 @@ public abstract class AlbumDAO {
 
     @Transaction
     public List<Long> insertToExistAlbumWithPhotoBeans(AlbumItemDAO albumItemDAO, AlbumEntity albumEntity, AlbumItemEntity... albumItemEntities) {
-        if(albumItemEntities[0] != null){
-            PhotoBean photoBean = albumItemEntities[0].getPhotoBean();
-            if(photoBean.getTokenDate() > albumEntity.getPhotoBean().getTokenDate()){
-                albumEntity.setPhotoBean(photoBean);
-                updateAlbum(albumEntity);
-            }
-        }
+        updateAlbum(albumEntity);
         return albumItemDAO.insertAlbumItem(albumItemEntities);
     }
 }

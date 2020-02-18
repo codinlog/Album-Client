@@ -16,9 +16,6 @@ import com.codinlog.album.util.WindowUtil
 class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
     val albumItemListener: AlbumItemListener = albumItemListener
     var albumEntities: List<AlbumEntity> = listOf()
-        get() {
-            return field
-        }
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -34,14 +31,14 @@ class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.setText(albumEntities[position].albumName)
-        holder.imageView.setOnClickListener { _ -> albumItemListener.handleEvent(position) }
+        holder.textView.text = albumEntities[position].albumName
+        holder.imageView.setOnClickListener { albumItemListener.handleEvent(position) }
         Glide.with(AlbumApplication.mContext).load(albumEntities[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
     }
 
     class ViewHolder : RecyclerView.ViewHolder {
-        lateinit var imageView: ImageView
-        lateinit var textView: TextView
+        var imageView: ImageView
+        var textView: TextView
 
         constructor(v: View) : super(v) {
             v.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4  * 5)

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/album_add_photo"
+        android:id="@+id/album_photo_select"
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/album_add_photo"
         android:visible="true"
@@ -12,6 +12,12 @@
         android:id="@+id/album_slide_play"
         android:icon="@drawable/ic_play_circle_filled_black_24dp"
         android:title="@string/album_slide_play"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/finish"
+        android:icon="@drawable/ic_check_black_24dp"
+        android:title="@string/finish"
         android:visible="true"
         app:showAsAction="always" />
 </menu>

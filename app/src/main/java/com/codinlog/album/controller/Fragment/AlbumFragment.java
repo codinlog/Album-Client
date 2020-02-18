@@ -47,10 +47,9 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
         albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
             @Override
             public void handleEvent(int position) {
-                Log.d("album", "handleEvent: " + position);
                 Intent intent = new Intent(getContext(),AlbumPreviewActivity.class);
-                intent.putExtra("albumId",viewModel.getAlbumEntityLiveData().getValue().get(position).getAlbumId());
-                intent.putExtra("albumName",viewModel.getAlbumEntityLiveData().getValue().get(position).getAlbumName());
+                intent.putExtra("from", "album");
+                intent.putExtra("albumEntity", viewModel.getAlbumEntityLiveData().getValue().get(position));
                 startActivity(intent);
             }
         });

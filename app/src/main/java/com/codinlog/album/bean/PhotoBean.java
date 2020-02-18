@@ -115,4 +115,11 @@ public class PhotoBean implements Comparable{
             return -1;
         return 1;
     }
+
+    @Override
+    public int hashCode() {
+        if(photoPath != null)
+            return photoPath.hashCode();
+        return super.hashCode();
+    }
 }

@@ -40,7 +40,6 @@ public class AlbumItemEntity {
     }
 
     public void setPhotoBean(PhotoBean photoBean) {
-        uuid = photoBean.getPhotoPath().hashCode();
         this.photoBean = photoBean;
     }
 }

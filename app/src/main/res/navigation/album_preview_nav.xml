@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/album_preview_nav"
-    app:startDestination="@id/album_preview">
+    app:startDestination="@id/album_preview"
+    tools:ignore="UnusedNavigation">
 
     <fragment
         android:id="@+id/album_preview"
         android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumDisplayFragment"
-        android:label="fragment_album_preview"
-        tools:layout="@layout/fragment_album_display" >
+        android:label="相册预览"
+        tools:layout="@layout/fragment_album_display">
         <action
             android:id="@+id/action_album_preview_to_photo_select"
             app:destination="@id/album_photo_select"
@@ -21,8 +22,8 @@
     <fragment
         android:id="@+id/album_photo_select"
         android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoSelectFragment"
-        android:label="fragment_photo_select"
-        tools:layout="@layout/fragment_photo_select" >
+        android:label="添加到相册"
+        tools:layout="@layout/fragment_photo_select">
         <action
             android:id="@+id/action_photo_select_to_album_preview"
             app:destination="@id/album_preview"

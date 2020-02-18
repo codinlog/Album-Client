@@ -10,7 +10,7 @@ class AlbumDisplayViewModel : ViewModel() {
     var displayData: MutableLiveData<List<PhotoBean>> = MutableLiveData()
     var albumPreviewViewModel : AlbumPreviewViewModel? = null
 
-    public fun setDisplayData(value : List<PhotoBean>) : Unit{
+    fun setDisplayData(value : List<PhotoBean>) : Unit{
         displayData.value = value
     }
 }

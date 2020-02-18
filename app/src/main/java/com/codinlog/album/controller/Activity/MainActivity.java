@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -24,7 +23,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.MainVPAdapter;
-import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.BaseActivityController;
@@ -40,6 +38,7 @@ import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
+import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
@@ -144,17 +143,13 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
                 viewModel.setCurrentPagerMutableLiveData(position);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
         binding.bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
@@ -175,22 +170,27 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                             .setBtnOkListener(new CommonListener() {
                                 @Override
                                 public void handleEvent(Object o) {
-                                    PhotoBean photoBean = viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().get(0);
                                     AlbumDialog dialog = (AlbumDialog) o;
                                     String albumName = dialog.getInputContent().trim();
                                     if ("".equals(albumName))
                                         Toast.makeText(MainActivity.this, getString(R.string.enter_album_name), Toast.LENGTH_SHORT).show();
                                     else {
+//                                        List<PhotoBean> beans = viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().stream()
+//                                                .sorted(Comparator.comparing(PhotoBean::getTokenDate).reversed()).collect(Collectors.toList());
                                         AlbumEntity albumEntity = new AlbumEntity();
                                         albumEntity.setAlbumName(albumName);
                                         albumEntity.setDate(new Date());
-                                        albumEntity.setPhotoBean(photoBean);
+                                        viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().forEach(
+                                                it-> {
+                                                    if(albumEntity.getPhotoBean() == null)
+                                                        albumEntity.setPhotoBean(it);
+                                                    if(it.getTokenDate() > albumEntity.getPhotoBean().getTokenDate())
+                                                        albumEntity.setPhotoBean(it);
+                                                }
+                                        );
                                         viewModel.albumViewModel.queryByAlbumId(albumEntity.hashCode(), new CommonListener() {
                                             @Override
                                             public void handleEvent(Object o) {
-                                                for (PhotoBean bean : viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue()) {
-                                                    Log.d("err", bean.toString());
-                                                }
                                                 if (o == null) {
                                                     viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
                                                         @Override
@@ -200,8 +200,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                                         }
                                                     });
                                                 } else {
-                                                    AlbumEntity existAlbumEntity = (AlbumEntity) o;
-                                                    viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(existAlbumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
+                                                    viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
                                                         @Override
                                                         public void handleEvent(Object o) {
                                                             if (o != null && ((List<Long>) o).size() > 0)

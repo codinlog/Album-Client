@@ -21,20 +21,22 @@
         <activity
             android:name=".controller.Activity.PhotoPreviewActivity"
             android:label="@string/title_activity_photo_preview"
-            android:theme="@style/SteepTheme"
+            android:launchMode="singleTop"
             android:parentActivityName=".controller.Activity.MainActivity"
-            android:launchMode="singleTop"/>
-        <activity android:name=".controller.Activity.kotlin.AlbumPreviewActivity"
+            android:theme="@style/SteepTheme" />
+        <activity
+            android:name=".controller.Activity.kotlin.AlbumPreviewActivity"
             android:label="@string/title_activity_album_preview"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
             android:parentActivityName=".controller.Activity.MainActivity"
-            android:launchMode="singleTop"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".controller.Activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

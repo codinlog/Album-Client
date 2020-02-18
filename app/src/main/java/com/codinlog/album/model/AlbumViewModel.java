@@ -17,15 +17,13 @@ import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryDBUtil;
 import com.codinlog.album.util.kotlin.AlbumUpdateDBUtil;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AlbumViewModel extends ViewModel {
 
     private LiveData<List<AlbumEntity>> albumEntityLiveData;
-    private String albumName;
-    private PhotoBean displayPhotoBean;
-
     public MainViewModel mainViewModel;
     public AlbumDAO albumDAO;
     public AlbumItemDAO albumItemDAO;
@@ -64,6 +62,7 @@ public class AlbumViewModel extends ViewModel {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
+            albumItemEntity.setUuid((v.getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             return albumItemEntity;
         }).collect(Collectors.toList());
         new AlbumInsertWithPhotoBeansDBUtil(albumDAO,albumItemDAO,albumEntity,commonListener).execute( albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
@@ -74,8 +73,9 @@ public class AlbumViewModel extends ViewModel {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
+            albumItemEntity.setUuid((v.getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             return albumItemEntity;
         }).collect(Collectors.toList());
-        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO,albumItemDAO,albumEntity,commonListener).execute( albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
+        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO,albumItemDAO,albumEntity,commonListener).execute(albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
     }
 }
