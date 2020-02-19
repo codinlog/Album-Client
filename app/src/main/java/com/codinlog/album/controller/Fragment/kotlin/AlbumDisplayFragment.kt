@@ -4,8 +4,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.codinlog.album.R
 import com.codinlog.album.adapter.kotlin.AlbumDisplayRVAdapter
@@ -47,7 +45,7 @@ class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
                     WorthStoreUtil.MODE.MODE_NORMAL -> {
                         val intent = Intent(context, PhotoPreviewActivity::class.java)
                         intent.putExtra("currentPosition", position)
-                        DataStoreUtil.getInstance().photoPreviewDataList = viewModel.displayData.value
+                        DataStoreUtil.getInstance().displayDataList = viewModel.displayData.value
                         startActivity(intent)
                     }
                     WorthStoreUtil.MODE.MODE_SELECT -> {

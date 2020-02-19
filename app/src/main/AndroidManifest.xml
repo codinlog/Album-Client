@@ -19,6 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".controller.Activity.kotlin.AlbumSlidePlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_album_slide_play"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme"/>
+        <activity
             android:name=".controller.Activity.PhotoPreviewActivity"
             android:label="@string/title_activity_photo_preview"
             android:launchMode="singleTop"

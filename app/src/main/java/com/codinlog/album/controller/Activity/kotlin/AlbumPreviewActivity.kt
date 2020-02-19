@@ -1,5 +1,6 @@
 package com.codinlog.album.controller.Activity.kotlin
 
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
@@ -97,10 +98,18 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        viewModel.navControllerMutableLiveData.value?.let {
-            if (it.currentDestination?.id == R.id.album_preview && item.itemId == android.R.id.home)
-                finish()
-            return NavigationUI.onNavDestinationSelected(item, it)
+        when(item.itemId){
+            R.id.album_slide_play ->{
+                val intent = Intent(this,AlbumSlidePlayActivity::class.java)
+                startActivity(intent)
+            }
+            android.R.id.home ->{
+                viewModel.navControllerMutableLiveData.value?.let {
+                    if (it.currentDestination?.id == R.id.album_preview)
+                        finish()
+                    return NavigationUI.onNavDestinationSelected(item, it)
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

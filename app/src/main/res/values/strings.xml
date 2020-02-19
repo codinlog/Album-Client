@@ -39,4 +39,6 @@
     <string name="album_add_photo">添加照片</string>
     <string name="album_slide_play">幻灯片播放</string>
     <string name="finish">完成</string>
+
+    <string name="title_activity_album_slide_play">AlbumSlidePlayActivity</string>
 </resources>

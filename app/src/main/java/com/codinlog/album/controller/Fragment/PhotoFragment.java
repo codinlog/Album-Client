@@ -74,7 +74,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                         }
                         currentPosition++;
                     }
-                    DataStoreUtil.getInstance().setPhotoPreviewDataList(viewModel.mainViewModel.getClassifiedPhotoBeanMutableLiveData().getValue());
+                    DataStoreUtil.getInstance().setDisplayDataList(viewModel.mainViewModel.getClassifiedPhotoBeanMutableLiveData().getValue());
                     startActivity(intent);
                 }
             }

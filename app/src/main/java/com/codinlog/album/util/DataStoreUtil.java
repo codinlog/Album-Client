@@ -14,7 +14,7 @@ public class DataStoreUtil {
     private Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap; //groupId,group include item number
     private List<Object> classifiedPhotoResList;//object {String,PhotoBean}
     private List<PhotoBean> classifiedPhotoBeanResList;//classified all PhotoBean
-    private List<PhotoBean> photoPreviewDataList;
+    private List<PhotoBean> displayDataList;
 
     private enum SingletonEnum{
         INSTANCE;
@@ -71,11 +71,11 @@ public class DataStoreUtil {
         return SingletonEnum.INSTANCE.getDataStoreUtil();
     }
 
-    public List<PhotoBean> getPhotoPreviewDataList() {
-        return photoPreviewDataList;
+    public List<PhotoBean> getDisplayDataList() {
+        return displayDataList;
     }
 
-    public void setPhotoPreviewDataList(List<PhotoBean> photoPreviewDataList) {
-        this.photoPreviewDataList = photoPreviewDataList;
+    public void setDisplayDataList(List<PhotoBean> displayDataList) {
+        this.displayDataList = displayDataList;
     }
 }
