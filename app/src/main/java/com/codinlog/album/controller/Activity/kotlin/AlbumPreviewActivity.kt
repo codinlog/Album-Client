@@ -98,16 +98,16 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.album_slide_play ->{
-                val intent = Intent(this,AlbumSlidePlayActivity::class.java)
-                startActivity(intent)
-            }
-            android.R.id.home ->{
-                viewModel.navControllerMutableLiveData.value?.let {
+        viewModel.navControllerMutableLiveData.value?.let {
+            when (item.itemId) {
+                R.id.album_photo_select -> return NavigationUI.onNavDestinationSelected(item, it)
+                R.id.album_slide_play -> {
+                    val intent = Intent(this, AlbumSlidePlayActivity::class.java)
+                    startActivity(intent)
+                }
+                android.R.id.home -> {
                     if (it.currentDestination?.id == R.id.album_preview)
                         finish()
-                    return NavigationUI.onNavDestinationSelected(item, it)
                 }
             }
         }
