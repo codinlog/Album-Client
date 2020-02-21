@@ -21,9 +21,14 @@ class AlbumPreviewViewModel : ViewModel() {
     private val albumItemDAO: AlbumItemDAO = AlbumDatabase.getInstance().albumItemDAO
     lateinit var previewDisplayData: List<PhotoBean>
     lateinit var albumEntity: AlbumEntity
-    lateinit var title :String
     var albumDisplayViewModel: AlbumDisplayViewModel ? = null
     var albumPhotoSelectViewModel: AlbumPhotoSelectViewModel ? = null
+    var titleMutableLiveData: MutableLiveData<String> = MutableLiveData()
+        get() {
+            if (field.value == null)
+                field.value = ""
+            return field
+        }
     var currentModelMutableLiveData: MutableLiveData<WorthStoreUtil.MODE> = MutableLiveData()
         get() {
             if (field.value == null)
@@ -57,7 +62,7 @@ class AlbumPreviewViewModel : ViewModel() {
     }
 
     fun setDisplayTitle(value : FromTo){
-        title = when(value){
+        titleMutableLiveData.value = when(value){
             FromTo.album_preview -> albumEntity.albumName
             FromTo.photo_preivew -> ""
             FromTo.select_preview ->  albumPhotoSelectViewModel?.selectData?.value?.size.toString() + "/" + albumPhotoSelectViewModel?.disPlayData?.value?.size.toString()

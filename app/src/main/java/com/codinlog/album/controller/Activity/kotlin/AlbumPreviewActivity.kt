@@ -60,10 +60,12 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
                         else -> AlbumPreviewViewModel.FromTo.album_preview
                     }
                     viewModel.setDisplayTitle(menuState)
-                    supportActionBar?.title = viewModel.title
                     invalidateOptionsMenu()
                 }
             }
+        })
+        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer {
+            supportActionBar!!.title = it
         })
     }
 
@@ -81,18 +83,17 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
                 viewModel.setDisplayTitle(AlbumPreviewViewModel.FromTo.photo_preivew)
             }
         }
-        supportActionBar?.title = viewModel.title
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (menuState == AlbumPreviewViewModel.FromTo.album_preview) {
             menu?.findItem(R.id.album_photo_select)?.isVisible = true
             menu?.findItem(R.id.album_slide_play)?.isVisible = true
-            menu?.findItem(R.id.finish)?.isVisible = false
+            menu?.findItem(R.id.album_preview)?.isVisible = false
         } else if (menuState == AlbumPreviewViewModel.FromTo.select_preview) {
             menu?.findItem(R.id.album_photo_select)?.isVisible = false
             menu?.findItem(R.id.album_slide_play)?.isVisible = false
-            menu?.findItem(R.id.finish)?.isVisible = true
+            menu?.findItem(R.id.album_preview)?.isVisible = true
         }
         return super.onPrepareOptionsMenu(menu)
     }
@@ -101,6 +102,9 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
         viewModel.navControllerMutableLiveData.value?.let {
             when (item.itemId) {
                 R.id.album_photo_select -> return NavigationUI.onNavDestinationSelected(item, it)
+                R.id.album_preview -> {
+                    return NavigationUI.onNavDestinationSelected(item, it)
+                }
                 R.id.album_slide_play -> {
                     val intent = Intent(this, AlbumSlidePlayActivity::class.java)
                     startActivity(intent)
