@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.2.1'
     implementation 'androidx.navigation:navigation-ui:2.2.1'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    def room_version = "2.2.3"
+    def room_version = '2.2.4'
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation 'androidx.core:core-ktx:1.2.0'
