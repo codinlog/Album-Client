@@ -299,7 +299,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                     ClassifyUtil.removeDeleteImage(photoBeans, true);
                 if (data != null) {
                     data.moveToFirst();
-                    do {
+                    while (data.moveToNext()) {
                         String path = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[0]));
                         boolean isContinue = true;
                         for (String str : WorthStoreUtil.disAllowScanning)
@@ -325,7 +325,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                 photoBeans.add(photoBean);
                             }
                         }
-                    } while (data.moveToNext());
+                    }
                     if (!isFirstScanner)
                         ClassifyUtil.removeDeleteImage(photoBeans, false);
                     else
