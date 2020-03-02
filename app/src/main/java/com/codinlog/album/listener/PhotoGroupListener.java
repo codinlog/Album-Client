@@ -1,9 +1,6 @@
 package com.codinlog.album.listener;
 
-public abstract class PhotoGroupListener extends CommonListener {
-
-    @Override
-    public void handleEvent(Object o) {}
-
-    public abstract void handleEvent(int position, boolean isChecked);
+public interface PhotoGroupListener extends CommonListener {
+    void handleEvent(Object o);
+    void handleEvent(int position, boolean isChecked);
 }

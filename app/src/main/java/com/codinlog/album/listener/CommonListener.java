@@ -1,5 +1,5 @@
 package com.codinlog.album.listener;
 
-public abstract class CommonListener {
-    public abstract void handleEvent(Object o);
+public interface  CommonListener {
+    void handleEvent(Object o);
 }

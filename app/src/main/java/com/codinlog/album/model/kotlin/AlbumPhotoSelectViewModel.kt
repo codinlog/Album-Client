@@ -5,23 +5,28 @@ import androidx.lifecycle.ViewModel
 import com.codinlog.album.bean.PhotoBean
 
 class AlbumPhotoSelectViewModel : ViewModel() {
-    var disPlayData : MutableLiveData<List<PhotoBean>> = MutableLiveData()
-    var selectData : MutableLiveData<List<PhotoBean>> = MutableLiveData()
-    get() {
-        if(field.value == null)
-            field.value = mutableListOf()
-        return field
+    var albumPreviewViewModel : AlbumPreviewViewModel? = null
+    var displayData: MutableLiveData<List<PhotoBean>> = MutableLiveData()
+    var selectData: MutableLiveData<MutableList<PhotoBean>> = MutableLiveData()
+        get() {
+            if (field.value == null)
+                field.value = mutableListOf()
+            return field
+        }
+
+    fun setDisplayData(value: List<PhotoBean>) {
+        displayData.value = value
     }
 
-    fun setDisplayData(value : List<PhotoBean>){
-        disPlayData.value = value
-    }
-
-    fun addSelectData(value : PhotoBean){
-        if(value.isSelected)
-            selectData.value = selectData.value?.plus(value)
-        else
-            selectData.value = selectData.value?.minus(value)
-        selectData.value = selectData.value
+    fun addSelectData(position: Int, isSelect: Boolean?) {
+        displayData.value?.let {
+            var photoBean = it[position]
+            photoBean.isSelected = isSelect ?: !photoBean.isSelected
+            if (photoBean.isSelected)
+                selectData.value?.add(photoBean)
+            else
+                selectData.value?.remove(photoBean)
+            selectData.value = selectData.value
+        }
     }
 }

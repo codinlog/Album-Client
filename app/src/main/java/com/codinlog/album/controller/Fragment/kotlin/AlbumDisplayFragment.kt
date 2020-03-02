@@ -10,7 +10,7 @@ import com.codinlog.album.adapter.kotlin.AlbumDisplayRVAdapter
 import com.codinlog.album.controller.Activity.PhotoPreviewActivity
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.databinding.FragmentAlbumDisplayBinding
-import com.codinlog.album.listener.PhotoItemListener
+import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
@@ -21,6 +21,7 @@ class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
         @JvmStatic
         fun newInstance() = AlbumDisplayFragment()
     }
+
     private lateinit var fragmentAlbumDisplayBinding: FragmentAlbumDisplayBinding
     private lateinit var albumDisplayRVAdapter: AlbumDisplayRVAdapter
     override fun getLayoutId(): Int {
@@ -34,32 +35,29 @@ class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
 
     override fun doInitListener() {
         viewModel.displayData.observe(viewLifecycleOwner, Observer {
-                albumDisplayRVAdapter?.photoBeans = it
+            albumDisplayRVAdapter?.photoBeans = it
         })
     }
 
     override fun doInitData() {
-        albumDisplayRVAdapter = AlbumDisplayRVAdapter(object : PhotoItemListener(){
-            override fun handleEvent(position: Int) {
-                when (viewModel.albumPreviewViewModel?.currentModelMutableLiveData?.value) {
-                    WorthStoreUtil.MODE.MODE_NORMAL -> {
-                        val intent = Intent(context, PhotoPreviewActivity::class.java)
-                        intent.putExtra("currentPosition", position)
-                        DataStoreUtil.getInstance().displayDataList = viewModel.displayData.value
-                        startActivity(intent)
-                    }
-                    WorthStoreUtil.MODE.MODE_SELECT -> {
-
-                    }
-                    else -> Log.d("err","click11111111111111111111111")
+        albumDisplayRVAdapter = AlbumDisplayRVAdapter(CommonListener {
+            var position = it as Int
+            when (viewModel.albumPreviewViewModel?.currentModelMutableLiveData?.value) {
+                WorthStoreUtil.MODE.MODE_NORMAL -> {
+                    val intent = Intent(context, PhotoPreviewActivity::class.java)
+                    intent.putExtra("currentPosition", position)
+                    DataStoreUtil.getInstance().displayDataList = viewModel.displayData.value
+                    startActivity(intent)
                 }
-            }
+                WorthStoreUtil.MODE.MODE_SELECT -> {
 
-        },object : PhotoItemListener(){
-            override fun handleEvent(position: Int) {
+                }
+                else -> Log.d("err", "click11111111111111111111111")
             }
+        }, CommonListener{
+
         })
-        fragmentAlbumDisplayBinding.rv.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+        fragmentAlbumDisplayBinding.rv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         fragmentAlbumDisplayBinding.rv.adapter = albumDisplayRVAdapter
     }
 }

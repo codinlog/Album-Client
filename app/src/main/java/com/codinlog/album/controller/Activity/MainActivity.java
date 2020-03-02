@@ -1,6 +1,7 @@
 package com.codinlog.album.controller.Activity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;

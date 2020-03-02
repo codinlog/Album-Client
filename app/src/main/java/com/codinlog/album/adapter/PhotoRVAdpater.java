@@ -17,8 +17,8 @@ import com.codinlog.album.R;
 import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.listener.PhotoGroupListener;
-import com.codinlog.album.listener.PhotoItemListener;
 import com.codinlog.album.util.WindowUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 
@@ -30,10 +30,10 @@ import static android.view.View.VISIBLE;
 public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> objectClassifiedResList;
     private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
-    private PhotoItemListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener;
+    private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener;
     private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
-    public PhotoRVAdpater(PhotoItemListener photoItemIVOnLongListener, PhotoItemListener photoItemIVOnClickListener, PhotoItemListener photoItemCheckBoxListener,
+    public PhotoRVAdpater(CommonListener photoItemIVOnLongListener, CommonListener photoItemIVOnClickListener, CommonListener photoItemCheckBoxListener,
                           PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener) {
         this.photoItemIVOnLongListener = photoItemIVOnLongListener;
         this.photoItemIVOnClickListener = photoItemIVOnClickListener;

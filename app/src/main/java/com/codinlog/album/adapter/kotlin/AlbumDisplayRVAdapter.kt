@@ -10,25 +10,23 @@ import com.bumptech.glide.Glide
 import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
-import com.codinlog.album.listener.PhotoItemListener
+import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.WindowUtil.albumPhotoItemSize
 import com.codinlog.album.util.WorthStoreUtil
 
-class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: PhotoItemListener,photoItemOnLongClickListener: PhotoItemListener) : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
-    var mode: WorthStoreUtil.MODE = WorthStoreUtil.MODE.MODE_NORMAL
-        get() = field
+class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener,photoItemOnLongClickListener: CommonListener) : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
+    private var mode: WorthStoreUtil.MODE = WorthStoreUtil.MODE.MODE_NORMAL
         set(value) {
             field = value
             notifyItemRangeChanged(0, photoBeans.size, "payloads")
         }
     var photoBeans: List<PhotoBean> = arrayListOf()
-        get() = field
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    val photoItemOnClickListener = photoItemOnClickListener
-    val photoItemOnLongClickListener = photoItemOnLongClickListener
+    private val photoItemOnClickListener = photoItemOnClickListener
+    private val photoItemOnLongClickListener = photoItemOnLongClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.album_photo_item, parent, false))
@@ -49,7 +47,7 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: PhotoItemListe
             holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize,(photoBeans[position].height.toFloat() * scale).toInt())
         }
         Glide.with(AlbumApplication.mContext).load(photoBeans[position].photoPath).thumbnail(0.4f).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
-        doSelectMode(holder, position)
+        doSelectModel(holder, position)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -57,10 +55,10 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: PhotoItemListe
         if (payloads.isEmpty())
             onBindViewHolder(holder, position)
         else
-            doSelectMode(holder, position)
+            doSelectModel(holder, position)
     }
 
-    fun doSelectMode(holder: ViewHolder, position: Int) {
+    fun doSelectModel(holder: ViewHolder, position: Int) {
         when (mode) {
             WorthStoreUtil.MODE.MODE_NORMAL -> {
                 holder.checkBox.visibility = View.INVISIBLE

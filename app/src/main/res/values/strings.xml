@@ -41,4 +41,5 @@
     <string name="finish">完成</string>
 
     <string name="title_activity_album_slide_play">AlbumSlidePlayActivity</string>
+    <string name="cancel_select">您有已选择的项目,是否取消并退出?</string>
 </resources>
