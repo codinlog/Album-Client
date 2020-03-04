@@ -54,7 +54,6 @@ public class MainViewModel extends ViewModel {
 
     public void setPhotoBeansLiveData(List<PhotoBean> value){
         Collections.sort(value);
-        Log.d("hi", "v:" + value.size());
         getPhotoBeansLiveData().setValue(value);
     }
 
@@ -67,8 +66,19 @@ public class MainViewModel extends ViewModel {
     }
 
     public void setModeLiveData(WorthStoreUtil.MODE value) {
-        photoViewModel.resetSelectChangeCount();
         getModeLiveData().setValue(value);
+        resetStatus();
+    }
+
+    public void resetStatus(){
+        getIsSelectAllLiveData().setValue(false);
+        switch (getCurrentPagerLiveData().getValue()){
+            case photoPager :{
+                photoViewModel.resetSelectLiveData();
+            }break;
+            case albumPager:break;
+            case timePager:break;
+        }
     }
 
     public MutableLiveData<Boolean> getIsSelectAllLiveData() {
@@ -86,7 +96,7 @@ public class MainViewModel extends ViewModel {
     public void setIsSelectAllToOtherViewModel(){
         switch (getCurrentPagerLiveData().getValue()){
             case photoPager:
-                photoViewModel.setIsSelectAllGroupFromMainViewMode(getIsSelectAllLiveData().getValue());break;
+                photoViewModel.selectAllGroup(!getIsSelectAllLiveData().getValue());break;
             case albumPager:break;
             case timePager:break;
         }

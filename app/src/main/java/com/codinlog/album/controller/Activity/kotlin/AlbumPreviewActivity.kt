@@ -2,6 +2,7 @@ package com.codinlog.album.controller.Activity.kotlin
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
@@ -15,12 +16,13 @@ import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
+import com.codinlog.album.util.DataStoreUtil
 import java.util.*
 
 
 class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
     private lateinit var binding: ActivityAlbumPreviewBinding
-    private var menuState: AlbumPreviewViewModel.From = AlbumPreviewViewModel.From.AlbumPreview
+    private var menuState: AlbumPreviewViewModel.FromWhere = AlbumPreviewViewModel.FromWhere.AlbumPreview
 
     override fun onStart() {
         super.onStart()
@@ -58,16 +60,16 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
             it?.let {
                 it.addOnDestinationChangedListener { _, destination, _ ->
                     menuState = when (destination.id) {
-                        R.id.album_preview -> AlbumPreviewViewModel.From.AlbumPreview
-                        R.id.album_photo_select -> AlbumPreviewViewModel.From.SelectPreview
-                        else -> AlbumPreviewViewModel.From.AlbumPreview
+                        R.id.album_preview -> AlbumPreviewViewModel.FromWhere.AlbumPreview
+                        R.id.album_photo_select -> AlbumPreviewViewModel.FromWhere.SelectPreview
+                        else -> AlbumPreviewViewModel.FromWhere.AlbumPreview
                     }
                     viewModel.setDisplayTitle(menuState)
                     invalidateOptionsMenu()
                 }
             }
         })
-        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer{
             supportActionBar!!.title = it
         })
     }
@@ -78,24 +80,26 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
         when (intent.getStringExtra("from")) {
             "album" -> {
                 viewModel.queryAlbumItemByAlbumEntity(intent.getParcelableExtra("albumEntity"))
-                viewModel.setDisplayTitle(AlbumPreviewViewModel.From.AlbumPreview)
+                viewModel.setDisplayTitle(AlbumPreviewViewModel.FromWhere.AlbumPreview)
             }
             "photo" -> {
-                viewModel.setDisplayTitle(AlbumPreviewViewModel.From.PhotoPreview)
+                Log.d("title","nt" + intent.getStringExtra("title"))
+                viewModel.albumDisplayViewModel?.setDisplayData(DataStoreUtil.getInstance().displayDataList)
+                viewModel.setDisplayTitle(AlbumPreviewViewModel.FromWhere.PhotoPreview,intent.getStringExtra("title"))
             }
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (menuState == AlbumPreviewViewModel.From.AlbumPreview) {
+        if (menuState == AlbumPreviewViewModel.FromWhere.AlbumPreview) {
             menu?.findItem(R.id.album_photo_select)?.isVisible = true
             menu?.findItem(R.id.album_slide_play)?.isVisible = true
             menu?.findItem(R.id.album_preview)?.isVisible = false
-        } else if (menuState == AlbumPreviewViewModel.From.SelectPreview) {
+        } else if (menuState == AlbumPreviewViewModel.FromWhere.SelectPreview) {
             menu?.findItem(R.id.album_photo_select)?.isVisible = false
             menu?.findItem(R.id.album_slide_play)?.isVisible = false
             menu?.findItem(R.id.album_preview)?.isVisible = true
-        }else if(menuState == AlbumPreviewViewModel.From.PhotoPreview){
+        }else if(menuState == AlbumPreviewViewModel.FromWhere.PhotoPreview){
 
         }
         return super.onPrepareOptionsMenu(menu)

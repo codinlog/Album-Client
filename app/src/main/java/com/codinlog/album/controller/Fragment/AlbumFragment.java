@@ -1,10 +1,8 @@
 package com.codinlog.album.controller.Fragment;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
-import android.util.Log;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.codinlog.album.R;
@@ -14,6 +12,7 @@ import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.AlbumFragmentBinding;
 import com.codinlog.album.listener.kotlin.AlbumItemListener;
 import com.codinlog.album.model.AlbumViewModel;
+import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.Objects;
@@ -47,7 +46,8 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
         albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
             @Override
             public void handleEvent(int position) {
-                Intent intent = new Intent(getContext(),AlbumPreviewActivity.class);
+                DataStoreUtil.getInstance().setAllDisplayDataList(viewModel.mainViewModel.getPhotoBeansLiveData().getValue());
+                Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
                 intent.putExtra("albumEntity", viewModel.getAlbumEntityLiveData().getValue().get(position));
                 startActivity(intent);

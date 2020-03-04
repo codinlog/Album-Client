@@ -2,7 +2,7 @@ package com.codinlog.album.bean;
 
 import androidx.annotation.Nullable;
 
-public class GroupBean {
+public class GroupBean implements Comparable {
     private String groupId;
     private boolean isSelected = false;
     private int haveNum = 0;
@@ -62,5 +62,14 @@ public class GroupBean {
 
     public static GroupBean newInstance(String groupId){
         return new GroupBean(groupId);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof GroupBean){
+            GroupBean groupBean = (GroupBean) o;
+            return groupBean.getGroupId().compareTo(groupId);
+        }
+        return 0;
     }
 }

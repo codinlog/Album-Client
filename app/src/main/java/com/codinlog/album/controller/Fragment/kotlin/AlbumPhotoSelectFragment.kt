@@ -48,7 +48,7 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
         viewModel.selectData.observe(viewLifecycleOwner, Observer {
             albumPhotoSelectRVAdapter?.let {
                 it.notifyItemChanged(currentPosition,"payload")
-                viewModel.albumPreviewViewModel?.setDisplayTitle(AlbumPreviewViewModel.From.SelectPreview)
+                viewModel.albumPreviewViewModel?.setDisplayTitle(AlbumPreviewViewModel.FromWhere.SelectPreview)
             }
         })
     }

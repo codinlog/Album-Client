@@ -46,13 +46,12 @@ class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
                 WorthStoreUtil.MODE.MODE_NORMAL -> {
                     val intent = Intent(context, PhotoPreviewActivity::class.java)
                     intent.putExtra("currentPosition", position)
-                    DataStoreUtil.getInstance().displayDataList = viewModel.displayData.value
+                    DataStoreUtil.getInstance().allDisplayDataList = viewModel.displayData.value
                     startActivity(intent)
                 }
                 WorthStoreUtil.MODE.MODE_SELECT -> {
 
                 }
-                else -> Log.d("err", "click11111111111111111111111")
             }
         }, CommonListener{
 

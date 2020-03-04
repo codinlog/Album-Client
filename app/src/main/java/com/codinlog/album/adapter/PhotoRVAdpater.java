@@ -30,16 +30,17 @@ import static android.view.View.VISIBLE;
 public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> objectClassifiedResList;
     private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
-    private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener;
+    private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener,imgBtnClickListener;
     private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
     public PhotoRVAdpater(CommonListener photoItemIVOnLongListener, CommonListener photoItemIVOnClickListener, CommonListener photoItemCheckBoxListener,
-                          PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener) {
+                          PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener,CommonListener imgBtnClickListener) {
         this.photoItemIVOnLongListener = photoItemIVOnLongListener;
         this.photoItemIVOnClickListener = photoItemIVOnClickListener;
         this.photoItemCheckBoxListener = photoItemCheckBoxListener;
         this.photoGroupCheckBoxListener = photoGroupCheckBoxListener;
         this.photoGroupTVOnLongListener = photoGroupTVOnLongListener;
+        this.imgBtnClickListener = imgBtnClickListener;
     }
 
     @NonNull
@@ -82,6 +83,7 @@ public class PhotoRVAdpater extends RecyclerView.Adapter<RecyclerView.ViewHolder
             GroupBean groupBean = (GroupBean) objectClassifiedResList.get(position);
             photoGroupViewHolder.textView.setText(groupBean.getGroupId());
             photoGroupViewHolder.checkBox.setOnClickListener(v -> (photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked()));
+            photoGroupViewHolder.imageButton.setOnClickListener(v -> imgBtnClickListener.handleEvent(position));
             photoGroupViewHolder.textView.setOnLongClickListener(v -> {
                 CheckBox checkBox = ((View)v.getParent()).findViewById(R.id.checkBox);
                 (photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());

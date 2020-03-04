@@ -12,24 +12,22 @@ import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.util.ClassifyUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PhotoViewModel extends ViewModel {
     // TODO: Implement the ViewModel
     private Handler handler = new Handler();
     private MutableLiveData<List<Object>> displayData; //图片+分组数据
-    private MutableLiveData<List<PhotoBean>> selectedPhotoBean;//已选择
-    private MutableLiveData<Map<String, PhotoSelectedNumBean>> photoGroupNum;//选择数量变化
+    private MutableLiveData<List<PhotoBean>> selectedPhotoBeans;//已选择
     private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayDataMap;
-    private MutableLiveData<Boolean> isSelectedAllGroup;
-    private MutableLiveData<Boolean> isSelectedGroupAll;
-    public MainViewModel mainViewModel;
     private Runnable classifiedRunnable;
+    public MainViewModel mainViewModel;
 
     public MutableLiveData<List<Object>> getDisplayData() {
         if (displayData == null) {
@@ -39,195 +37,12 @@ public class PhotoViewModel extends ViewModel {
         return displayData;
     }
 
-    public void setDisplayData() {
-        Log.d("hi", "running here");
-        getDisplayData().getValue().clear();
-        getSelectedPhotoBean().getValue().clear();
-        getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
-            getDisplayData().getValue().add(k);
-            v.forEach(it -> {
-                getDisplayData().getValue().add(it);
-                if (it.isSelected())
-                    getSelectedPhotoBean().getValue().add(it);
-            });
-        });
-        getSelectedPhotoBean().setValue(getSelectedPhotoBean().getValue());
-        getDisplayData().setValue(getDisplayData().getValue());
-    }
-
-    public void modeChangeToNormal() {
-        if (getSelectedPhotoBean().getValue() == null)
-            return;
-        for (Object o : Objects.requireNonNull(getDisplayData().getValue())) {
-            if (o instanceof PhotoBean) {
-                PhotoBean photoBean = (PhotoBean) o;
-                photoBean.setSelected(false);
-            } else if (o instanceof GroupBean) {
-                GroupBean groupBean = (GroupBean) o;
-                groupBean.setSelected(false);
-            }
+    public MutableLiveData<List<PhotoBean>> getSelectedPhotoBeans() {
+        if (selectedPhotoBeans == null) {
+            selectedPhotoBeans = new MutableLiveData<>();
+            selectedPhotoBeans.setValue(new ArrayList<>());
         }
-        for (Map.Entry<String, PhotoSelectedNumBean> entry : Objects.requireNonNull(getPhotoGroupNum().getValue()).entrySet())
-            entry.getValue().setSelected(0);
-        getSelectedPhotoBean().getValue().clear();
-        getSelectedPhotoBean().setValue(getSelectedPhotoBean().getValue());
-    }
-
-    public MutableLiveData<List<PhotoBean>> getSelectedPhotoBean() {
-        if (selectedPhotoBean == null) {
-            selectedPhotoBean = new MutableLiveData<>();
-            selectedPhotoBean.setValue(new ArrayList<>());
-        }
-        return selectedPhotoBean;
-    }
-
-    private void addSelectMutableLiveData(PhotoBean photoBean) {
-        for (PhotoBean bean : Objects.requireNonNull(getSelectedPhotoBean().getValue())) {
-            if (photoBean.getPhotoId() == bean.getPhotoId()) {
-                return;
-            }
-        }
-        selectChangeCount(photoBean.getGroupId(), true);
-        getSelectedPhotoBean().getValue().add(photoBean);
-    }
-
-    private void removeSelectMutableLiveData(PhotoBean photoBean) {
-        Iterator<PhotoBean> iterator = Objects.requireNonNull(getSelectedPhotoBean().getValue()).iterator();
-        while (iterator.hasNext()) {
-            if (photoBean.getPhotoId() == iterator.next().getPhotoId()) {
-                selectChangeCount(photoBean.getGroupId(), false);
-                iterator.remove();
-                break;
-            }
-        }
-    }
-
-    public void changeSelectMutableLiveData(int position, boolean isRepeat, boolean isGroupAll, boolean isAllGroup) {
-        if (position >= Objects.requireNonNull(getDisplayData().getValue()).size())
-            return;
-        Object o = getDisplayData().getValue().get(position);
-        if (o instanceof PhotoBean) {
-            PhotoBean photoBean = (PhotoBean) o;
-            if (isRepeat)
-                if (!isAllGroup)
-                    photoBean.setSelected(getIsSelectedGroupAll().getValue());
-                else
-                    photoBean.setSelected(getIsSelectedAllGroup().getValue());
-            else
-                photoBean.setSelected(!photoBean.isSelected());
-            if (photoBean.isSelected())
-                addSelectMutableLiveData(photoBean);
-            else
-                removeSelectMutableLiveData(photoBean);
-            if (isRepeat)
-                changeSelectMutableLiveData(++position, isRepeat, isGroupAll, isAllGroup);
-        } else if (o instanceof GroupBean) {
-            if (isGroupAll || isAllGroup) {
-                GroupBean groupBean = (GroupBean) o;
-                if (isAllGroup)
-                    groupBean.setSelected(getIsSelectedAllGroup().getValue());
-                else
-                    groupBean.setSelected(!groupBean.isSelected());
-                ++position;
-                isGroupAll = false;
-            }
-            if (Objects.requireNonNull(displayData.getValue()).get(position) instanceof GroupBean && !isAllGroup)
-                return;
-            changeSelectMutableLiveData(position++, true, isGroupAll, isAllGroup);
-        }
-        getSelectedPhotoBean().setValue(getSelectedPhotoBean().getValue());
-    }
-
-    private MutableLiveData<Map<String, PhotoSelectedNumBean>> getPhotoGroupNum() {
-        if (photoGroupNum == null) {
-            photoGroupNum = new MutableLiveData<>();
-            photoGroupNum.setValue(new HashMap<>());
-        }
-        return photoGroupNum;
-    }
-
-    void setPhotoGroupNum(Map<String, PhotoSelectedNumBean> value) {
-        Map<String, PhotoSelectedNumBean> oldValue = getPhotoGroupNum().getValue();
-        for (Map.Entry<String, PhotoSelectedNumBean> entry : value.entrySet()) {
-            assert oldValue != null;
-            if (oldValue.containsKey(entry.getKey()))
-                if (entry.getValue().getSize() < Objects.requireNonNull(oldValue.get(entry.getKey())).getSelected()) {
-                    entry.getValue().setSelected(entry.getValue().getSize());
-                } else {
-                    entry.getValue().setSelected(Objects.requireNonNull(oldValue.get(entry.getKey())).getSelected());
-                }
-        }
-        getPhotoGroupNum().setValue(value);
-        selectChangeCount("null", false);
-    }
-
-    private void selectChangeCount(String key, boolean isAdd) {
-        if (key != null && Objects.requireNonNull(getPhotoGroupNum().getValue()).containsKey(key)) {
-            PhotoSelectedNumBean photoSelectedNumBean = getPhotoGroupNum().getValue().get(key);
-            if (isAdd)
-                photoSelectedNumBean.add();
-            else
-                photoSelectedNumBean.sub();
-        }
-        Iterator<Object> iterator = getDisplayData().getValue().iterator();
-        boolean isAllGroupSelected = true;
-        while (iterator.hasNext()) {
-            Object o = iterator.next();
-            if (o instanceof GroupBean) {
-                GroupBean groupBean = (GroupBean) o;
-                if (getPhotoGroupNum().getValue().containsKey(groupBean.getGroupId())) {
-                    PhotoSelectedNumBean photoSelectedNumBean = getPhotoGroupNum().getValue().get(groupBean.getGroupId());
-                    if (photoSelectedNumBean.getSize() <= photoSelectedNumBean.getSelected())
-                        groupBean.setSelected(true);
-                    else {
-                        groupBean.setSelected(false);
-                        isAllGroupSelected = false;
-                    }
-                }
-            }
-        }
-        if (mainViewModel != null) {
-            if (isAllGroupSelected)
-                mainViewModel.setIsSelectAllLiveData(true);
-            else
-                mainViewModel.setIsSelectAllLiveData(false);
-        }
-    }
-
-    void resetSelectChangeCount() {
-        if (getPhotoGroupNum().getValue() != null) {
-            for (PhotoSelectedNumBean photoSelectedNumBean : getPhotoGroupNum().getValue().values())
-                photoSelectedNumBean.setSelected(0);
-        }
-    }
-
-    public MutableLiveData<Boolean> getIsSelectedAllGroup() {
-        if (isSelectedAllGroup == null) {
-            isSelectedAllGroup = new MutableLiveData<>();
-            isSelectedAllGroup.setValue(false);
-        }
-        return isSelectedAllGroup;
-    }
-
-    private void setIsSelectedAllGroup(boolean value) {
-        getIsSelectedAllGroup().setValue(value);
-    }
-
-    void setIsSelectAllGroupFromMainViewMode(boolean value) {
-        setIsSelectedAllGroup(value);
-        changeSelectMutableLiveData(0, true, false, true);
-    }
-
-    private MutableLiveData<Boolean> getIsSelectedGroupAll() {
-        if (isSelectedGroupAll == null) {
-            isSelectedGroupAll = new MutableLiveData<>();
-            isSelectedGroupAll.setValue(false);
-        }
-        return isSelectedGroupAll;
-    }
-
-    public void setIsSelectedGroupAll(boolean value) {
-        getIsSelectedGroupAll().setValue(value);
+        return selectedPhotoBeans;
     }
 
     public MutableLiveData<Map<GroupBean, List<PhotoBean>>> getClassifiedDisplayDataMap() {
@@ -243,10 +58,97 @@ public class PhotoViewModel extends ViewModel {
     }
 
     public void setClassifiedData(List<PhotoBean> it) {
-        Log.d("hi", "it:" +it.size());
-        classifiedRunnable = () -> {
-            setClassifiedDisplayDataMap(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayDataMap().getValue()));
-        };
+        if (classifiedRunnable != null)
+            handler.removeCallbacks(classifiedRunnable);
+        else
+            classifiedRunnable = () -> {
+                setClassifiedDisplayDataMap(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayDataMap().getValue()));
+            };
         handler.post(classifiedRunnable);
+    }
+
+    public void setDisplayData() {
+        getDisplayData().getValue().clear();
+        getSelectedPhotoBeans().getValue().clear();
+        List<GroupBean> groupBeans = new ArrayList<>(getClassifiedDisplayDataMap().getValue().keySet());
+        Collections.sort(groupBeans);
+        groupBeans.forEach(it -> {
+            getDisplayData().getValue().add(it);
+            getClassifiedDisplayDataMap().getValue().get(it).forEach(in -> {
+                getDisplayData().getValue().add(in);
+                if (in.isSelected())
+                    getSelectedPhotoBeans().getValue().add(in);
+            });
+        });
+        setMainViewModelIsSelectAll();
+        getSelectedPhotoBeans().setValue(getSelectedPhotoBeans().getValue());
+        getDisplayData().setValue(getDisplayData().getValue());
+    }
+
+    public void changeSelectLiveData(int position, boolean isGroupAll) {
+        Object o = getDisplayData().getValue().get(position);
+        if (o instanceof PhotoBean) {
+            PhotoBean photoBean = (PhotoBean) o;
+            photoBean.setSelected(!photoBean.isSelected());
+            for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+                if (groupBean.getGroupId().equals(photoBean.getGroupId())) {
+                    groupBean.setSelectNum(getClassifiedDisplayDataMap().getValue().get(groupBean).
+                            stream().filter(PhotoBean::isSelected).collect(Collectors.toList()).size());
+                    groupBean.setSelected(groupBean.getHaveNum() <= groupBean.getSelectNum());
+                    break;
+                }
+            }
+        } else if (o instanceof GroupBean) {
+            for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+                if (groupBean.getGroupId().equals(((GroupBean) o).getGroupId())) {
+                    getClassifiedDisplayDataMap().getValue().get(groupBean).forEach(it -> {
+                        it.setSelected(isGroupAll);
+                    });
+                    groupBean.setSelectNum(getClassifiedDisplayDataMap().getValue().get(groupBean).
+                            stream().filter(it -> it.isSelected()).collect(Collectors.toList()).size());
+                    groupBean.setSelected(groupBean.getHaveNum() <= groupBean.getSelectNum());
+                    break;
+                }
+            }
+        }
+        getSelectedPhotoBeans().setValue(getDisplayData().getValue().stream()
+                .filter(it -> ((it instanceof PhotoBean) && ((PhotoBean) it).isSelected()))
+                .map(it -> (PhotoBean) it).collect(Collectors.toList()));
+        setMainViewModelIsSelectAll();
+    }
+
+
+    public void resetSelectLiveData() {
+        getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
+            k.setSelectNum(0);
+            k.setSelected(false);
+            v.forEach(it -> it.setSelected(false));
+        });
+        getSelectedPhotoBeans().setValue(new ArrayList<>());
+    }
+
+    public void selectAllGroup(boolean isAllGroup) {
+        if (isAllGroup) {
+            List<PhotoBean> photoBeans = new ArrayList<>();
+            getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
+                v.forEach(it -> it.setSelected(isAllGroup));
+                List<PhotoBean> photoBeansTemp = v.stream().filter(it -> it.isSelected()).collect(Collectors.toList());
+                photoBeans.addAll(photoBeansTemp);
+                k.setSelectNum(photoBeansTemp.size());
+                k.setSelected(k.getHaveNum() <= k.getSelectNum());
+            });
+            getSelectedPhotoBeans().setValue(photoBeans);
+        } else resetSelectLiveData();
+        mainViewModel.setIsSelectAllLiveData(isAllGroup);
+    }
+
+    private void setMainViewModelIsSelectAll() {
+        for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+            if (!groupBean.isSelected()) {
+                mainViewModel.setIsSelectAllLiveData(false);
+                return;
+            }
+        }
+        mainViewModel.setIsSelectAllLiveData(true);
     }
 }

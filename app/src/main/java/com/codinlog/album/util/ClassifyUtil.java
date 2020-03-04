@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static com.codinlog.album.util.WorthStoreUtil.errorCode;
 import static com.codinlog.album.util.WorthStoreUtil.photoIsNew;
@@ -62,8 +63,17 @@ public class ClassifyUtil {
         });
         classifiedMap.forEach((k,v)->{
             k.setHaveNum(v.size());
+            k.setSelectNum(v.stream().filter(PhotoBean::isSelected).collect(Collectors.toList()).size());
+            k.setSelected(k.getHaveNum() <= k.getSelectNum());
+            v.forEach(it -> it.setGroupId(k.getGroupId()));
             Collections.sort(v);
         });
+        Iterator<GroupBean> iterator = classifiedMap.keySet().iterator();
+        while (iterator.hasNext()){
+            GroupBean groupBean = iterator.next();
+            if(groupBean.getHaveNum() <= 0)
+                iterator.remove();
+        }
         return classifiedMap;
     }
 

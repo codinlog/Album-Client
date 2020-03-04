@@ -85,7 +85,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
         binding.viewPager.setAdapter(photoPreviewVPAdapter);
-        viewModel.setDisplayPhotoBeansMutableLiveData(DataStoreUtil.getInstance().getDisplayDataList());
+        viewModel.setDisplayPhotoBeansMutableLiveData(DataStoreUtil.getInstance().getAllDisplayDataList());
     }
 
     @Override

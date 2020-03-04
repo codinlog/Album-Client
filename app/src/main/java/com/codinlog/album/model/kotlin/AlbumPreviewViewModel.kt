@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.dao.AlbumItemDAO
 import com.codinlog.album.database.AlbumDatabase
 import com.codinlog.album.entity.AlbumEntity
@@ -15,13 +14,13 @@ import com.codinlog.album.util.WorthStoreUtil
 import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil
 
 class AlbumPreviewViewModel : ViewModel() {
-    enum class From {
-        PhotoPreview, AlbumPreview,SelectPreview
+    enum class FromWhere {
+        None,PhotoPreview, AlbumPreview, SelectPreview
     }
 
     private val albumItemDAO: AlbumItemDAO = AlbumDatabase.getInstance().albumItemDAO
-    lateinit var previewDisplayData: List<PhotoBean>
-    lateinit var albumEntity: AlbumEntity
+    private var albumEntity: AlbumEntity? = null
+    var fromWhere : FromWhere = FromWhere.None
     var albumDisplayViewModel: AlbumDisplayViewModel? = null
     var albumPhotoSelectViewModel: AlbumPhotoSelectViewModel? = null
     var titleMutableLiveData: MutableLiveData<String> = MutableLiveData()
@@ -41,32 +40,29 @@ class AlbumPreviewViewModel : ViewModel() {
     fun queryAlbumItemByAlbumEntity(value: AlbumEntity) {
         albumEntity = value
         AlbumItemQueryByAlbumIdDBUtil(albumItemDAO, CommonListener { o ->
-            previewDisplayData = (o as List<out AlbumItemEntity>).map { it.photoBean }.toList()
-            albumDisplayViewModel?.setDisplayData(previewDisplayData)
-            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().classifiedPhotoBeanResList.filter { i ->
-                //                    for (t in previewDisplayData) {
-//                        if (t.hashCode() == i.hashCode())
-//                            return@filter false
-//                    }
-//                    return@filter true
-                previewDisplayData.all { t ->
+            val displayData = (o as List<out AlbumItemEntity>).map { it.photoBean }.toList()
+            albumDisplayViewModel?.setDisplayData(displayData)
+            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().allDisplayDataList.filter { i ->
+                displayData.all { t ->
                     t.hashCode() != i.hashCode()
                 }
             }.toList())
-        }).execute(albumEntity.albumId)
+        }).execute(value.albumId)
     }
 
     fun setNavController(value: NavController) {
         navControllerMutableLiveData.value = value
     }
 
-    fun setDisplayTitle(value: From) {
+    fun setDisplayTitle(value: FromWhere, title: String = "") {
+        Log.d("title", title)
         titleMutableLiveData.value = when (value) {
-            From.AlbumPreview -> albumEntity.albumName
-            From.PhotoPreview -> ""
-            From.SelectPreview -> albumPhotoSelectViewModel?.selectData?.value?.size.toString() + "/" + albumPhotoSelectViewModel?.displayData?.value?.size.toString()
+            FromWhere.AlbumPreview -> albumEntity?.albumName
+            FromWhere.PhotoPreview -> if ("" == title) titleMutableLiveData.value else title
+            FromWhere.SelectPreview -> albumPhotoSelectViewModel?.selectData?.value?.size.toString() + "/" + albumPhotoSelectViewModel?.displayData?.value?.size.toString()
+            else -> ""
         }
-        Log.d("title",titleMutableLiveData.value)
+        Log.d("title", "aaa" + titleMutableLiveData.value)
     }
 
     fun resetSelectData() {

@@ -1,20 +1,13 @@
 package com.codinlog.album.util;
 
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class DataStoreUtil {
-    private Map<String, List<PhotoBean>> classifiedPhotoResMap;//groupId,List<PhotoBean>
-    private Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap; //groupId,group include item number
-    private List<Object> classifiedPhotoResList;//object {String,PhotoBean}
-    private List<PhotoBean> classifiedPhotoBeanResList;//classified all PhotoBean
+    private List<PhotoBean> allDisplayDataList;
     private List<PhotoBean> displayDataList;
+    private List<PhotoBean> slidePlayDataList;
 
     private enum SingletonEnum{
         INSTANCE;
@@ -22,7 +15,6 @@ public class DataStoreUtil {
         SingletonEnum(){
             dataStoreUtil = new DataStoreUtil();
         }
-
         public DataStoreUtil getDataStoreUtil(){
             return dataStoreUtil;
         }
@@ -31,44 +23,20 @@ public class DataStoreUtil {
         return SingletonEnum.INSTANCE.getDataStoreUtil();
     }
 
-    public void loadClassifiedRes(List<PhotoBean> photoBeanList){
-      //  ClassifyUtil.PhotoBeansClassify(photoBeanList);
+    public List<PhotoBean> getAllDisplayDataList() {
+        return allDisplayDataList;
     }
 
-    public Map<String, List<PhotoBean>> getClassifiedPhotoResMap() {
-        return classifiedPhotoResMap == null ? new TreeMap<>() : classifiedPhotoResMap;
+    public void setAllDisplayDataList(List<PhotoBean> allDisplayDataList) {
+        this.allDisplayDataList = allDisplayDataList;
     }
 
-    public DataStoreUtil setClassifiedPhotoResMap(Map<String, List<PhotoBean>> classifiedPhotoResMap) {
-        this.classifiedPhotoResMap = classifiedPhotoResMap;
-        return SingletonEnum.INSTANCE.getDataStoreUtil();
+    public List<PhotoBean> getSlidePlayDataList() {
+        return slidePlayDataList;
     }
 
-    public List<Object> getClassifiedPhotoResList() {
-        return classifiedPhotoResList == null ? new ArrayList<>() : classifiedPhotoResList;
-    }
-
-    public DataStoreUtil setClassifiedPhotoResList(List<Object> classifiedPhotoResList) {
-        this.classifiedPhotoResList = classifiedPhotoResList;
-        return SingletonEnum.INSTANCE.getDataStoreUtil();
-    }
-
-    public Map<String, PhotoSelectedNumBean> getClassifiedPhotoResNumMap() {
-        return classifiedPhotoResNumMap == null ? new HashMap<>() : classifiedPhotoResNumMap;
-    }
-
-    public DataStoreUtil setClassifiedPhotoResNumMap(Map<String, PhotoSelectedNumBean> classifiedPhotoResNumMap) {
-        this.classifiedPhotoResNumMap = classifiedPhotoResNumMap;
-        return SingletonEnum.INSTANCE.getDataStoreUtil();
-    }
-
-    public List<PhotoBean> getClassifiedPhotoBeanResList() {
-        return classifiedPhotoBeanResList;
-    }
-
-    public DataStoreUtil setClassifiedPhotoBeanResList(List<PhotoBean> classifiedPhotoBeanResList) {
-        this.classifiedPhotoBeanResList = classifiedPhotoBeanResList;
-        return SingletonEnum.INSTANCE.getDataStoreUtil();
+    public void setSlidePlayDataList(List<PhotoBean> slidePlayDataList) {
+        this.slidePlayDataList = slidePlayDataList;
     }
 
     public List<PhotoBean> getDisplayDataList() {
