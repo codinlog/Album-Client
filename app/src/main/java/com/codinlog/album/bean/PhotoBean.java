@@ -1,6 +1,7 @@
 package com.codinlog.album.bean;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
 
@@ -121,5 +122,14 @@ public class PhotoBean implements Comparable{
         if(photoPath != null)
             return photoPath.hashCode();
         return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj instanceof PhotoBean){
+            PhotoBean photoBean = (PhotoBean) obj;
+            return this.photoPath.equals(photoBean.getPhotoPath());
+        }
+        return super.equals(obj);
     }
 }

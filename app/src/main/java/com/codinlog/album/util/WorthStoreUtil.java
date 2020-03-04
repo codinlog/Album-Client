@@ -30,9 +30,8 @@ public class WorthStoreUtil {
 
     };
 
-    public static String[] disAllowScanning = {"amap/data/",};
     public static String[] selectionArgs = {"image/jpeg", "image/png"};
-    public static boolean isFirstScanner = true;
+    public static String[] disAllowScanning = {"amap/data/",};
     public final static int photoPager = 0;
     public final static int albumPager = 1;
     public final static int timePager = 2;
@@ -45,7 +44,6 @@ public class WorthStoreUtil {
     public final static int photoIsNew = 11;
     public final static int errorCode = 404;
     public final static int albumItemNum = 3;
-    public final static int REQUEST_IMAGE_CAPTURE = 100;
     public final static int REQUEST_TAKE_PHOTO = 101;
     public final static int albumPhotoItemNum = 2;
 

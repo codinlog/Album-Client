@@ -32,7 +32,7 @@ public class DataStoreUtil {
     }
 
     public void loadClassifiedRes(List<PhotoBean> photoBeanList){
-        ClassifyUtil.PhotoClassification(photoBeanList);
+      //  ClassifyUtil.PhotoBeansClassify(photoBeanList);
     }
 
     public Map<String, List<PhotoBean>> getClassifiedPhotoResMap() {

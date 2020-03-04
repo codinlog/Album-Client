@@ -1,5 +1,7 @@
 package com.codinlog.album.model;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -10,6 +12,7 @@ import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,97 +21,87 @@ import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 import static com.codinlog.album.util.WorthStoreUtil.timePager;
 
 public class MainViewModel extends ViewModel {
-    private MutableLiveData<ArrayList<FragmentBean>> fragmentMutableLiveData;//界面
-    private MutableLiveData<List<PhotoBean>> classifiedPhotoBeanMutableLiveData;//图片数据
-    private MutableLiveData<WorthStoreUtil.MODE> modeMutableLiveData;//选择模式
-    private MutableLiveData<Boolean> isSelectAllMutableLiveData;//是否选择所有
-    private MutableLiveData<Integer> currentPagerMutableLiveData;//当前页面
+    private MutableLiveData<ArrayList<FragmentBean>> fragmentLiveData;//界面
+    private MutableLiveData<List<PhotoBean>> photoBeansLiveData;//图片数据
+    private MutableLiveData<WorthStoreUtil.MODE> modeLiveData;//选择模式
+    private MutableLiveData<Boolean> isSelectAllLiveData;//是否选择所有
+    private MutableLiveData<Integer> currentPagerLiveData;//当前页面
     public AlbumDatabase albumDatabase;
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
     public TimeViewModel timeViewModel;
 
-    public MutableLiveData<ArrayList<FragmentBean>> getFragmentMutableLiveData() {
-        if (fragmentMutableLiveData == null) {
-            fragmentMutableLiveData = new MutableLiveData<>();
-            fragmentMutableLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<ArrayList<FragmentBean>> getFragmentLiveData() {
+        if (fragmentLiveData == null) {
+            fragmentLiveData = new MutableLiveData<>();
+            fragmentLiveData.setValue(new ArrayList<>());
         }
-        return fragmentMutableLiveData;
+        return fragmentLiveData;
     }
 
-    public void setFragmentMutableLiveData(ArrayList<FragmentBean> value){
-        getFragmentMutableLiveData().setValue(value);
+    public void setFragmentLiveData(ArrayList<FragmentBean> value){
+        getFragmentLiveData().setValue(value);
     }
 
 
-    public MutableLiveData<List<PhotoBean>> getClassifiedPhotoBeanMutableLiveData() {
-        if(classifiedPhotoBeanMutableLiveData == null){
-            classifiedPhotoBeanMutableLiveData = new MutableLiveData<>();
-            classifiedPhotoBeanMutableLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<List<PhotoBean>> getPhotoBeansLiveData() {
+        if(photoBeansLiveData == null){
+            photoBeansLiveData = new MutableLiveData<>();
+            photoBeansLiveData.setValue(new ArrayList<>());
         }
-        return classifiedPhotoBeanMutableLiveData;
+        return photoBeansLiveData;
     }
 
-    public void setClassifiedPhotoBeanMutableLiveData(List<PhotoBean> value){
-        getClassifiedPhotoBeanMutableLiveData().setValue(value);
+    public void setPhotoBeansLiveData(List<PhotoBean> value){
+        Collections.sort(value);
+        Log.d("hi", "v:" + value.size());
+        getPhotoBeansLiveData().setValue(value);
     }
 
-    public MutableLiveData<WorthStoreUtil.MODE> getModeMutableLiveData() {
-        if (modeMutableLiveData == null) {
-            modeMutableLiveData = new MutableLiveData<>();
-            modeMutableLiveData.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+    public MutableLiveData<WorthStoreUtil.MODE> getModeLiveData() {
+        if (modeLiveData == null) {
+            modeLiveData = new MutableLiveData<>();
+            modeLiveData.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
         }
-        return modeMutableLiveData;
+        return modeLiveData;
     }
 
-    public void setModeMutableLiveData(WorthStoreUtil.MODE value) {
+    public void setModeLiveData(WorthStoreUtil.MODE value) {
         photoViewModel.resetSelectChangeCount();
-        getModeMutableLiveData().setValue(value);
+        getModeLiveData().setValue(value);
     }
 
-    public MutableLiveData<Boolean> getIsSelectAllMutableLiveData() {
-        if(isSelectAllMutableLiveData == null){
-            isSelectAllMutableLiveData = new MutableLiveData<>();
-            isSelectAllMutableLiveData.setValue(false);
+    public MutableLiveData<Boolean> getIsSelectAllLiveData() {
+        if(isSelectAllLiveData == null){
+            isSelectAllLiveData = new MutableLiveData<>();
+            isSelectAllLiveData.setValue(false);
         }
-        return isSelectAllMutableLiveData;
+        return isSelectAllLiveData;
     }
 
-    public void setIsSelectAllMutableLiveData(boolean value) {
-        getIsSelectAllMutableLiveData().setValue(value);
+    public void setIsSelectAllLiveData(boolean value) {
+        getIsSelectAllLiveData().setValue(value);
     }
 
     public void setIsSelectAllToOtherViewModel(){
-        switch (getCurrentPagerMutableLiveData().getValue()){
+        switch (getCurrentPagerLiveData().getValue()){
             case photoPager:
-                photoViewModel.setIsSelectAllGroupFromMainViewMode(getIsSelectAllMutableLiveData().getValue());break;
+                photoViewModel.setIsSelectAllGroupFromMainViewMode(getIsSelectAllLiveData().getValue());break;
             case albumPager:break;
             case timePager:break;
         }
     }
 
-    public void setPhotoViewModelListData(List<Object> resList){
-        photoViewModel.setClassifiedResListMutableLiveData(resList);
-    }
-
-    public void setPhotoViewModelMapData(Map<String,List<PhotoBean>> resMap){
-        photoViewModel.setClassifiedResMapMutableLiveData(resMap);
-    }
-
-    public void setPhotoViewModelMapNumData(Map<String, PhotoSelectedNumBean> resNumMap){
-        photoViewModel.setClassifiedResNumMapMutableLiveData(resNumMap);
-    }
-
-    public MutableLiveData<Integer> getCurrentPagerMutableLiveData() {
-        if(currentPagerMutableLiveData == null){
-            currentPagerMutableLiveData = new MutableLiveData<>();
-            currentPagerMutableLiveData.setValue(0);
+    public MutableLiveData<Integer> getCurrentPagerLiveData() {
+        if(currentPagerLiveData == null){
+            currentPagerLiveData = new MutableLiveData<>();
+            currentPagerLiveData.setValue(0);
         }
-        return currentPagerMutableLiveData;
+        return currentPagerLiveData;
     }
 
-    public void setCurrentPagerMutableLiveData(int value) {
-        getCurrentPagerMutableLiveData().setValue(value);
+    public void setCurrentPagerLiveData(int value) {
+        getCurrentPagerLiveData().setValue(value);
     }
 
     public AlbumDatabase getAlbumDatabase() {

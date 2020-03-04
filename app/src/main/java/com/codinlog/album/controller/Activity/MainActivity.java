@@ -1,13 +1,13 @@
 package com.codinlog.album.controller.Activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -39,7 +39,6 @@ import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
-import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
@@ -55,7 +54,6 @@ import java.util.stream.Collectors;
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
 import static com.codinlog.album.util.WorthStoreUtil.REQUEST_TAKE_PHOTO;
-import static com.codinlog.album.util.WorthStoreUtil.isFirstScanner;
 import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
 import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 
@@ -95,7 +93,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
-        viewModel.setFragmentMutableLiveData(fragmentBeans);
+        viewModel.setFragmentLiveData(fragmentBeans);
         viewModel.albumDatabase = AlbumDatabase.getInstance();
         viewModel.albumViewModel.albumDAO = viewModel.albumDatabase.getAlbumDAO();
         viewModel.albumViewModel.albumItemDAO = viewModel.albumDatabase.getAlbumItemDAO();
@@ -107,18 +105,16 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
     @Override
     protected void doInitListener() {
-        viewModel.getFragmentMutableLiveData().observe(this, fragmentBeans -> {
+        viewModel.getFragmentLiveData().observe(this, fragmentBeans -> {
             if (mainVPAdapter == null)
                 return;
             mainVPAdapter.setList(MainActivity.this.fragmentBeans);
             mainVPAdapter.notifyDataSetChanged();
         });
-        viewModel.getClassifiedPhotoBeanMutableLiveData().observe(this, photoBeans -> {
-            viewModel.setPhotoViewModelListData(DataStoreUtil.getInstance().getClassifiedPhotoResList());
-            viewModel.setPhotoViewModelMapData(DataStoreUtil.getInstance().getClassifiedPhotoResMap());
-            viewModel.setPhotoViewModelMapNumData(DataStoreUtil.getInstance().getClassifiedPhotoResNumMap());
+        viewModel.getPhotoBeansLiveData().observe(this, it -> {
+            viewModel.photoViewModel.setClassifiedData(it);
         });
-        viewModel.getModeMutableLiveData().observe(this, mode -> {
+        viewModel.getModeLiveData().observe(this, mode -> {
             binding.viewPager.setCanScroll(mode == MODE_NORMAL);
             binding.bottomNavigation.getMenu().getItem(1).setChecked(true);
             binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
@@ -126,12 +122,12 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
             binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
         });
-        viewModel.getIsSelectAllMutableLiveData().observe(this, aBoolean -> binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel) : getString(R.string.btn_all)));
-        viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().observe(this, integers -> {
-            if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+        viewModel.getIsSelectAllLiveData().observe(this, aBoolean -> binding.bottomNavigation.getMenu().getItem(2).setTitle(aBoolean ? getString(R.string.btn_all_cancel) : getString(R.string.btn_all)));
+        viewModel.photoViewModel.getSelectedPhotoBean().observe(this, integers -> {
+            if (viewModel.getModeLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
                 binding.topBarSelectNotice.setText(String.format(getString(R.string.top_bar_select_notice), integers == null ? 0 : integers.size()));
         });
-        viewModel.getCurrentPagerMutableLiveData().observe(this, integer -> {
+        viewModel.getCurrentPagerLiveData().observe(this, integer -> {
             switch (integer) {
                 case WorthStoreUtil.photoPager:
                     break;
@@ -145,10 +141,12 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
+
             @Override
             public void onPageSelected(int position) {
-                viewModel.setCurrentPagerMutableLiveData(position);
+                viewModel.setCurrentPagerLiveData(position);
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -156,7 +154,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         binding.bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.menu_addto_album:
-                    if (viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().size() <= 0) {
+                    if (viewModel.photoViewModel.getSelectedPhotoBean().getValue().size() <= 0) {
                         Toast.makeText(MainActivity.this, getString(R.string.choice_item), Toast.LENGTH_SHORT).show();
                         break;
                     }
@@ -168,52 +166,44 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                     dialog.dismiss();
                                 }
                             })
-                            .setBtnOkListener(new CommonListener() {
-                                @Override
-                                public void handleEvent(Object o) {
-                                    AlbumDialog dialog = (AlbumDialog) o;
-                                    String albumName = dialog.getInputContent().trim();
-                                    if ("".equals(albumName))
-                                        Toast.makeText(MainActivity.this, getString(R.string.enter_album_name), Toast.LENGTH_SHORT).show();
-                                    else {
-//                                        List<PhotoBean> beans = viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().stream()
-//                                                .sorted(Comparator.comparing(PhotoBean::getTokenDate).reversed()).collect(Collectors.toList());
-                                        AlbumEntity albumEntity = new AlbumEntity();
-                                        albumEntity.setAlbumName(albumName);
-                                        albumEntity.setDate(new Date());
-                                        viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue().forEach(
-                                                it-> {
-                                                    if(albumEntity.getPhotoBean() == null)
-                                                        albumEntity.setPhotoBean(it);
-                                                    if(it.getTokenDate() > albumEntity.getPhotoBean().getTokenDate())
-                                                        albumEntity.setPhotoBean(it);
-                                                }
-                                        );
-                                        viewModel.albumViewModel.queryByAlbumId(albumEntity.hashCode(), new CommonListener() {
-                                            @Override
-                                            public void handleEvent(Object o) {
-                                                if (o == null) {
-                                                    viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
-                                                        @Override
-                                                        public void handleEvent(Object o) {
-                                                            if (o != null && ((List<Long>) o).size() > 0)
-                                                                Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                                } else {
-                                                    viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBeanMutableLiveData().getValue(), new CommonListener() {
-                                                        @Override
-                                                        public void handleEvent(Object o) {
-                                                            if (o != null && ((List<Long>) o).size() > 0)
-                                                                Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-                                                }
-                                                viewModel.setModeMutableLiveData(MODE_NORMAL);
-                                                dialog.dismiss();
+                            .setBtnOkListener(o -> {
+                                AlbumDialog dialog = (AlbumDialog) o;
+                                String albumName = dialog.getInputContent().trim();
+                                if ("".equals(albumName))
+                                    Toast.makeText(MainActivity.this, getString(R.string.enter_album_name), Toast.LENGTH_SHORT).show();
+                                else {
+                                    AlbumEntity albumEntity = new AlbumEntity();
+                                    albumEntity.setAlbumName(albumName);
+                                    albumEntity.setDate(new Date());
+                                    viewModel.photoViewModel.getSelectedPhotoBean().getValue().forEach(
+                                            it -> {
+                                                if (albumEntity.getPhotoBean() == null)
+                                                    albumEntity.setPhotoBean(it);
+                                                if (it.getTokenDate() > albumEntity.getPhotoBean().getTokenDate())
+                                                    albumEntity.setPhotoBean(it);
                                             }
-                                        });
-                                    }
+                                    );
+                                    viewModel.albumViewModel.queryByAlbumId(albumEntity.hashCode(), o1 -> {
+                                        if (o1 == null) {
+                                            viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBean().getValue(), new CommonListener() {
+                                                @Override
+                                                public void handleEvent(Object o1) {
+                                                    if (o1 != null && ((List<Long>) o1).size() > 0)
+                                                        Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        } else {
+                                            viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedPhotoBean().getValue(), new CommonListener() {
+                                                @Override
+                                                public void handleEvent(Object o1) {
+                                                    if (o1 != null && ((List<Long>) o1).size() > 0)
+                                                        Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                        viewModel.setModeLiveData(MODE_NORMAL);
+                                        dialog.dismiss();
+                                    });
                                 }
                             })
                             .setNoticeAdapterData(viewModel.albumViewModel.getAlbumEntityLiveData().getValue().stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList()))
@@ -221,10 +211,10 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                     albumDialog.show();
                     break;
                 case R.id.menu_cancel:
-                    viewModel.setModeMutableLiveData(MODE_NORMAL);
+                    viewModel.setModeLiveData(MODE_NORMAL);
                     break;
                 case R.id.menu_all:
-                    viewModel.setIsSelectAllMutableLiveData(!viewModel.getIsSelectAllMutableLiveData().getValue());
+                    viewModel.setIsSelectAllLiveData(!viewModel.getIsSelectAllLiveData().getValue());
                     viewModel.setIsSelectAllToOtherViewModel();
                     break;
             }
@@ -232,9 +222,9 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
         });
 
         binding.btnOperation.setOnClickListener(v -> {
-            switch (viewModel.getCurrentPagerMutableLiveData().getValue()) {
+            switch (viewModel.getCurrentPagerLiveData().getValue()) {
                 case photoPager:
-                    if (viewModel.getModeMutableLiveData().getValue() == MODE_NORMAL) {
+                    if (viewModel.getModeLiveData().getValue() == MODE_NORMAL) {
                         try {
                             dispatchTakePictureIntent();
                         } catch (IOException e) {
@@ -274,8 +264,8 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
     @Override
     public void onBackPressed() {
-        if (viewModel.getModeMutableLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
-            viewModel.setModeMutableLiveData(MODE_NORMAL);
+        if (viewModel.getModeLiveData().getValue() == WorthStoreUtil.MODE.MODE_SELECT)
+            viewModel.setModeLiveData(MODE_NORMAL);
         else
             super.onBackPressed();
     }
@@ -293,46 +283,46 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
 
             @Override
             public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-                List<PhotoBean> photoBeans = viewModel.getClassifiedPhotoBeanMutableLiveData().getValue();
-                if (isFirstScanner)
-                    photoBeans = new ArrayList<>();
-                else
-                    ClassifyUtil.removeDeleteImage(photoBeans, true);
-                if (data != null) {
+                List<PhotoBean> photoBeans = viewModel.getPhotoBeansLiveData().getValue();
+                boolean isFirstScanning = photoBeans.isEmpty();
+                boolean isReloadData = false;
+
+                ClassifyUtil.removeDeletePhotoBeans(photoBeans, true);
+                if (data != null && data.getCount() > 0) {
                     data.moveToFirst();
                     do {
+                        boolean isContain = false;
                         String path = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[0]));
-                        boolean isContinue = true;
                         for (String str : WorthStoreUtil.disAllowScanning)
-                            if (path.contains(str)) {
-                                isContinue = false;
+                            if (isContain = path.contains(str))
                                 break;
-                            }
                         File file = new File(path);
-                        if (file.exists() && isContinue) {
+                        if (file.exists() && !isContain) {
                             String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
                             String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
                             String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
                             String width = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[4]));
                             String height = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5]));
-                            if (isFirstScanner || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
+                            if (isFirstScanning || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
+                                isReloadData = true;
                                 PhotoBean photoBean = PhotoBean.newInstance();
                                 photoBean.setPhotoPath(path);
                                 photoBean.setPhotoSize(Long.parseLong(size));
                                 photoBean.setPhotoId(Integer.parseInt(id));
                                 photoBean.setTokenDate(Long.parseLong(tokenData));
+                                photoBean.setDelete(false);
                                 photoBean.setWidth(width == null ? 0 : Integer.parseInt(width));
                                 photoBean.setHeight(height == null ? 0 : Integer.parseInt(height));
                                 photoBeans.add(photoBean);
                             }
                         }
                     } while (data.moveToNext());
-                    if (!isFirstScanner)
-                        ClassifyUtil.removeDeleteImage(photoBeans, false);
-                    else
-                        isFirstScanner = false;
-                    DataStoreUtil.getInstance().loadClassifiedRes(photoBeans);
-                    viewModel.setClassifiedPhotoBeanMutableLiveData(DataStoreUtil.getInstance().getClassifiedPhotoBeanResList());
+                    isReloadData = ClassifyUtil.removeDeletePhotoBeans(photoBeans, false) || isReloadData;
+                    Log.d("hi", "find new data" + isReloadData);
+                    if (isReloadData) {
+                        viewModel.setPhotoBeansLiveData(photoBeans);
+                        Log.d("hi", "find new data");
+                    }
                 }
             }
 
