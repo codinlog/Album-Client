@@ -19,9 +19,8 @@ import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 
-public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
+public class PhotoFragment extends BaseFragmentController<PhotoViewModel,PhotoFragmentBinding> {
     private PhotoRVAdpater photoRVAdpater;
-    private PhotoFragmentBinding photoFragmentBinding;
 
     public static PhotoFragment newInstance() {
         return new PhotoFragment();
@@ -34,13 +33,12 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     }
 
     @Override
-    protected void doInitView() {
+    public void doInitViewData() {
         viewModel = new ViewModelProvider(getActivity()).get(PhotoViewModel.class);
-        photoFragmentBinding = (PhotoFragmentBinding) super.binding;
     }
 
     @Override
-    protected void doInitListener() {
+    public void doInitListener() {
         viewModel.getDisplayData().observe(getViewLifecycleOwner(), v -> photoRVAdpater.setData(v));
         viewModel.getClassifiedDisplayDataMap().observe(getViewLifecycleOwner(), v -> viewModel.setDisplayData());
         viewModel.getSelectedPhotoBeans().observe(getViewLifecycleOwner(), integers -> photoRVAdpater.notifyChange(null, true));
@@ -52,7 +50,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
     }
 
     @Override
-    protected void doInitData() {
+    public void doInitDisplayData() {
         photoRVAdpater = new PhotoRVAdpater(position -> {
             if (viewModel.mainViewModel.getModeLiveData().getValue() != WorthStoreUtil.MODE.MODE_SELECT)
                 viewModel.mainViewModel.setModeLiveData(WorthStoreUtil.MODE.MODE_SELECT);
@@ -101,12 +99,12 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel> {
                 DataStoreUtil.getInstance().setDisplayDataList(viewModel.getClassifiedDisplayDataMap().getValue().get(groupBean));
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "photo");
-                intent.putExtra("title", groupBean.getGroupId());
+                intent.putExtra("fromValue", groupBean.getGroupId());
                 startActivity(intent);
             }
         });
-        photoFragmentBinding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.thumbnailPhotoNum));
-        photoFragmentBinding.rv.setAdapter(photoRVAdpater);
+        binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.thumbnailPhotoNum));
+        binding.rv.setAdapter(photoRVAdpater);
     }
 
     private void selectPhotoChanged(int position, boolean isGroupAll) {

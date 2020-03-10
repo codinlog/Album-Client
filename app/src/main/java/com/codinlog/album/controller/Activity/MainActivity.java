@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -64,21 +65,15 @@ import static com.codinlog.album.util.WorthStoreUtil.REQUEST_TAKE_PHOTO;
 import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
 import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 
-public class MainActivity extends BaseActivityController<MainViewModel> {
+public class MainActivity extends BaseActivityController<MainViewModel,ActivityMainBinding> {
     private ArrayList<FragmentBean> fragmentBeans;
     private MainVPAdapter mainVPAdapter;
-    private ActivityMainBinding binding;
     private String currentPhotoPath;
     private PopupMenu popupMenu;
     private Handler handler = new Handler();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void doInitVew() {
+    public void doInitViewData() {
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
@@ -95,24 +90,20 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
     }
 
     @Override
-    protected void doInitData() {
+    public void doInitDisplayData() {
         mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         fragmentBeans = new ArrayList<>();
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(TimeFragment.newInstance(), getString(R.string.time)));
         viewModel.setFragmentLiveData(fragmentBeans);
-        viewModel.albumDatabase = AlbumDatabase.getInstance();
-        viewModel.albumViewModel.albumDAO = viewModel.albumDatabase.getAlbumDAO();
-        viewModel.albumViewModel.albumItemDAO = viewModel.albumDatabase.getAlbumItemDAO();
-        viewModel.albumViewModel.setAlbumEntityLiveData();
         binding.viewPager.setAdapter(mainVPAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
         loadPhotoData();
     }
 
     @Override
-    protected void doInitListener() {
+    public void doInitListener() {
         viewModel.getFragmentLiveData().observe(this, fragmentBeans -> {
             if (mainVPAdapter == null)
                 return;
@@ -166,6 +157,12 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         Toast.makeText(MainActivity.this, getString(R.string.choice_item), Toast.LENGTH_SHORT).show();
                         break;
                     }
+                    List<AlbumEntity> albumEntities = viewModel.albumViewModel.getAlbumEntityLiveData().getValue();
+                    List<String> stringList = new ArrayList<>();
+                    if(albumEntities != null)
+                    {
+                        stringList = albumEntities.stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList());
+                    }
                     AlbumDialog albumDialog = new AlbumDialog(MainActivity.this)
                             .setBtnCancelListener(new CommonListener() {
                                 @Override
@@ -214,7 +211,7 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                                     });
                                 }
                             })
-                            .setNoticeAdapterData(viewModel.albumViewModel.getAlbumEntityLiveData().getValue().stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList()))
+                            .setNoticeAdapterData(stringList)
                             .setTvTitle(getString(R.string.addto_album));
                     albumDialog.show();
                     break;
@@ -339,8 +336,10 @@ public class MainActivity extends BaseActivityController<MainViewModel> {
                         }
                     } while (data.moveToNext());
                     isReloadData = ClassifyUtil.removeDeletePhotoBeans(photoBeans, false) || isReloadData;
-                    if (isReloadData)
+                    if (isReloadData) {
+                        Collections.sort(photoBeans);
                         viewModel.setPhotoBeansLiveData(photoBeans);
+                    }
                 }
             }
 

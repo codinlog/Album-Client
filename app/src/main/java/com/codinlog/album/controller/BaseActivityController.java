@@ -2,39 +2,35 @@ package com.codinlog.album.controller;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModel;
 
-import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
 
 import static com.codinlog.album.util.WorthStoreUtil.permission_RequestCode;
 
-public abstract class BaseActivityController<T extends ViewModel> extends AppCompatActivity {
+public abstract class BaseActivityController<T extends ViewModel,V extends ViewDataBinding> extends AppCompatActivity implements IBaseController{
     protected static final String TAG = "BaseActivityController";
     protected T viewModel;
+    protected V binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        doInitVew();
+        doInitViewData();
         checkPermissions();
     }
 
     protected void doUpgrade() {
-        Log.d(TAG, "doUpgrade: Checking New Version..............");
     }
 
     protected void checkPermissions() {
-        Log.d(TAG, "checkPermissions: ");
         ArrayList<String> permissions = new ArrayList<>();
         for (String permission : WorthStoreUtil.needPermissions) {
             int res = checkSelfPermission(permission);
@@ -45,7 +41,7 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
             requestPermissions(WorthStoreUtil.needPermissions, permission_RequestCode);
         } else {
             doInitListener();
-            doInitData();
+            doInitDisplayData();
             doUpgrade();
         }
     }
@@ -62,17 +58,12 @@ public abstract class BaseActivityController<T extends ViewModel> extends AppCom
             showPermissionDialog(notAllowPermissions);
         }else{
             doInitListener();
-            doInitData();
+            doInitDisplayData();
             doUpgrade();
         }
     }
 
-    protected abstract void doInitVew();
-
-    protected abstract void doInitListener();
 
     protected abstract void showPermissionDialog(ArrayList<Integer> notAllowPermissions);
-
-    protected abstract void doInitData();
 
 }

@@ -13,6 +13,7 @@ import androidx.navigation.ui.NavigationUI
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
+import com.codinlog.album.model.AlbumViewModel
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
@@ -20,10 +21,7 @@ import com.codinlog.album.util.DataStoreUtil
 import java.util.*
 
 
-class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
-    private lateinit var binding: ActivityAlbumPreviewBinding
-    private var menuState: AlbumPreviewViewModel.FromWhere = AlbumPreviewViewModel.FromWhere.AlbumPreview
-
+class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, ActivityAlbumPreviewBinding>() {
     override fun onStart() {
         super.onStart()
         if (viewModel.navControllerMutableLiveData.value == null) {
@@ -39,7 +37,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
         return super.onSupportNavigateUp()
     }
 
-    override fun doInitVew() {
+    override fun doInitViewData() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_album_preview)
         binding.lifecycleOwner = this
         viewModel = ViewModelProvider(this).get(AlbumPreviewViewModel::class.java)
@@ -59,48 +57,56 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
         viewModel.navControllerMutableLiveData.observe(this, androidx.lifecycle.Observer {
             it?.let {
                 it.addOnDestinationChangedListener { _, destination, _ ->
-                    menuState = when (destination.id) {
-                        R.id.album_preview -> AlbumPreviewViewModel.FromWhere.AlbumPreview
-                        R.id.album_photo_select -> AlbumPreviewViewModel.FromWhere.SelectPreview
-                        else -> AlbumPreviewViewModel.FromWhere.AlbumPreview
+                    if(viewModel.fromWhere != AlbumPreviewViewModel.FromWhere.PhotoPreview){
+                        viewModel.fromWhere = when (destination.id) {
+                            R.id.album_photo_preview -> AlbumPreviewViewModel.FromWhere.AlbumPreview
+                            R.id.album_photo_select -> AlbumPreviewViewModel.FromWhere.SelectPreview
+                            else -> AlbumPreviewViewModel.FromWhere.None
+                        }
                     }
-                    viewModel.setDisplayTitle(menuState)
+                    viewModel.setDisplayTitle()
                     invalidateOptionsMenu()
                 }
             }
         })
-        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer{
+        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer {
             supportActionBar!!.title = it
         })
     }
 
     override fun showPermissionDialog(notAllowPermissions: ArrayList<Int>?) {}
 
-    override fun doInitData() {
-        when (intent.getStringExtra("from")) {
-            "album" -> {
-                viewModel.queryAlbumItemByAlbumEntity(intent.getParcelableExtra("albumEntity"))
-                viewModel.setDisplayTitle(AlbumPreviewViewModel.FromWhere.AlbumPreview)
-            }
-            "photo" -> {
-                Log.d("title","nt" + intent.getStringExtra("title"))
-                viewModel.albumDisplayViewModel?.setDisplayData(DataStoreUtil.getInstance().displayDataList)
-                viewModel.setDisplayTitle(AlbumPreviewViewModel.FromWhere.PhotoPreview,intent.getStringExtra("title"))
-            }
+    override fun doInitDisplayData() {
+        val from = when (intent.getStringExtra("from")) {
+            "album" -> From(intent.getParcelableExtra("fromValue"), AlbumPreviewViewModel.FromWhere.AlbumPreview)
+            "photo" -> From(intent.getStringExtra("fromValue"), AlbumPreviewViewModel.FromWhere.PhotoPreview)
+            else -> From(intent.getStringExtra("fromValue"), AlbumPreviewViewModel.FromWhere.None)
         }
+        viewModel.handOutData(from.fromValue,from.fromWhere)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        if (menuState == AlbumPreviewViewModel.FromWhere.AlbumPreview) {
-            menu?.findItem(R.id.album_photo_select)?.isVisible = true
-            menu?.findItem(R.id.album_slide_play)?.isVisible = true
-            menu?.findItem(R.id.album_preview)?.isVisible = false
-        } else if (menuState == AlbumPreviewViewModel.FromWhere.SelectPreview) {
-            menu?.findItem(R.id.album_photo_select)?.isVisible = false
-            menu?.findItem(R.id.album_slide_play)?.isVisible = false
-            menu?.findItem(R.id.album_preview)?.isVisible = true
-        }else if(menuState == AlbumPreviewViewModel.FromWhere.PhotoPreview){
-
+        when (viewModel.fromWhere) {
+            AlbumPreviewViewModel.FromWhere.AlbumPreview -> {
+                menu?.findItem(R.id.album_photo_select)?.isVisible = true
+                menu?.findItem(R.id.album_slide_play)?.isVisible = true
+                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+            }
+            AlbumPreviewViewModel.FromWhere.SelectPreview -> {
+                menu?.findItem(R.id.album_photo_select)?.isVisible = false
+                menu?.findItem(R.id.album_slide_play)?.isVisible = false
+                menu?.findItem(R.id.album_photo_preview)?.isVisible = true
+            }
+            AlbumPreviewViewModel.FromWhere.PhotoPreview -> {
+                menu?.findItem(R.id.album_photo_select)?.isVisible = false
+                menu?.findItem(R.id.album_slide_play)?.isVisible = true
+                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+            }
+            else -> {
+                menu?.findItem(R.id.album_photo_select)?.isVisible = false
+                menu?.findItem(R.id.album_slide_play)?.isVisible = false
+                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+            }
         }
         return super.onPrepareOptionsMenu(menu)
     }
@@ -113,11 +119,11 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
                     val intent = Intent(this, AlbumSlidePlayActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.album_preview -> {
+                R.id.album_photo_preview -> {
                     return onSupportNavigateUp()
                 }
                 android.R.id.home -> {
-                    if (it.currentDestination?.id == R.id.album_preview)
+                    if (it.currentDestination?.id == R.id.album_photo_preview)
                         finish()
                     backNotice(it)
                     return true
@@ -129,7 +135,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.album_preview,menu)
+        menuInflater.inflate(R.menu.album_preview, menu)
         return true
     }
 
@@ -143,9 +149,9 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
         finish()
     }
 
-    private fun backNotice(it : NavController) {
-        if(viewModel.albumPhotoSelectViewModel?.selectData?.value?.size!! > 0){
-            var builder = AlertDialog.Builder(this)
+    private fun backNotice(it: NavController) {
+        if (viewModel.albumPhotoSelectViewModel?.selectData?.value?.size!! > 0) {
+            val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.notice))
                     .setCancelable(false)
                     .setMessage(getString(R.string.cancel_select))
@@ -154,14 +160,16 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel>() {
                         it.navigateUp()
                         viewModel.resetSelectData()
                     }
-                    .setNegativeButton(R.string.btn_cancel) { dialog, _ ->  dialog.dismiss()}
+                    .setNegativeButton(R.string.btn_cancel) { dialog, _ -> dialog.dismiss() }
             builder.show()
-        }
-        else
+        } else
             it.navigateUp()
     }
+
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.actitivtyin, R.anim.activityout)
     }
 }
+
+data class From(val fromValue: Any, val fromWhere: AlbumPreviewViewModel.FromWhere)

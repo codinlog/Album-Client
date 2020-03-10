@@ -26,7 +26,6 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<WorthStoreUtil.MODE> modeLiveData;//选择模式
     private MutableLiveData<Boolean> isSelectAllLiveData;//是否选择所有
     private MutableLiveData<Integer> currentPagerLiveData;//当前页面
-    public AlbumDatabase albumDatabase;
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
     public TimeViewModel timeViewModel;
@@ -53,7 +52,6 @@ public class MainViewModel extends ViewModel {
     }
 
     public void setPhotoBeansLiveData(List<PhotoBean> value){
-        Collections.sort(value);
         getPhotoBeansLiveData().setValue(value);
     }
 
@@ -112,13 +110,5 @@ public class MainViewModel extends ViewModel {
 
     public void setCurrentPagerLiveData(int value) {
         getCurrentPagerLiveData().setValue(value);
-    }
-
-    public AlbumDatabase getAlbumDatabase() {
-        return albumDatabase;
-    }
-
-    public void setAlbumDatabase(AlbumDatabase albumDatabase) {
-        this.albumDatabase = albumDatabase;
     }
 }

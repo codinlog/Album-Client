@@ -1,11 +1,13 @@
 package com.codinlog.album.model;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.dao.AlbumDAO;
 import com.codinlog.album.dao.AlbumItemDAO;
+import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
 import com.codinlog.album.listener.CommonListener;
@@ -25,57 +27,65 @@ public class AlbumViewModel extends ViewModel {
 
     private LiveData<List<AlbumEntity>> albumEntityLiveData;
     public MainViewModel mainViewModel;
-    public AlbumDAO albumDAO;
-    public AlbumItemDAO albumItemDAO;
+    private AlbumDAO albumDAO;
+    private AlbumItemDAO albumItemDAO;
 
     public LiveData<List<AlbumEntity>> getAlbumEntityLiveData() {
+        if(albumEntityLiveData == null){
+            albumEntityLiveData = getAlbumDAO().queryAllAlbum();
+        }
         return albumEntityLiveData;
     }
 
-    public void setAlbumEntityLiveData() {
-        albumEntityLiveData = albumDAO.queryAllAlbum();
+    public AlbumDAO getAlbumDAO() {
+        if(albumDAO == null)
+            albumDAO = AlbumDatabase.getInstance().getAlbumDAO();
+        return albumDAO;
     }
 
+    public AlbumItemDAO getAlbumItemDAO() {
+        if(albumItemDAO == null)
+            albumItemDAO = AlbumDatabase.getInstance().getAlbumItemDAO();
+        return albumItemDAO;
+    }
 
     public void insertAlbum(AlbumEntity... albumEntities){
-        new AlbumInsertDBUtil(albumDAO).execute(albumEntities);
+        new AlbumInsertDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
     public void deleteAlbum(AlbumEntity... albumEntities){
-        new AlbumDeleteDBUtil(albumDAO).execute(albumEntities);
+        new AlbumDeleteDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
     public void queryAlbum(){
-        new AlbumQueryDBUtil(albumDAO).execute();
+        new AlbumQueryDBUtil(getAlbumDAO()).execute();
     }
 
     public void queryByAlbumId(int albumId, CommonListener commonListener){
-        new AlbumQueryByAlbumIdDBUtil(albumDAO,commonListener).execute(albumId);
+        new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(),commonListener).execute(albumId);
     }
 
     public void updateAlbum(AlbumEntity... albumEntities){
-        new AlbumUpdateDBUtil(albumDAO).execute(albumEntities);
+        new AlbumUpdateDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
     public void insertAlbumWithPhotoBeans(AlbumEntity albumEntity,List<PhotoBean> photoBeans,CommonListener commonListener){
-        List<AlbumItemEntity> albumItemEntities = photoBeans.stream().map(v -> {
+        new AlbumInsertWithPhotoBeansDBUtil(albumDAO,getAlbumItemDAO(),albumEntity,commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
             albumItemEntity.setUuid((v.getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             return albumItemEntity;
-        }).collect(Collectors.toList());
-        new AlbumInsertWithPhotoBeansDBUtil(albumDAO,albumItemDAO,albumEntity,commonListener).execute( albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
+        }).toArray(AlbumItemEntity[]::new));
     }
 
     public void insertExistAlbumWithPhotoBeans(AlbumEntity albumEntity,List<PhotoBean> photoBeans,CommonListener commonListener){
-        List<AlbumItemEntity> albumItemEntities = photoBeans.stream().map(v -> {
+        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO,getAlbumItemDAO(),albumEntity,commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
             albumItemEntity.setUuid((v.getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             return albumItemEntity;
-        }).collect(Collectors.toList());
-        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO,albumItemDAO,albumEntity,commonListener).execute(albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
+        }).toArray(AlbumItemEntity[]::new));
     }
 }

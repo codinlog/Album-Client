@@ -17,8 +17,7 @@ import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.Objects;
 
-public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
-    private AlbumFragmentBinding albumFragmentBinding;
+public class AlbumFragment extends BaseFragmentController<AlbumViewModel,AlbumFragmentBinding> {
     private AlbumRVAdapter albumRVAdapter;
 
     public static AlbumFragment newInstance() {
@@ -31,29 +30,28 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel> {
     }
 
     @Override
-    protected void doInitView() {
-        viewModel = new ViewModelProvider(Objects.requireNonNull(getActivity())).get(AlbumViewModel.class);
-        albumFragmentBinding = (AlbumFragmentBinding) super.binding;
+    public void doInitViewData() {
+        viewModel = new ViewModelProvider(getActivity()).get(AlbumViewModel.class);
     }
 
     @Override
-    protected void doInitListener() {
+    public void doInitListener() {
         viewModel.getAlbumEntityLiveData().observe(getViewLifecycleOwner(), albumEntities -> albumRVAdapter.setAlbumEntities(albumEntities));
     }
 
     @Override
-    protected void doInitData() {
+    public void doInitDisplayData() {
         albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
             @Override
             public void handleEvent(int position) {
                 DataStoreUtil.getInstance().setAllDisplayDataList(viewModel.mainViewModel.getPhotoBeansLiveData().getValue());
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
-                intent.putExtra("albumEntity", viewModel.getAlbumEntityLiveData().getValue().get(position));
+                intent.putExtra("fromValue", viewModel.getAlbumEntityLiveData().getValue().get(position));
                 startActivity(intent);
             }
         });
-        albumFragmentBinding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.albumItemNum));
-        albumFragmentBinding.rv.setAdapter(albumRVAdapter);
+        binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.albumItemNum));
+        binding.rv.setAdapter(albumRVAdapter);
     }
 }

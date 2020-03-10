@@ -15,27 +15,14 @@ import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
 import com.codinlog.album.util.WorthStoreUtil
 
 
-class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewModel>() {
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-                AlbumPhotoSelectFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
-    }
-
+class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewModel, FragmentPhotoSelectBinding>() {
     private var currentPosition = 0
-
-    private lateinit var fragmentPhotoSelectBinding : FragmentPhotoSelectBinding
-    private var albumPhotoSelectRVAdapter : AlbumPhotoSelectRVAdapter? = null
-
+    private var albumPhotoSelectRVAdapter: AlbumPhotoSelectRVAdapter? = null
     override fun getLayoutId(): Int {
         return R.layout.fragment_photo_select
     }
 
-    override fun doInitView() {
-        fragmentPhotoSelectBinding = super.binding as FragmentPhotoSelectBinding
+    override fun doInitViewData() {
         viewModel = activity?.let { ViewModelProvider(it).get(AlbumPhotoSelectViewModel::class.java) }
     }
 
@@ -47,25 +34,30 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
         })
         viewModel.selectData.observe(viewLifecycleOwner, Observer {
             albumPhotoSelectRVAdapter?.let {
-                it.notifyItemChanged(currentPosition,"payload")
-                viewModel.albumPreviewViewModel?.setDisplayTitle(AlbumPreviewViewModel.FromWhere.SelectPreview)
+                it.notifyItemChanged(currentPosition, "payload")
+                viewModel.albumPreviewViewModel?.setDisplayTitle()
             }
         })
     }
 
-    override fun doInitData() {
+    override fun doInitDisplayData() {
         albumPhotoSelectRVAdapter = AlbumPhotoSelectRVAdapter(CommonListener {
             var position = it as Int
             currentPosition = position
-            viewModel.addSelectData(position,null)
+            viewModel.addSelectData(position, null)
         }, object : PhotoGroupListener {
             override fun handleEvent(o: Any) {}
             override fun handleEvent(position: Int, isChecked: Boolean) {
                 currentPosition = position
-                viewModel.addSelectData(position,isChecked)
+                viewModel.addSelectData(position, isChecked)
             }
         })
-        fragmentPhotoSelectBinding.rv.layoutManager = GridLayoutManager(context, WorthStoreUtil.thumbnailPhotoNum)
-        fragmentPhotoSelectBinding.rv.adapter = albumPhotoSelectRVAdapter
+        binding.rv.layoutManager = GridLayoutManager(context, WorthStoreUtil.thumbnailPhotoNum)
+        binding.rv.adapter = albumPhotoSelectRVAdapter
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = AlbumPhotoSelectFragment()
     }
 }

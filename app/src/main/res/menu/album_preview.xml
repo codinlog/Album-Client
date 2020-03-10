@@ -15,7 +15,7 @@
         android:visible="true"
         app:showAsAction="always" />
     <item
-        android:id="@+id/album_preview"
+        android:id="@+id/album_photo_preview"
         android:icon="@drawable/ic_check_black_24dp"
         android:title="@string/finish"
         android:visible="true"

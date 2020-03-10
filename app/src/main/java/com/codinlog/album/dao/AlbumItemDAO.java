@@ -20,4 +20,7 @@ public abstract class AlbumItemDAO {
 
     @Query("select * from albumItemTB where belongToId == :albumId order by tokenDate desc")
     public abstract List<AlbumItemEntity> queryAllAlbumItem(int albumId);
+
+    @Query("select * from albumItemTB where belongToId == :albumId order by tokenDate desc")
+    public abstract LiveData<List<AlbumItemEntity>> queryAllAlbum(int albumId);
 }

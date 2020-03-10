@@ -1,7 +1,6 @@
 package com.codinlog.album.util.kotlin
 
 import android.os.AsyncTask
-import android.util.Log
 import com.codinlog.album.dao.AlbumItemDAO
 import com.codinlog.album.entity.AlbumItemEntity
 import com.codinlog.album.listener.CommonListener
@@ -10,7 +9,6 @@ class AlbumItemQueryByAlbumIdDBUtil(albumItemDAO: AlbumItemDAO,commonListener: C
     private val albumItemDAO = albumItemDAO
     private val commonListener = commonListener
     override fun doInBackground(vararg params: Int?): MutableList<AlbumItemEntity>? {
-        Log.d("test","" + params[0])
         return params[0]?.let { albumItemDAO.queryAllAlbumItem(it) }
     }
 

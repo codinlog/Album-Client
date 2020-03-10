@@ -19,7 +19,7 @@ import com.codinlog.album.model.PhotoPreviewViewModel;
 
 import java.util.ArrayList;
 
-public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel> {
+public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel,ActivityPhotoPreviewBinding> {
     private ActivityPhotoPreviewBinding binding;
     private PhotoPreviewVPAdapter photoPreviewVPAdapter;
     private static boolean isShowAppBar = false;
@@ -32,7 +32,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
     }
 
     @Override
-    protected void doInitVew() {
+    public void doInitViewData() {
         viewModel = new ViewModelProvider(this).get(PhotoPreviewViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_photo_preview);
         setSupportActionBar(binding.toolbar);
@@ -42,7 +42,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
     }
 
     @Override
-    protected void doInitListener() {
+    public void doInitListener() {
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -63,7 +63,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
     }
 
     @Override
-    protected void doInitData() {
+    public void doInitDisplayData() {
         photoPreviewVPAdapter = new PhotoPreviewVPAdapter(new CommonListener() {
             @Override
             public void handleEvent(Object o) {

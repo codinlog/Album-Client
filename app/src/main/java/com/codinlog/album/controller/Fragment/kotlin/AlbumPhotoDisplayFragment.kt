@@ -10,38 +10,35 @@ import com.codinlog.album.adapter.kotlin.AlbumDisplayRVAdapter
 import com.codinlog.album.controller.Activity.PhotoPreviewActivity
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.databinding.FragmentAlbumDisplayBinding
+import com.codinlog.album.entity.AlbumItemEntity
 import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
 
 
-class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
-    companion object {
-        @JvmStatic
-        fun newInstance() = AlbumDisplayFragment()
-    }
-
-    private lateinit var fragmentAlbumDisplayBinding: FragmentAlbumDisplayBinding
+class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumDisplayViewModel, FragmentAlbumDisplayBinding>() {
     private lateinit var albumDisplayRVAdapter: AlbumDisplayRVAdapter
     override fun getLayoutId(): Int {
         return R.layout.fragment_album_display
     }
 
-    override fun doInitView() {
-        fragmentAlbumDisplayBinding = super.binding as FragmentAlbumDisplayBinding
+    override fun doInitViewData() {
         viewModel = activity?.let { ViewModelProvider(it).get(AlbumDisplayViewModel::class.java) }
     }
 
     override fun doInitListener() {
         viewModel.displayData.observe(viewLifecycleOwner, Observer {
-            albumDisplayRVAdapter?.photoBeans = it
+            albumDisplayRVAdapter.photoBeans = it
+        })
+        viewModel.data?.observe(viewLifecycleOwner, Observer {
+            albumDisplayRVAdapter.photoBeans = it.map {i -> i.photoBean}.toList()
         })
     }
 
-    override fun doInitData() {
+    override fun doInitDisplayData() {
         albumDisplayRVAdapter = AlbumDisplayRVAdapter(CommonListener {
-            var position = it as Int
+            val position = it as Int
             when (viewModel.albumPreviewViewModel?.currentModelMutableLiveData?.value) {
                 WorthStoreUtil.MODE.MODE_NORMAL -> {
                     val intent = Intent(context, PhotoPreviewActivity::class.java)
@@ -53,10 +50,15 @@ class AlbumDisplayFragment : BaseFragmentController<AlbumDisplayViewModel>() {
 
                 }
             }
-        }, CommonListener{
+        }, CommonListener {
 
         })
-        fragmentAlbumDisplayBinding.rv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        fragmentAlbumDisplayBinding.rv.adapter = albumDisplayRVAdapter
+        binding.rv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.rv.adapter = albumDisplayRVAdapter
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = AlbumPhotoDisplayFragment()
     }
 }

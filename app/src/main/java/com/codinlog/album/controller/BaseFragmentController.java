@@ -12,10 +12,9 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 
-public abstract class BaseFragmentController<T extends ViewModel> extends Fragment {
+public abstract class BaseFragmentController<T extends ViewModel,V extends ViewDataBinding>  extends Fragment implements IBaseController   {
     protected T viewModel;
-    protected ViewDataBinding binding;
-
+    protected V binding;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,12 +25,9 @@ public abstract class BaseFragmentController<T extends ViewModel> extends Fragme
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        doInitView();
+        doInitViewData();
         doInitListener();
-        doInitData();
+        doInitDisplayData();
     }
     protected abstract int getLayoutId();
-    protected abstract void doInitView();
-    protected abstract void doInitListener();
-    protected abstract void doInitData();
 }
