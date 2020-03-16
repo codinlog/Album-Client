@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -29,6 +30,9 @@ public class AlbumEntity implements Parcelable{
     @NonNull
     @ColumnInfo(name = "albumName")
     private String albumName;
+
+    @Ignore
+    private boolean isSelect = false;
 
     @Embedded
     private PhotoBean photoBean;
@@ -75,6 +79,14 @@ public class AlbumEntity implements Parcelable{
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
         setAlbumId(this.hashCode());
+    }
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 
     public PhotoBean getPhotoBean() {

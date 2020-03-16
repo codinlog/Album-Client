@@ -1,10 +1,8 @@
 package com.codinlog.album.model.kotlin
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.dao.AlbumItemDAO
 import com.codinlog.album.database.AlbumDatabase
 import com.codinlog.album.entity.AlbumEntity
@@ -13,7 +11,6 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
 import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil
-import java.util.*
 
 class AlbumPreviewViewModel : ViewModel() {
     enum class FromWhere {
@@ -32,8 +29,8 @@ class AlbumPreviewViewModel : ViewModel() {
     private fun queryAlbumItemByAlbumEntity(value: AlbumEntity) {
         AlbumItemQueryByAlbumIdDBUtil(albumItemDAO, CommonListener { o ->
             val displayData = (o as List<out AlbumItemEntity>).map { it.photoBean }.toList()
-            albumDisplayViewModel?.setDisplayData(displayData)
-            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().allDisplayDataList.filter { i ->
+            //albumDisplayViewModel?.setDisplayData(displayData)
+            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().allDisplayData.filter { i ->
                 displayData.all { t ->
                     t.hashCode() != i.hashCode()
                 }
@@ -45,9 +42,8 @@ class AlbumPreviewViewModel : ViewModel() {
         this.fromValue = fromValue
         this.fromWhere = fromWhere
         when (fromWhere) {
-            FromWhere.PhotoPreview -> albumDisplayViewModel?.setDisplayData(DataStoreUtil.getInstance().displayDataList)
-            FromWhere.AlbumPreview -> albumDisplayViewModel?.data = albumItemDAO.queryAllAlbum((fromValue as AlbumEntity).albumId)//queryAlbumItemByAlbumEntity(fromValue as AlbumEntity)
-            else -> albumDisplayViewModel?.setDisplayData(listOf())
+            FromWhere.PhotoPreview -> albumDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().displayData)
+            FromWhere.AlbumPreview -> albumDisplayViewModel?.displayData = albumItemDAO.queryAllAlbumPhotoItem((fromValue as AlbumEntity).albumId)
         }
         setDisplayTitle()
     }
@@ -74,7 +70,7 @@ class AlbumPreviewViewModel : ViewModel() {
             i?.forEach { t ->
                 t.isSelected = false
             }
-            i?.clear()
+            return@let i?.clear()
         }
     }
 }

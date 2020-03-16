@@ -74,7 +74,7 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var imageView: ImageView = v.findViewById(R.id.iv)
-        var checkBox: CheckBox = v.findViewById(R.id.checkBox)
+        var checkBox: CheckBox = v.findViewById(R.id.cb)
         var v: View = v
         init {
             v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize,albumPhotoItemSize)

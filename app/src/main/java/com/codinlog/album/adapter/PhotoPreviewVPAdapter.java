@@ -48,7 +48,7 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.iv);
         }
     }
 

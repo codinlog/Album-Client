@@ -5,9 +5,7 @@ import com.codinlog.album.dao.AlbumItemDAO
 import com.codinlog.album.entity.AlbumItemEntity
 import com.codinlog.album.listener.CommonListener
 
-class AlbumItemQueryByAlbumIdDBUtil(albumItemDAO: AlbumItemDAO,commonListener: CommonListener) :AsyncTask<Int,Unit,List<AlbumItemEntity>>() {
-    private val albumItemDAO = albumItemDAO
-    private val commonListener = commonListener
+class AlbumItemQueryByAlbumIdDBUtil(private val albumItemDAO: AlbumItemDAO,private val commonListener: CommonListener) :AsyncTask<Int,Unit,List<AlbumItemEntity>>() {
     override fun doInBackground(vararg params: Int?): MutableList<AlbumItemEntity>? {
         return params[0]?.let { albumItemDAO.queryAllAlbumItem(it) }
     }

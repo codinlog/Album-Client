@@ -28,6 +28,9 @@ public abstract class AlbumDAO {
     @Query("select * from albumTB order by createDate desc")
     public abstract LiveData<List<AlbumEntity>> queryAllAlbum();
 
+    @Query("select * from albumTB order by createDate desc")
+    public abstract List<AlbumEntity> queryAllAlbumWithList();
+
     @Query("select * from albumTB where albumId= :id")
     public abstract AlbumEntity queryByAlbumId(int id);
 

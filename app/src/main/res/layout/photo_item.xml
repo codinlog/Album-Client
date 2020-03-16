@@ -18,7 +18,7 @@
         app:srcCompat="@drawable/ic_photo_black_24dp" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

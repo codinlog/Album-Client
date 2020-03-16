@@ -4,9 +4,8 @@ import android.os.AsyncTask
 import com.codinlog.album.dao.AlbumDAO
 import com.codinlog.album.entity.AlbumEntity
 
-class AlbumUpdateDBUtil (albumDAO : AlbumDAO): AsyncTask<AlbumEntity, Unit, Unit>() {
-    private  val albumDao : AlbumDAO ? = albumDAO
+class AlbumUpdateDBUtil (private val albumDAO : AlbumDAO): AsyncTask<AlbumEntity, Unit, Unit>() {
     override fun doInBackground(vararg params: AlbumEntity?) {
-        albumDao?.updateAlbum(*params)
+        albumDAO.updateAlbum(*params)
     }
 }

@@ -2,7 +2,6 @@ package com.codinlog.album.controller.Activity.kotlin
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
@@ -13,7 +12,6 @@ import androidx.navigation.ui.NavigationUI
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
-import com.codinlog.album.model.AlbumViewModel
 import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
@@ -22,6 +20,7 @@ import java.util.*
 
 
 class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, ActivityAlbumPreviewBinding>() {
+    data class From(val fromValue: Any, val fromWhere: AlbumPreviewViewModel.FromWhere)
     override fun onStart() {
         super.onStart()
         if (viewModel.navControllerMutableLiveData.value == null) {
@@ -116,6 +115,8 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
             when (item.itemId) {
                 R.id.album_photo_select -> return NavigationUI.onNavDestinationSelected(item, it)
                 R.id.album_slide_play -> {
+                    DataStoreUtil.getInstance().slidePlayData = viewModel.albumDisplayViewModel?.displayData?.value
+                            ?: listOf()
                     val intent = Intent(this, AlbumSlidePlayActivity::class.java)
                     startActivity(intent)
                 }
@@ -171,5 +172,3 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
         overridePendingTransition(R.anim.actitivtyin, R.anim.activityout)
     }
 }
-
-data class From(val fromValue: Any, val fromWhere: AlbumPreviewViewModel.FromWhere)

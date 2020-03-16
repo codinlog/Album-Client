@@ -29,7 +29,7 @@
         app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/cb"
         style="@style/Widget.AppCompat.CompoundButton.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

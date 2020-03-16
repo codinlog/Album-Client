@@ -44,4 +44,6 @@
     <string name="cancel_select">您有已选择的项目,是否取消并退出?</string>
     <string name="delete_notice">是否删除%d个项目</string>
     <string name="delete_not_all">未能删除所有项目</string>
+    <string name="img_mask">mask</string>
+    <string name="merge_album">合并相册</string>
 </resources>

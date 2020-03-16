@@ -5,9 +5,9 @@ import com.codinlog.album.bean.PhotoBean;
 import java.util.List;
 
 public class DataStoreUtil {
-    private List<PhotoBean> allDisplayDataList;
-    private List<PhotoBean> displayDataList;
-    private List<PhotoBean> slidePlayDataList;
+    private List<PhotoBean> allDisplayData;
+    private List<PhotoBean> displayData;
+    private List<PhotoBean> slidePlayData;
 
     private enum SingletonEnum{
         INSTANCE;
@@ -23,27 +23,27 @@ public class DataStoreUtil {
         return SingletonEnum.INSTANCE.getDataStoreUtil();
     }
 
-    public List<PhotoBean> getAllDisplayDataList() {
-        return allDisplayDataList;
+    public List<PhotoBean> getAllDisplayData() {
+        return allDisplayData;
     }
 
-    public void setAllDisplayDataList(List<PhotoBean> allDisplayDataList) {
-        this.allDisplayDataList = allDisplayDataList;
+    public void setAllDisplayData(List<PhotoBean> allDisplayData) {
+        this.allDisplayData = allDisplayData;
     }
 
-    public List<PhotoBean> getSlidePlayDataList() {
-        return slidePlayDataList;
+    public List<PhotoBean> getSlidePlayData() {
+        return slidePlayData;
     }
 
-    public void setSlidePlayDataList(List<PhotoBean> slidePlayDataList) {
-        this.slidePlayDataList = slidePlayDataList;
+    public void setSlidePlayData(List<PhotoBean> slidePlayData) {
+        this.slidePlayData = slidePlayData;
     }
 
-    public List<PhotoBean> getDisplayDataList() {
-        return displayDataList;
+    public List<PhotoBean> getDisplayData() {
+        return displayData;
     }
 
-    public void setDisplayDataList(List<PhotoBean> displayDataList) {
-        this.displayDataList = displayDataList;
+    public void setDisplayData(List<PhotoBean> displayData) {
+        this.displayData = displayData;
     }
 }

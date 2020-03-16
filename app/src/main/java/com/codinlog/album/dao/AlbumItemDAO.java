@@ -6,6 +6,8 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.entity.AlbumItemEntity;
 
 import java.util.List;
@@ -21,6 +23,6 @@ public abstract class AlbumItemDAO {
     @Query("select * from albumItemTB where belongToId == :albumId order by tokenDate desc")
     public abstract List<AlbumItemEntity> queryAllAlbumItem(int albumId);
 
-    @Query("select * from albumItemTB where belongToId == :albumId order by tokenDate desc")
-    public abstract LiveData<List<AlbumItemEntity>> queryAllAlbum(int albumId);
+    @Query("select photoId,photoPath,photoWidth,photoHeight,photoSize,tokenDate from albumItemTB where belongToId == :albumId order by tokenDate desc")
+    public abstract LiveData<List<PhotoBean>> queryAllAlbumPhotoItem(int albumId);
 }

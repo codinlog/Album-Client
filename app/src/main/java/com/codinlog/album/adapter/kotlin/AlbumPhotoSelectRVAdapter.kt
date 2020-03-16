@@ -32,11 +32,11 @@ class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickList
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.checkBox.visibility = View.VISIBLE
-        holder.checkBox.setOnClickListener { cbOnClickListener.handleEvent(position,holder.checkBox.isChecked) }
-        holder.imageView.setOnClickListener { ivOnClickListener.handleEvent(position) }
+        holder.cb.visibility = View.VISIBLE
+        holder.cb.setOnClickListener { cbOnClickListener.handleEvent(position,holder.cb.isChecked) }
+        holder.iv.setOnClickListener { ivOnClickListener.handleEvent(position) }
         doSelectModel(holder, position)
-        Glide.with(AlbumApplication.mContext).load(displayData[position].photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.2f).into(holder.imageView)
+        Glide.with(AlbumApplication.mContext).load(displayData[position].photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.2f).into(holder.iv)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -46,16 +46,18 @@ class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickList
             doSelectModel(holder,position)
     }
 
-    fun doSelectModel(holder: ViewHolder, position: Int) {
-        holder.checkBox.isChecked = displayData[position].isSelected
+    private fun doSelectModel(holder: ViewHolder, position: Int) {
+        holder.cb.isChecked = displayData[position].isSelected
     }
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var checkBox: CheckBox = v.findViewById(R.id.checkBox)
-        var imageView: ImageView = v.findViewById(R.id.iv)
+        var cb: CheckBox
+        var iv: ImageView
 
         init {
             v.layoutParams = ViewGroup.LayoutParams(WindowUtil.thumbnailImageSize, WindowUtil.thumbnailImageSize)
+            cb = v.findViewById(R.id.cb)
+            iv = v.findViewById(R.id.iv)
         }
     }
 }

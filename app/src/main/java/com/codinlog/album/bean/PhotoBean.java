@@ -1,5 +1,8 @@
 package com.codinlog.album.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
@@ -7,7 +10,7 @@ import androidx.room.Ignore;
 
 import java.text.SimpleDateFormat;
 
-public class PhotoBean implements Comparable{
+public class PhotoBean implements Comparable, Parcelable {
     @ColumnInfo(name = "photoPath")
     private String photoPath;                    // 路径
     @ColumnInfo(name = "photoSize")
@@ -26,6 +29,32 @@ public class PhotoBean implements Comparable{
     private int width;                 // 图片宽度
     @ColumnInfo(name = "photoHeight")
     private int height;                // 图片高度
+
+    protected PhotoBean(Parcel in) {
+        photoPath = in.readString();
+        photoSize = in.readDouble();
+        photoId = in.readInt();
+        groupId = in.readString();
+        tokenDate = in.readLong();
+        isSelected = in.readByte() != 0;
+        isDelete = in.readByte() != 0;
+        width = in.readInt();
+        height = in.readInt();
+    }
+
+    public static final Creator<PhotoBean> CREATOR = new Creator<PhotoBean>() {
+        @Override
+        public PhotoBean createFromParcel(Parcel in) {
+            return new PhotoBean(in);
+        }
+
+        @Override
+        public PhotoBean[] newArray(int size) {
+            return new PhotoBean[size];
+        }
+    };
+
+    public PhotoBean() {}
 
     @NonNull
     @Override
@@ -131,5 +160,23 @@ public class PhotoBean implements Comparable{
             return this.photoPath.equals(photoBean.getPhotoPath());
         }
         return super.equals(obj);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(photoPath);
+        parcel.writeDouble(photoSize);
+        parcel.writeInt(photoId);
+        parcel.writeString(groupId);
+        parcel.writeLong(tokenDate);
+        parcel.writeByte((byte) (isSelected ? 1 : 0));
+        parcel.writeByte((byte) (isDelete ? 1 : 0));
+        parcel.writeInt(width);
+        parcel.writeInt(height);
     }
 }

@@ -1,114 +1,134 @@
 package com.codinlog.album.model;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.codinlog.album.R;
+import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
-import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
 import static com.codinlog.album.util.WorthStoreUtil.albumPager;
 import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 import static com.codinlog.album.util.WorthStoreUtil.timePager;
 
 public class MainViewModel extends ViewModel {
-    private MutableLiveData<ArrayList<FragmentBean>> fragmentLiveData;//界面
-    private MutableLiveData<List<PhotoBean>> photoBeansLiveData;//图片数据
-    private MutableLiveData<WorthStoreUtil.MODE> modeLiveData;//选择模式
-    private MutableLiveData<Boolean> isSelectAllLiveData;//是否选择所有
-    private MutableLiveData<Integer> currentPagerLiveData;//当前页面
+    private MutableLiveData<ArrayList<FragmentBean>> fragments;//界面
+    private MutableLiveData<List<PhotoBean>> photoBeans;//图片数据
+    private MutableLiveData<WorthStoreUtil.MODE> mode;//选择模式
+    private MutableLiveData<Boolean> isSelectAll;//是否选择所有
+    private MutableLiveData<Integer> currentPager;//当前页面
+    private MutableLiveData<String> title;
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
     public TimeViewModel timeViewModel;
 
-    public MutableLiveData<ArrayList<FragmentBean>> getFragmentLiveData() {
-        if (fragmentLiveData == null) {
-            fragmentLiveData = new MutableLiveData<>();
-            fragmentLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<ArrayList<FragmentBean>> getFragments() {
+        if (fragments == null) {
+            fragments = new MutableLiveData<>();
+            fragments.setValue(new ArrayList<>());
         }
-        return fragmentLiveData;
+        return fragments;
     }
 
-    public void setFragmentLiveData(ArrayList<FragmentBean> value){
-        getFragmentLiveData().setValue(value);
+    public void setFragments(ArrayList<FragmentBean> value){
+        getFragments().setValue(value);
     }
 
-
-    public MutableLiveData<List<PhotoBean>> getPhotoBeansLiveData() {
-        if(photoBeansLiveData == null){
-            photoBeansLiveData = new MutableLiveData<>();
-            photoBeansLiveData.setValue(new ArrayList<>());
+    public MutableLiveData<String> getTitle() {
+        if(title == null){
+            title = new MutableLiveData<>();
+            title.setValue("");
         }
-        return photoBeansLiveData;
+        return title;
     }
 
-    public void setPhotoBeansLiveData(List<PhotoBean> value){
-        getPhotoBeansLiveData().setValue(value);
-    }
-
-    public MutableLiveData<WorthStoreUtil.MODE> getModeLiveData() {
-        if (modeLiveData == null) {
-            modeLiveData = new MutableLiveData<>();
-            modeLiveData.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
-        }
-        return modeLiveData;
-    }
-
-    public void setModeLiveData(WorthStoreUtil.MODE value) {
-        getModeLiveData().setValue(value);
-        resetStatus();
-    }
-
-    public void resetStatus(){
-        getIsSelectAllLiveData().setValue(false);
-        switch (getCurrentPagerLiveData().getValue()){
-            case photoPager :{
-                photoViewModel.resetSelectLiveData();
-            }break;
-            case albumPager:break;
-            case timePager:break;
-        }
-    }
-
-    public MutableLiveData<Boolean> getIsSelectAllLiveData() {
-        if(isSelectAllLiveData == null){
-            isSelectAllLiveData = new MutableLiveData<>();
-            isSelectAllLiveData.setValue(false);
-        }
-        return isSelectAllLiveData;
-    }
-
-    public void setIsSelectAllLiveData(boolean value) {
-        getIsSelectAllLiveData().setValue(value);
-    }
-
-    public void setIsSelectAllToOtherViewModel(){
-        switch (getCurrentPagerLiveData().getValue()){
+    public void setTitle() {
+        String title = "";
+        switch (getCurrentPager().getValue()) {
             case photoPager:
-                photoViewModel.selectAllGroup(!getIsSelectAllLiveData().getValue());break;
+                title = String.format(AlbumApplication.mContext.getString(R.string.top_bar_select_notice),photoViewModel.getSelectedData().getValue().size());break;
+            case albumPager:
+                title = String.format(AlbumApplication.mContext.getString(R.string.top_bar_select_notice),albumViewModel.getSelectedData().getValue().size());break;
+            case timePager:break;
+        }
+        getTitle().setValue(title);
+    }
+
+    public MutableLiveData<List<PhotoBean>> getPhotoBeans() {
+        if(photoBeans == null){
+            photoBeans = new MutableLiveData<>();
+            photoBeans.setValue(new ArrayList<>());
+        }
+        return photoBeans;
+    }
+
+    public void setPhotoBeans(List<PhotoBean> value){
+        getPhotoBeans().setValue(value);
+    }
+
+    public MutableLiveData<WorthStoreUtil.MODE> getMode() {
+        if (mode == null) {
+            mode = new MutableLiveData<>();
+            mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+        }
+        return mode;
+    }
+
+    public void setMode(WorthStoreUtil.MODE value) {
+        getMode().setValue(value);
+    }
+
+    public MutableLiveData<Boolean> getIsSelectAll() {
+        if(isSelectAll == null){
+            isSelectAll = new MutableLiveData<>();
+            isSelectAll.setValue(false);
+        }
+        return isSelectAll;
+    }
+
+    public void setIsSelectAll(boolean value) {
+        getIsSelectAll().setValue(value);
+    }
+
+
+    public MutableLiveData<Integer> getCurrentPager() {
+        if(currentPager == null){
+            currentPager = new MutableLiveData<>();
+            currentPager.setValue(0);
+        }
+        return currentPager;
+    }
+
+    public void setCurrentPager(int value) {
+        getCurrentPager().setValue(value);
+    }
+    public void setIsSelectAllToOtherViewModel(){
+        switch (getCurrentPager().getValue()){
+            case photoPager:
+                photoViewModel.selectAllGroup(!getIsSelectAll().getValue());break;
             case albumPager:break;
             case timePager:break;
         }
     }
 
-    public MutableLiveData<Integer> getCurrentPagerLiveData() {
-        if(currentPagerLiveData == null){
-            currentPagerLiveData = new MutableLiveData<>();
-            currentPagerLiveData.setValue(0);
+    public void modeChanged(){
+        if(getMode().getValue() == MODE_NORMAL)
+            getIsSelectAll().setValue(false);
+        switch (getCurrentPager().getValue()){
+            case photoPager :{
+                photoViewModel.setMode(getMode().getValue());
+            }break;
+            case albumPager: {
+                albumViewModel.setMode(getMode().getValue());
+            }break;
+            case timePager:break;
         }
-        return currentPagerLiveData;
     }
 
-    public void setCurrentPagerLiveData(int value) {
-        getCurrentPagerLiveData().setValue(value);
-    }
 }

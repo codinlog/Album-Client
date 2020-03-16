@@ -1,33 +1,43 @@
 package com.codinlog.album.model;
 
 import android.os.Handler;
-import android.util.Log;
 
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.util.ClassifyUtil;
+import com.codinlog.album.util.WorthStoreUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PhotoViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
-    private Handler handler = new Handler();
     private MutableLiveData<List<Object>> displayData; //图片+分组数据
-    private MutableLiveData<List<PhotoBean>> selectedPhotoBeans;//已选择
+    private MutableLiveData<List<PhotoBean>> selectedData;//已选择
+    private MutableLiveData<WorthStoreUtil.MODE> mode;
     private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayDataMap;
-    private Runnable classifiedRunnable;
     public MainViewModel mainViewModel;
+    private Handler handler = new Handler();
+    private Runnable classifiedRunnable;
+
+    public MutableLiveData<WorthStoreUtil.MODE> getMode() {
+        if(mode == null){
+            mode = new MediatorLiveData<>();
+            mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+        }
+        return mode;
+    }
+
+    public void setMode(WorthStoreUtil.MODE mode) {
+        getMode().setValue(mode);
+    }
 
     public MutableLiveData<List<Object>> getDisplayData() {
         if (displayData == null) {
@@ -37,12 +47,12 @@ public class PhotoViewModel extends ViewModel {
         return displayData;
     }
 
-    public MutableLiveData<List<PhotoBean>> getSelectedPhotoBeans() {
-        if (selectedPhotoBeans == null) {
-            selectedPhotoBeans = new MutableLiveData<>();
-            selectedPhotoBeans.setValue(new ArrayList<>());
+    public MutableLiveData<List<PhotoBean>> getSelectedData() {
+        if (selectedData == null) {
+            selectedData = new MutableLiveData<>();
+            selectedData.setValue(new ArrayList<>());
         }
-        return selectedPhotoBeans;
+        return selectedData;
     }
 
     public MutableLiveData<Map<GroupBean, List<PhotoBean>>> getClassifiedDisplayDataMap() {
@@ -69,7 +79,7 @@ public class PhotoViewModel extends ViewModel {
 
     public void setDisplayData() {
         getDisplayData().getValue().clear();
-        getSelectedPhotoBeans().getValue().clear();
+        getSelectedData().getValue().clear();
         List<GroupBean> groupBeans = new ArrayList<>(getClassifiedDisplayDataMap().getValue().keySet());
         Collections.sort(groupBeans);
         groupBeans.forEach(it -> {
@@ -77,11 +87,11 @@ public class PhotoViewModel extends ViewModel {
             getClassifiedDisplayDataMap().getValue().get(it).forEach(in -> {
                 getDisplayData().getValue().add(in);
                 if (in.isSelected())
-                    getSelectedPhotoBeans().getValue().add(in);
+                    getSelectedData().getValue().add(in);
             });
         });
         setMainViewModelIsSelectAll();
-        getSelectedPhotoBeans().setValue(getSelectedPhotoBeans().getValue());
+        getSelectedData().setValue(getSelectedData().getValue());
         getDisplayData().setValue(getDisplayData().getValue());
     }
 
@@ -111,20 +121,20 @@ public class PhotoViewModel extends ViewModel {
                 }
             }
         }
-        getSelectedPhotoBeans().setValue(getDisplayData().getValue().stream()
+        getSelectedData().setValue(getDisplayData().getValue().stream()
                 .filter(it -> ((it instanceof PhotoBean) && ((PhotoBean) it).isSelected()))
                 .map(it -> (PhotoBean) it).collect(Collectors.toList()));
         setMainViewModelIsSelectAll();
     }
 
 
-    public void resetSelectLiveData() {
+    public void resetSelectedData() {
         getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
             k.setSelectNum(0);
             k.setSelected(false);
             v.forEach(it -> it.setSelected(false));
         });
-        getSelectedPhotoBeans().setValue(new ArrayList<>());
+        getSelectedData().setValue(new ArrayList<>());
     }
 
     public void selectAllGroup(boolean isAllGroup) {
@@ -137,18 +147,18 @@ public class PhotoViewModel extends ViewModel {
                 k.setSelectNum(photoBeansTemp.size());
                 k.setSelected(k.getHaveNum() <= k.getSelectNum());
             });
-            getSelectedPhotoBeans().setValue(photoBeans);
-        } else resetSelectLiveData();
-        mainViewModel.setIsSelectAllLiveData(isAllGroup);
+            getSelectedData().setValue(photoBeans);
+        } else resetSelectedData();
+        mainViewModel.setIsSelectAll(isAllGroup);
     }
 
     private void setMainViewModelIsSelectAll() {
         for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
             if (!groupBean.isSelected()) {
-                mainViewModel.setIsSelectAllLiveData(false);
+                mainViewModel.setIsSelectAll(false);
                 return;
             }
         }
-        mainViewModel.setIsSelectAllLiveData(true);
+        mainViewModel.setIsSelectAll(true);
     }
 }

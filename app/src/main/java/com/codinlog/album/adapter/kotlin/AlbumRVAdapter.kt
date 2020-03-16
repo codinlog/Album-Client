@@ -10,40 +10,67 @@ import com.bumptech.glide.Glide
 import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.entity.AlbumEntity
+import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.listener.kotlin.AlbumItemListener
 import com.codinlog.album.util.WindowUtil
+import com.codinlog.album.util.WorthStoreUtil
 
-class AlbumRVAdapter(albumItemListener: AlbumItemListener) : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
-    val albumItemListener: AlbumItemListener = albumItemListener
-    var albumEntities: List<AlbumEntity> = listOf()
+class AlbumRVAdapter(private val albumItemOnClickListener: AlbumItemListener,
+                     private val albumItemLongClickListener: CommonListener)
+    : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
+    private var mode = WorthStoreUtil.MODE.MODE_NORMAL
+    var displayData: List<AlbumEntity> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var v: View = LayoutInflater.from(parent.context).inflate(R.layout.album_item, parent, false)
+        val v: View = LayoutInflater.from(parent.context).inflate(R.layout.album_item, parent, false)
         return ViewHolder(v)
     }
 
     override fun getItemCount(): Int {
-        return albumEntities.size
+        return displayData.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = albumEntities[position].albumName
-        holder.imageView.setOnClickListener { albumItemListener.handleEvent(position) }
-        Glide.with(AlbumApplication.mContext).load(albumEntities[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
+        holder.tv.text = displayData[position].albumName
+        holder.iv.setOnClickListener { albumItemOnClickListener.handleEvent(position) }
+        holder.iv.setOnLongClickListener { albumItemLongClickListener.handleEvent(position);return@setOnLongClickListener true; }
+        Glide.with(AlbumApplication.mContext).load(displayData[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
+        doSelectMode(holder, position)
     }
 
-    class ViewHolder : RecyclerView.ViewHolder {
-        var imageView: ImageView
-        var textView: TextView
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty())
+            onBindViewHolder(holder, position)
+        else
+            doSelectMode(holder, position)
+    }
 
-        constructor(v: View) : super(v) {
-            v.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4  * 5)
-            imageView = v.findViewById(R.id.imageView)
-            textView = v.findViewById(R.id.textView)
+    private fun doSelectMode(holder: ViewHolder, position: Int) {
+        when (mode) {
+            WorthStoreUtil.MODE.MODE_NORMAL -> holder.ivMask.visibility = View.INVISIBLE
+            WorthStoreUtil.MODE.MODE_SELECT -> holder.ivMask.visibility = if (displayData[position].isSelect) View.VISIBLE else View.INVISIBLE
+        }
+    }
+
+    fun setMode(mode: WorthStoreUtil.MODE) {
+        this.mode = mode;
+        notifyItemRangeChanged(0, displayData.size, "payload")
+    }
+
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        var iv: ImageView
+        var tv: TextView
+        var ivMask: ImageView
+
+        init {
+            v.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4 * 5)
+            iv = v.findViewById(R.id.iv)
+            tv = v.findViewById(R.id.tv)
+            ivMask = v.findViewById(R.id.ivMask)
         }
     }
 }
