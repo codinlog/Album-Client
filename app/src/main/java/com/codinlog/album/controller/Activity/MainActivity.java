@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
     private String currentPhotoPath;
     private PopupMenu popupMenu;
     private Handler handler = new Handler();
-    private static Object lock = new Object();
+    private static final Object lock = new Object();
 
     @Override
     public void doInitViewData() {
