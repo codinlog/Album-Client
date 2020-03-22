@@ -1,36 +1,53 @@
 package com.codinlog.album.controller.Activity.kotlin
 
-import android.net.Uri
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.view.marginLeft
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.codinlog.album.R
-import com.codinlog.album.adapter.kotlin.AlbumGalleryAdapter
+import com.codinlog.album.adapter.kotlin.AlbumSlidePlayRVAdapter
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumSlidePlayBinding
+import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.model.kotlin.AlbumSlidePlayViewModel
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WindowUtil.gallerySize
 import kotlinx.android.synthetic.main.activity_album_slide_play.*
-import java.util.*
+import java.lang.Exception
+import java.util.ArrayList
+import kotlin.properties.Delegates
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, ActivityAlbumSlidePlayBinding>() {
-    private lateinit var albumGalleryAdapter: AlbumGalleryAdapter
+    private var currentPosition: Int by Delegates.observable(0) { _, oldPos, newPos ->
+        viewModel.displayData.value.let {
+            it?.get(oldPos)?.isSelected = false
+            it?.get(newPos)?.isSelected = true
+            try {
+                albumSlidePlayRVAdapter?.notifyItemChanged(oldPos, "payload")
+                albumSlidePlayRVAdapter?.notifyItemChanged(newPos, "payload")
+            } catch (e: IndexOutOfBoundsException) {
+
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+    private lateinit var albumSlidePlayRVAdapter: AlbumSlidePlayRVAdapter
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
-        imageSwitcher.systemUiVisibility =
+        fullscreen_content.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
                         View.SYSTEM_UI_FLAG_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -44,65 +61,51 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
     }
     private var mVisible: Boolean = false
     private val mHideRunnable = Runnable { hide() }
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private val mDelayHideTouchListener = View.OnTouchListener { _, _ ->
-        if (AUTO_HIDE) {
-            delayedHide(AUTO_HIDE_DELAY_MILLIS)
-        }
-        false
-    }
-
     override fun doInitViewData() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_album_slide_play)
         viewModel = ViewModelProvider(this).get(AlbumSlidePlayViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_album_slide_play)
+        binding.lifecycleOwner = this
         binding.data = viewModel
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        mVisible = true
-        imageSwitcher.setFactory {
-            val iv = ImageView(this@AlbumSlidePlayActivity)
-            iv.scaleType = ImageView.ScaleType.FIT_CENTER
-            iv.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT)
-            return@setFactory iv
+        binding.rv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, gallerySize)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setTitle(R.string.album_slide_play)
         }
-        gallery.layoutParams = LinearLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,gallerySize)
-        gallery.setSpacing(10)
+        mVisible = true
     }
 
     override fun doInitListener() {
-        viewModel.displayData.observe(this, Observer { i->
-            albumGalleryAdapter?.let {t ->
-                t.displayData = i
+        fullscreen_content.setOnClickListener { toggle() }
+        viewModel.displayData.observe(this, Observer {
+            albumSlidePlayRVAdapter.disPlayData = it.also { it[currentPosition].isSelected = true }
+        })
+        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                val lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition()
+                if (firstVisibleItemPosition > currentPosition)
+                    currentPosition = firstVisibleItemPosition
+                else if (lastVisibleItemPosition < currentPosition)
+                    currentPosition = lastVisibleItemPosition
             }
         })
-        gallery.onItemSelectedListener = object :  AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, i: Int, p3: Long) {
-                viewModel.displayData.value?.get(i)?.let {
-                    imageSwitcher.setImageURI(Uri.parse(it.photoPath))
-                }
-            }
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-        }
-        // Set up the user interaction to manually show or hide the system UI.
-        imageSwitcher.setOnClickListener { toggle() }
-//        gallery.onItemClickListener{toggle()}
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-
-        //imageSwitcher.setOnTouchListener(mDelayHideTouchListener)
     }
 
     override fun doInitDisplayData() {
-        albumGalleryAdapter = AlbumGalleryAdapter()
-        gallery.adapter = albumGalleryAdapter
+        albumSlidePlayRVAdapter = AlbumSlidePlayRVAdapter(CommonListener { it ->
+            currentPosition = it as Int
+        })
+        binding.rv.layoutManager = LinearLayoutManager(this, HORIZONTAL, false);
+        binding.rv.adapter = albumSlidePlayRVAdapter
+        binding.rv.addItemDecoration(object : ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
+                super.getItemOffsets(outRect, itemPosition, parent)
+                outRect.left = 5
+                outRect.right = 5
+            }
+        })
         viewModel.setDisplayData(DataStoreUtil.getInstance().slidePlayData)
     }
 
@@ -128,7 +131,7 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
     }
 
     private fun show() {
-        gallery.systemUiVisibility =
+        fullscreen_content.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
@@ -141,17 +144,10 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
         mHideHandler.postDelayed(mHideRunnable, delayMillis.toLong())
     }
 
+
     override fun showPermissionDialog(notAllowPermissions: ArrayList<Int>?) {}
 
     companion object {
-        private const val AUTO_HIDE = true
-        private const val AUTO_HIDE_DELAY_MILLIS = 3000
-
-        /**
-         * Some older devices needs a small delay between UI widget updates
-         * and a change of the status and navigation bar.
-         */
         private const val UI_ANIMATION_DELAY = 300
     }
-
 }

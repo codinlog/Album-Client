@@ -5,7 +5,7 @@
     <data>
         <variable
             name="data"
-            type="com.codinlog.album.model.kotlin.AlbumDisplayViewModel" />
+            type="com.codinlog.album.model.kotlin.AlbumPhotoDisplayViewModel" />
     </data>
 
     <FrameLayout

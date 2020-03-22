@@ -14,7 +14,9 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.WindowUtil.albumPhotoItemSize
 import com.codinlog.album.util.WorthStoreUtil
 
-class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener,photoItemOnLongClickListener: CommonListener) : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
+class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: CommonListener,
+                                        private val photoItemOnLongClickListener: CommonListener)
+    : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
     private var mode: WorthStoreUtil.MODE = WorthStoreUtil.MODE.MODE_NORMAL
         set(value) {
             field = value
@@ -25,8 +27,6 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener
             field = value
             notifyDataSetChanged()
         }
-    private val photoItemOnClickListener = photoItemOnClickListener
-    private val photoItemOnLongClickListener = photoItemOnLongClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.album_photo_item, parent, false))
@@ -37,14 +37,14 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.imageView.setOnClickListener{ photoItemOnClickListener.handleEvent(position) }
-        holder.imageView.setOnLongClickListener{
+        holder.imageView.setOnClickListener { photoItemOnClickListener.handleEvent(position) }
+        holder.imageView.setOnLongClickListener {
             photoItemOnLongClickListener.handleEvent(position)
             return@setOnLongClickListener true
         }
-        if(photoBeans[position].height > 0 && photoBeans[position].width > 0){
-            var scale = albumPhotoItemSize.toFloat() / photoBeans[position].width
-            holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize,(photoBeans[position].height.toFloat() * scale).toInt())
+        if (photoBeans[position].height > 0 && photoBeans[position].width > 0) {
+            val scale = albumPhotoItemSize.toFloat() / photoBeans[position].width
+            holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, (photoBeans[position].height.toFloat() * scale).toInt())
         }
         Glide.with(AlbumApplication.mContext).load(photoBeans[position].photoPath).thumbnail(0.4f).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
         doSelectModel(holder, position)
@@ -58,7 +58,7 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener
             doSelectModel(holder, position)
     }
 
-    fun doSelectModel(holder: ViewHolder, position: Int) {
+    private fun doSelectModel(holder: ViewHolder, position: Int) {
         when (mode) {
             WorthStoreUtil.MODE.MODE_NORMAL -> {
                 holder.checkBox.visibility = View.INVISIBLE
@@ -72,13 +72,10 @@ class AlbumDisplayRVAdapter constructor(photoItemOnClickListener: CommonListener
     }
 
 
-    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        var imageView: ImageView = v.findViewById(R.id.iv)
-        var checkBox: CheckBox = v.findViewById(R.id.cb)
-        var v: View = v
-        init {
-            v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize,albumPhotoItemSize)
-        }
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var imageView: ImageView = view.findViewById(R.id.iv)
+        var checkBox: CheckBox = view.findViewById(R.id.cb)
+        var v: View = view.apply { layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, albumPhotoItemSize) }
     }
 
 }

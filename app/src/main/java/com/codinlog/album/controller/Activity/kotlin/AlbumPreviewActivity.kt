@@ -12,7 +12,7 @@ import androidx.navigation.ui.NavigationUI
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
-import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
+import com.codinlog.album.model.kotlin.AlbumPhotoDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
 import com.codinlog.album.util.DataStoreUtil
@@ -40,9 +40,10 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
         binding = DataBindingUtil.setContentView(this, R.layout.activity_album_preview)
         binding.lifecycleOwner = this
         viewModel = ViewModelProvider(this).get(AlbumPreviewViewModel::class.java)
-        viewModel.albumDisplayViewModel = ViewModelProvider(this).get(AlbumDisplayViewModel::class.java)
+        viewModel.albumPhotoDisplayViewModel = ViewModelProvider(this).get(AlbumPhotoDisplayViewModel::class.java)
         viewModel.albumPhotoSelectViewModel = ViewModelProvider(this).get(AlbumPhotoSelectViewModel::class.java)
-        viewModel.albumDisplayViewModel?.albumPreviewViewModel = viewModel
+        viewModel.albumPhotoDisplayViewModel?.albumPhotoSelectViewModel = viewModel.albumPhotoSelectViewModel
+        viewModel.albumPhotoDisplayViewModel?.albumPreviewViewModel = viewModel
         viewModel.albumPhotoSelectViewModel?.albumPreviewViewModel = viewModel
         setSupportActionBar(binding.toolbar)
         supportActionBar?.let {
@@ -115,7 +116,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
             when (item.itemId) {
                 R.id.album_photo_select -> return NavigationUI.onNavDestinationSelected(item, it)
                 R.id.album_slide_play -> {
-                    DataStoreUtil.getInstance().slidePlayData = viewModel.albumDisplayViewModel?.displayData?.value
+                    DataStoreUtil.getInstance().slidePlayData = viewModel.albumPhotoDisplayViewModel?.displayData?.value
                             ?: listOf()
                     val intent = Intent(this, AlbumSlidePlayActivity::class.java)
                     startActivity(intent)

@@ -1,6 +1,5 @@
 package com.codinlog.album.controller.Fragment.kotlin
 
-import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -11,7 +10,6 @@ import com.codinlog.album.databinding.FragmentPhotoSelectBinding
 import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.listener.PhotoGroupListener
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
-import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
 import com.codinlog.album.util.WorthStoreUtil
 
 

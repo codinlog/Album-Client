@@ -11,7 +11,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
-import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
@@ -48,14 +47,14 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                getSupportActionBar().setTitle(String.format(getString(R.string.photo_detail_title), position + 1, viewModel.getDisplayPhotoBeansMutableLiveData().getValue().size()));
+                getSupportActionBar().setTitle(String.format(getString(R.string.photo_detail_title), position + 1, viewModel.getDisplayData().getValue().size()));
             }
         });
-        viewModel.getDisplayPhotoBeansMutableLiveData().observe(this, photoBeans -> {
+        viewModel.getDisplayData().observe(this, photoBeans -> {
             photoPreviewVPAdapter.setData(photoBeans);
-            viewModel.setCurrentPositionMutableLiveData(photoBeans.indexOf(getIntent().getParcelableExtra("photoBean")));
+            viewModel.setCurrentPosition(photoBeans.indexOf(getIntent().getParcelableExtra("photoBean")));
         });
-        viewModel.getCurrentPositionMutableLiveData().observe(this, integer -> binding.viewPager.setCurrentItem(integer, false));
+        viewModel.getCurrentPosition().observe(this, integer -> binding.viewPager.setCurrentItem(integer, false));
     }
 
     @Override
@@ -86,7 +85,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
         binding.viewPager.setAdapter(photoPreviewVPAdapter);
-        viewModel.setDisplayPhotoBeansMutableLiveData(DataStoreUtil.getInstance().getAllDisplayData());
+        viewModel.setDisplayData(DataStoreUtil.getInstance().getAllDisplayData());
     }
 
     @Override

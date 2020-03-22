@@ -61,16 +61,16 @@ class AlbumRVAdapter(private val albumItemOnClickListener: AlbumItemListener,
         notifyItemRangeChanged(0, displayData.size, "payload")
     }
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var iv: ImageView
         var tv: TextView
         var ivMask: ImageView
 
         init {
-            v.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4 * 5)
-            iv = v.findViewById(R.id.iv)
-            tv = v.findViewById(R.id.tv)
-            ivMask = v.findViewById(R.id.ivMask)
+            view.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4 * 5)
+            iv = view.findViewById(R.id.iv)
+            tv = view.findViewById(R.id.tv)
+            ivMask = view.findViewById(R.id.ivMask)
         }
     }
 }

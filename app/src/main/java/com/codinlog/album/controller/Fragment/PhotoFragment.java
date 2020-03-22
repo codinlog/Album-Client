@@ -48,7 +48,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
             if (photoRVAdapter != null)
                 photoRVAdapter.setMode(mode);
             if (mode == WorthStoreUtil.MODE.MODE_NORMAL)
-                viewModel.resetSelectedData();
+                viewModel.resetDisplayData();
         });
     }
 
@@ -67,7 +67,6 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
                 if (o instanceof PhotoBean) {
                     Intent intent = new Intent(getContext(), PhotoPreviewActivity.class);
                     intent.putExtra("photoBean", (PhotoBean) o);
-                    DataStoreUtil.getInstance().setAllDisplayData(viewModel.mainViewModel.getPhotoBeans().getValue());
                     startActivity(intent);
                 }
             }

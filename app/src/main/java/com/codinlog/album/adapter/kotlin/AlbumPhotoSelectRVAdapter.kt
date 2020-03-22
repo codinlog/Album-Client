@@ -50,14 +50,14 @@ class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickList
         holder.cb.isChecked = displayData[position].isSelected
     }
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var cb: CheckBox
         var iv: ImageView
 
         init {
-            v.layoutParams = ViewGroup.LayoutParams(WindowUtil.thumbnailImageSize, WindowUtil.thumbnailImageSize)
-            cb = v.findViewById(R.id.cb)
-            iv = v.findViewById(R.id.iv)
+            view.layoutParams = ViewGroup.LayoutParams(WindowUtil.thumbnailImageSize, WindowUtil.thumbnailImageSize)
+            cb = view.findViewById(R.id.cb)
+            iv = view.findViewById(R.id.iv)
         }
     }
 }

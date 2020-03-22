@@ -10,24 +10,27 @@ import com.codinlog.album.controller.Activity.PhotoPreviewActivity
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.databinding.FragmentAlbumDisplayBinding
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.model.kotlin.AlbumDisplayViewModel
+import com.codinlog.album.model.kotlin.AlbumPhotoDisplayViewModel
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
 
 
-class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumDisplayViewModel, FragmentAlbumDisplayBinding>() {
+class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewModel, FragmentAlbumDisplayBinding>() {
     private lateinit var albumDisplayRVAdapter: AlbumDisplayRVAdapter
     override fun getLayoutId(): Int {
         return R.layout.fragment_album_display
     }
 
     override fun doInitViewData() {
-        viewModel = activity?.let { ViewModelProvider(it).get(AlbumDisplayViewModel::class.java) }
+        viewModel = activity?.let { ViewModelProvider(it).get(AlbumPhotoDisplayViewModel::class.java) }
     }
 
     override fun doInitListener() {
         viewModel.displayData.observe(viewLifecycleOwner, Observer {
             albumDisplayRVAdapter.photoBeans = it
+            viewModel.albumPhotoSelectViewModel?.displayData?.value = DataStoreUtil.getInstance().allDisplayData.filter { i ->
+                !it.contains(i)
+            }.toList()
         })
     }
 

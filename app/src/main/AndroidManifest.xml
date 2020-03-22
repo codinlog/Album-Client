@@ -23,7 +23,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_album_slide_play"
             android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme"/>
+            android:parentActivityName=".controller.Activity.kotlin.AlbumPreviewActivity"
+            android:theme="@style/FullscreenTheme"></activity>
         <activity
             android:name=".controller.Activity.PhotoPreviewActivity"
             android:label="@string/title_activity_photo_preview"

@@ -6,11 +6,8 @@ import androidx.navigation.NavController
 import com.codinlog.album.dao.AlbumItemDAO
 import com.codinlog.album.database.AlbumDatabase
 import com.codinlog.album.entity.AlbumEntity
-import com.codinlog.album.entity.AlbumItemEntity
-import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
-import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil
 
 class AlbumPreviewViewModel : ViewModel() {
     enum class FromWhere {
@@ -20,30 +17,30 @@ class AlbumPreviewViewModel : ViewModel() {
     private val albumItemDAO: AlbumItemDAO = AlbumDatabase.getInstance().albumItemDAO
     var fromWhere: FromWhere = FromWhere.None
     var fromValue: Any? = null
-    var albumDisplayViewModel: AlbumDisplayViewModel? = null
+    var albumPhotoDisplayViewModel: AlbumPhotoDisplayViewModel? = null
     var albumPhotoSelectViewModel: AlbumPhotoSelectViewModel? = null
-    var titleMutableLiveData = MutableLiveData<String>().apply { value = ""}
-    var currentModelMutableLiveData = MutableLiveData<WorthStoreUtil.MODE>().apply {value = WorthStoreUtil.MODE.MODE_NORMAL}
+    var titleMutableLiveData = MutableLiveData<String>().apply { value = "" }
+    var currentModelMutableLiveData = MutableLiveData<WorthStoreUtil.MODE>().apply { value = WorthStoreUtil.MODE.MODE_NORMAL }
     var navControllerMutableLiveData = MutableLiveData<NavController>()
 
-    private fun queryAlbumItemByAlbumEntity(value: AlbumEntity) {
-        AlbumItemQueryByAlbumIdDBUtil(albumItemDAO, CommonListener { o ->
-            val displayData = (o as List<out AlbumItemEntity>).map { it.photoBean }.toList()
-            //albumDisplayViewModel?.setDisplayData(displayData)
-            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().allDisplayData.filter { i ->
-                displayData.all { t ->
-                    t.hashCode() != i.hashCode()
-                }
-            }.toList())
-        }).execute(value.albumId)
-    }
+//    private fun queryAlbumItemByAlbumEntity(value: AlbumEntity) {
+//        AlbumItemQueryByAlbumIdDBUtil(albumItemDAO, CommonListener { o ->
+//            val displayData = (o as List<out AlbumItemEntity>).map { it.photoBean }.toList()
+//            //albumDisplayViewModel?.setDisplayData(displayData)
+//            albumPhotoSelectViewModel?.setDisplayData(DataStoreUtil.getInstance().allDisplayData.filter { i ->
+//                displayData.all { t ->
+//                    t.hashCode() != i.hashCode()
+//                }
+//            }.toList())
+//        }).execute(value.albumId)
+//    }
 
     fun handOutData(fromValue: Any, fromWhere: FromWhere) {
         this.fromValue = fromValue
         this.fromWhere = fromWhere
         when (fromWhere) {
-            FromWhere.PhotoPreview -> albumDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().displayData)
-            FromWhere.AlbumPreview -> albumDisplayViewModel?.displayData = albumItemDAO.queryAllAlbumPhotoItem((fromValue as AlbumEntity).albumId)
+            FromWhere.PhotoPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().displayData)
+            FromWhere.AlbumPreview -> albumPhotoDisplayViewModel?.displayData = albumItemDAO.queryAllAlbumPhotoItem((fromValue as AlbumEntity).albumId)
         }
         setDisplayTitle()
     }

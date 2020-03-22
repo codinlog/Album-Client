@@ -43,16 +43,16 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
         return getPhotoBeans().size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        public AlbumImageView imageView;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        AlbumImageView imageView;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.iv);
         }
     }
 
-    public List<PhotoBean> getPhotoBeans() {
+    private List<PhotoBean> getPhotoBeans() {
         if (photoBeans == null)
             photoBeans = new ArrayList<>();
         return photoBeans;

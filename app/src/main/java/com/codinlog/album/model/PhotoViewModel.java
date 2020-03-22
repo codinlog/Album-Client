@@ -128,7 +128,7 @@ public class PhotoViewModel extends ViewModel {
     }
 
 
-    public void resetSelectedData() {
+    public void resetDisplayData() {
         getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
             k.setSelectNum(0);
             k.setSelected(false);
@@ -148,7 +148,7 @@ public class PhotoViewModel extends ViewModel {
                 k.setSelected(k.getHaveNum() <= k.getSelectNum());
             });
             getSelectedData().setValue(photoBeans);
-        } else resetSelectedData();
+        } else resetDisplayData();
         mainViewModel.setIsSelectAll(isAllGroup);
     }
 

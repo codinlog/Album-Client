@@ -11,7 +11,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/background_dark"
+        android:background="#0099cc"
         tools:context=".controller.Activity.kotlin.AlbumSlidePlayActivity">
 
         <!-- The primary full-screen view. This can be replaced with whatever view
@@ -20,11 +20,24 @@
 
         <!-- This FrameLayout insets its children based on system windows using
              android:fitsSystemWindows. -->
-        <ImageSwitcher
-            android:id="@+id/imageSwitcher"
-            style="?metaButtonBarButtonStyle"
+        <TextView
+            android:id="@+id/fullscreen_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:keepScreenOn="true"
+            android:text="@string/dummy_content"
+            android:textColor="#33b5e5"
+            android:textSize="50sp"
+            android:textStyle="bold" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+        </androidx.viewpager2.widget.ViewPager2>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -38,18 +51,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
                 android:background="@color/black_overlay"
-                android:baselineAligned="false"
                 android:orientation="horizontal"
                 tools:ignore="UselessParent">
 
-                <Gallery
-                    android:id="@+id/gallery"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/gallary_height"
-                    android:gravity="center"
-                    android:keepScreenOn="true" />
-            </LinearLayout>
+                    android:layout_height="match_parent" />
 
+            </LinearLayout>
         </FrameLayout>
 
     </FrameLayout>

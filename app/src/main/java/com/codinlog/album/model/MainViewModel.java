@@ -122,9 +122,11 @@ public class MainViewModel extends ViewModel {
             getIsSelectAll().setValue(false);
         switch (getCurrentPager().getValue()){
             case photoPager :{
+                photoViewModel.resetDisplayData();
                 photoViewModel.setMode(getMode().getValue());
             }break;
             case albumPager: {
+                photoViewModel.resetDisplayData();
                 albumViewModel.setMode(getMode().getValue());
             }break;
             case timePager:break;

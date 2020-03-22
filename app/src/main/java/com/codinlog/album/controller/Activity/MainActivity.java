@@ -42,6 +42,7 @@ import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
 import com.codinlog.album.model.TimeViewModel;
 import com.codinlog.album.util.ClassifyUtil;
+import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
 
@@ -112,6 +113,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             mainVPAdapter.notifyDataSetChanged();
         });
         viewModel.getPhotoBeans().observe(this, it -> {
+            DataStoreUtil.getInstance().setAllDisplayData(it);
             viewModel.photoViewModel.setClassifiedData(it);
         });
         viewModel.getMode().observe(this, mode -> {
