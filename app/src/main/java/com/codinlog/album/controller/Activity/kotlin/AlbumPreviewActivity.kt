@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -12,25 +13,28 @@ import androidx.navigation.ui.NavigationUI
 import com.codinlog.album.R
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumPreviewBinding
+import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.model.kotlin.AlbumPhotoDisplayViewModel
 import com.codinlog.album.model.kotlin.AlbumPhotoSelectViewModel
 import com.codinlog.album.model.kotlin.AlbumPreviewViewModel
+import com.codinlog.album.model.kotlin.FromWhere
 import com.codinlog.album.util.DataStoreUtil
 import java.util.*
 
 
 class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, ActivityAlbumPreviewBinding>() {
-    data class From(val fromValue: Any, val fromWhere: AlbumPreviewViewModel.FromWhere)
+    data class From(val fromValue: Any, val fromWhere: FromWhere)
+
     override fun onStart() {
         super.onStart()
-        if (viewModel.navControllerMutableLiveData.value == null) {
+        if (viewModel.navController.value == null) {
             viewModel.setNavController(Navigation.findNavController(binding.fragment))
         }
         overridePendingTransition(R.anim.actitivtyin, R.anim.activityout)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        viewModel.navControllerMutableLiveData.value?.let {
+        viewModel.navController.value?.let {
             return it.navigateUp()
         }
         return super.onSupportNavigateUp()
@@ -54,14 +58,14 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
 
 
     override fun doInitListener() {
-        viewModel.navControllerMutableLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.navController.observe(this, androidx.lifecycle.Observer {
             it?.let {
                 it.addOnDestinationChangedListener { _, destination, _ ->
-                    if(viewModel.fromWhere != AlbumPreviewViewModel.FromWhere.PhotoPreview){
+                    if (viewModel.fromWhere != FromWhere.PhotoPreview) {
                         viewModel.fromWhere = when (destination.id) {
-                            R.id.album_photo_preview -> AlbumPreviewViewModel.FromWhere.AlbumPreview
-                            R.id.album_photo_select -> AlbumPreviewViewModel.FromWhere.SelectPreview
-                            else -> AlbumPreviewViewModel.FromWhere.None
+                            R.id.album_confirm -> FromWhere.AlbumPreview
+                            R.id.album_add -> FromWhere.SelectPreview
+                            else -> FromWhere.None
                         }
                     }
                     viewModel.setDisplayTitle()
@@ -69,7 +73,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
                 }
             }
         })
-        viewModel.titleMutableLiveData.observe(this, androidx.lifecycle.Observer {
+        viewModel.title.observe(this, androidx.lifecycle.Observer {
             supportActionBar!!.title = it
         })
     }
@@ -78,54 +82,59 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
 
     override fun doInitDisplayData() {
         val from = when (intent.getStringExtra("from")) {
-            "album" -> From(intent.getParcelableExtra("fromValue"), AlbumPreviewViewModel.FromWhere.AlbumPreview)
-            "photo" -> From(intent.getStringExtra("fromValue"), AlbumPreviewViewModel.FromWhere.PhotoPreview)
-            else -> From(intent.getStringExtra("fromValue"), AlbumPreviewViewModel.FromWhere.None)
+            "album" -> From(intent.getParcelableExtra("fromValue"), FromWhere.AlbumPreview)
+            "photo" -> From(intent.getStringExtra("fromValue"), FromWhere.PhotoPreview)
+            else -> From(intent.getStringExtra("fromValue"), FromWhere.None)
         }
-        viewModel.handOutData(from.fromValue,from.fromWhere)
+        viewModel.handOutData(from.fromValue, from.fromWhere)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         when (viewModel.fromWhere) {
-            AlbumPreviewViewModel.FromWhere.AlbumPreview -> {
-                menu?.findItem(R.id.album_photo_select)?.isVisible = true
-                menu?.findItem(R.id.album_slide_play)?.isVisible = true
-                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+            FromWhere.AlbumPreview -> {
+                menu?.findItem(R.id.album_add)?.isVisible = true
+                menu?.findItem(R.id.album_play)?.isVisible = true
+                menu?.findItem(R.id.album_confirm)?.isVisible = false
             }
-            AlbumPreviewViewModel.FromWhere.SelectPreview -> {
-                menu?.findItem(R.id.album_photo_select)?.isVisible = false
-                menu?.findItem(R.id.album_slide_play)?.isVisible = false
-                menu?.findItem(R.id.album_photo_preview)?.isVisible = true
+            FromWhere.SelectPreview -> {
+                menu?.findItem(R.id.album_add)?.isVisible = false
+                menu?.findItem(R.id.album_play)?.isVisible = false
+                menu?.findItem(R.id.album_confirm)?.isVisible = true
             }
-            AlbumPreviewViewModel.FromWhere.PhotoPreview -> {
-                menu?.findItem(R.id.album_photo_select)?.isVisible = false
-                menu?.findItem(R.id.album_slide_play)?.isVisible = true
-                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+            FromWhere.PhotoPreview -> {
+                menu?.findItem(R.id.album_add)?.isVisible = false
+                menu?.findItem(R.id.album_play)?.isVisible = true
+                menu?.findItem(R.id.album_confirm)?.isVisible = false
             }
             else -> {
-                menu?.findItem(R.id.album_photo_select)?.isVisible = false
-                menu?.findItem(R.id.album_slide_play)?.isVisible = false
-                menu?.findItem(R.id.album_photo_preview)?.isVisible = false
+                menu?.findItem(R.id.album_add)?.isVisible = false
+                menu?.findItem(R.id.album_play)?.isVisible = false
+                menu?.findItem(R.id.album_confirm)?.isVisible = false
             }
         }
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        viewModel.navControllerMutableLiveData.value?.let {
+        viewModel.navController.value?.let { it ->
             when (item.itemId) {
-                R.id.album_photo_select -> return NavigationUI.onNavDestinationSelected(item, it)
-                R.id.album_slide_play -> {
+                R.id.album_add -> return NavigationUI.onNavDestinationSelected(item, it)
+                R.id.album_play -> {
                     DataStoreUtil.getInstance().slidePlayData = viewModel.albumPhotoDisplayViewModel?.displayData?.value
                             ?: listOf()
                     val intent = Intent(this, AlbumSlidePlayActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.album_photo_preview -> {
+                R.id.album_confirm -> {
+                    viewModel.insertExistAlbumWithPhotoBeans(CommonListener {i->
+                        viewModel.resetSelectData()
+                        if ((i as List<Long>).size > 0)
+                            Toast.makeText(this@AlbumPreviewActivity, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show()
+                    })
                     return onSupportNavigateUp()
                 }
                 android.R.id.home -> {
-                    if (it.currentDestination?.id == R.id.album_photo_preview)
+                    if (it.currentDestination?.id == R.id.album_confirm)
                         finish()
                     backNotice(it)
                     return true
@@ -142,8 +151,8 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
     }
 
     override fun onBackPressed() {
-        viewModel.navControllerMutableLiveData.value?.let {
-            if (it.currentDestination?.id == R.id.album_photo_select) {
+        viewModel.navController.value?.let {
+            if (it.currentDestination?.id == R.id.album_add) {
                 backNotice(it)
                 return
             }

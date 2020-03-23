@@ -108,6 +108,7 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 } else if (holder instanceof PhotoGroupViewHolder) {
                     PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
                     photoGroupViewHolder.checkBox.setVisibility(INVISIBLE);
+                    photoGroupViewHolder.imageButton.setEnabled(true);
                     Object o = displayData.get(position);
                     if(o instanceof GroupBean){
                         GroupBean groupBean = (GroupBean)o;
@@ -127,6 +128,7 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 } else if (holder instanceof PhotoGroupViewHolder) {
                     PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
                     photoGroupViewHolder.checkBox.setVisibility(VISIBLE);
+                    photoGroupViewHolder.imageButton.setEnabled(false);
                     Object o = displayData.get(position);
                     if(o instanceof GroupBean){
                         GroupBean groupBean = (GroupBean)o;

@@ -3,30 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/album_preview_nav"
-    app:startDestination="@id/album_photo_preview"
+    app:startDestination="@id/album_confirm"
     tools:ignore="UnusedNavigation">
 
     <fragment
-        android:id="@+id/album_photo_preview"
+        android:id="@+id/album_confirm"
         android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoDisplayFragment"
         android:label="相册预览"
         tools:layout="@layout/fragment_album_display">
         <action
             android:id="@+id/action_album_preview_to_photo_select"
-            app:destination="@id/album_photo_select"
+            app:destination="@id/album_add"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
-        android:id="@+id/album_photo_select"
+        android:id="@+id/album_add"
         android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoSelectFragment"
         android:label="添加到相册"
         tools:layout="@layout/fragment_photo_select">
         <action
             android:id="@+id/action_photo_select_to_album_preview"
-            app:destination="@id/album_photo_preview"
+            app:destination="@id/album_confirm"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"

@@ -64,23 +64,20 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
 
     @Override
     public void doInitDisplayData() {
-        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(new CommonListener() {
-            @Override
-            public void handleEvent(Object o) {
-                if (animation == null || animation.hasEnded()) {
-                    animation = isShowAppBar ?
-                            new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
-                                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                                    -1.0f, Animation.RELATIVE_TO_SELF, 0.0f) :
-                            new TranslateAnimation(Animation.RELATIVE_TO_SELF,
-                                    0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-                                    Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-                                    -1.0f);
-                    animation.setDuration(500);
-                    binding.appBarLayout.startAnimation(animation);
-                    binding.appBarLayout.setVisibility(isShowAppBar ? View.VISIBLE : View.GONE);
-                    isShowAppBar = !isShowAppBar;
-                }
+        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(o -> {
+            if (animation == null || animation.hasEnded()) {
+                animation = isShowAppBar ?
+                        new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                                -1.0f, Animation.RELATIVE_TO_SELF, 0.0f) :
+                        new TranslateAnimation(Animation.RELATIVE_TO_SELF,
+                                0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
+                                -1.0f);
+                animation.setDuration(500);
+                binding.appBarLayout.startAnimation(animation);
+                binding.appBarLayout.setVisibility(isShowAppBar ? View.VISIBLE : View.GONE);
+                isShowAppBar = !isShowAppBar;
             }
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());

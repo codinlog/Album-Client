@@ -14,7 +14,7 @@ import com.codinlog.album.util.WorthStoreUtil
 
 
 class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewModel, FragmentPhotoSelectBinding>() {
-    private var currentPosition = 0
+    private var clickPosition = 0
     private var albumPhotoSelectRVAdapter: AlbumPhotoSelectRVAdapter? = null
     override fun getLayoutId(): Int {
         return R.layout.fragment_photo_select
@@ -32,7 +32,7 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
         })
         viewModel.selectData.observe(viewLifecycleOwner, Observer {
             albumPhotoSelectRVAdapter?.let {
-                it.notifyItemChanged(currentPosition, "payload")
+                it.notifyItemChanged(clickPosition, "payload")
                 viewModel.albumPreviewViewModel?.setDisplayTitle()
             }
         })
@@ -40,13 +40,12 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
 
     override fun doInitDisplayData() {
         albumPhotoSelectRVAdapter = AlbumPhotoSelectRVAdapter(CommonListener {
-            var position = it as Int
-            currentPosition = position
-            viewModel.addSelectData(position, null)
+            clickPosition = it as Int
+            viewModel.addSelectData(clickPosition, null)
         }, object : PhotoGroupListener {
             override fun handleEvent(o: Any) {}
             override fun handleEvent(position: Int, isChecked: Boolean) {
-                currentPosition = position
+                clickPosition = position
                 viewModel.addSelectData(position, isChecked)
             }
         })

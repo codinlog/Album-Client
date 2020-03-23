@@ -43,6 +43,7 @@ public class AlbumEntity implements Parcelable{
         albumId = in.readInt();
         date = new Date(in.readLong());
         albumName = in.readString();
+        photoBean = (PhotoBean) in.readValue(Thread.currentThread().getContextClassLoader());
     }
 
     public static final Creator<AlbumEntity> CREATOR = new Creator<AlbumEntity>() {
@@ -122,5 +123,6 @@ public class AlbumEntity implements Parcelable{
         dest.writeInt(albumId);
         dest.writeLong(date.getTime());
         dest.writeString(albumName);
+        dest.writeValue(photoBean);
     }
 }

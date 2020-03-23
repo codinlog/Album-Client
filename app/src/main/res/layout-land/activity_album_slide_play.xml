@@ -11,7 +11,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#0099cc"
+        android:background="@android:color/background_dark"
         tools:context=".controller.Activity.kotlin.AlbumSlidePlayActivity">
 
         <!-- The primary full-screen view. This can be replaced with whatever view
@@ -20,22 +20,12 @@
 
         <!-- This FrameLayout insets its children based on system windows using
              android:fitsSystemWindows. -->
-        <TextView
-            android:id="@+id/fullscreen_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:keepScreenOn="true"
-            android:text="@string/dummy_content"
-            android:textColor="#33b5e5"
-            android:textSize="50sp"
-            android:textStyle="bold" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
         </androidx.viewpager2.widget.ViewPager2>
 

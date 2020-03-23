@@ -198,20 +198,14 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                         );
                                         viewModel.albumViewModel.queryAlbumById(albumEntity.hashCode(), o1 -> {
                                             if (o1 == null) {
-                                                viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedData().getValue(), new CommonListener() {
-                                                    @Override
-                                                    public void handleEvent(Object o1) {
-                                                        if (o1 != null && ((List<Long>) o1).size() > 0)
-                                                            Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
-                                                    }
+                                                viewModel.albumViewModel.insertAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedData().getValue(), o2 -> {
+                                                    if (o2 != null && ((List<Long>) o2).size() > 0)
+                                                        Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
                                                 });
                                             } else {
-                                                viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedData().getValue(), new CommonListener() {
-                                                    @Override
-                                                    public void handleEvent(Object o1) {
-                                                        if (o1 != null && ((List<Long>) o1).size() > 0)
-                                                            Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
-                                                    }
+                                                viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedData().getValue(), o3 -> {
+                                                    if (o3 != null && ((List<Long>) o3).size() > 0)
+                                                        Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
                                                 });
                                             }
                                             viewModel.setMode(MODE_NORMAL);

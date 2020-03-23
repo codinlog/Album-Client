@@ -36,7 +36,7 @@ class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewMo
 
     override fun doInitDisplayData() {
         albumDisplayRVAdapter = AlbumDisplayRVAdapter(CommonListener {
-            when (viewModel.albumPreviewViewModel?.currentModelMutableLiveData?.value) {
+            when (viewModel.albumPreviewViewModel?.currentModel?.value) {
                 WorthStoreUtil.MODE.MODE_NORMAL -> {
                     val intent = Intent(context, PhotoPreviewActivity::class.java)
                     intent.putExtra("photoBean", viewModel.displayData.value?.get(it as Int))
