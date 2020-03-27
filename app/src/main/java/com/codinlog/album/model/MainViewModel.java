@@ -27,6 +27,7 @@ public class MainViewModel extends ViewModel {
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
     public TimeViewModel timeViewModel;
+    private Object lock;
 
     public MutableLiveData<ArrayList<FragmentBean>> getFragments() {
         if (fragments == null) {
@@ -131,6 +132,12 @@ public class MainViewModel extends ViewModel {
             }break;
             case timePager:break;
         }
+    }
+
+    public void setLock(Object lock){
+        this.lock = lock;
+        albumViewModel.lock = lock;
+        photoViewModel.lock = lock;
     }
 
 }

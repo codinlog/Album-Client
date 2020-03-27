@@ -44,6 +44,7 @@ class AlbumPreviewViewModel : ViewModel() {
         when (fromWhere) {
             FromWhere.PhotoPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().displayData)
             FromWhere.AlbumPreview -> albumPhotoDisplayViewModel?.displayData = albumItemDAO.queryAllAlbumPhotoItem((fromValue as AlbumEntity).albumId)
+            FromWhere.AlbumFolderPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().folderDisplayData)
         }
         setDisplayTitle()
     }
@@ -95,5 +96,5 @@ class AlbumPreviewViewModel : ViewModel() {
 }
 
 enum class FromWhere {
-    None, PhotoPreview, AlbumPreview, SelectPreview
+    None, PhotoPreview, AlbumPreview, SelectPreview, AlbumFolderPreview
 }

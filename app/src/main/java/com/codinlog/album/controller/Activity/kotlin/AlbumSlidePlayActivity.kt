@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -30,6 +31,8 @@ import java.util.ArrayList
 import kotlin.properties.Delegates
 
 class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, ActivityAlbumSlidePlayBinding>() {
+    private var mVisible: Boolean = false
+    private val mHideRunnable = Runnable { hide() }
     private var currentPosition: Int by Delegates.observable(0) { _, oldPos, newPos ->
         viewModel.displayData.value.let {
             it?.get(oldPos)?.isSelected = false
@@ -61,9 +64,9 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
         supportActionBar?.show()
         fullscreen_content_controls.visibility = View.VISIBLE
     }
-    private var mVisible: Boolean = false
-    private val mHideRunnable = Runnable { hide() }
+
     override fun doInitViewData() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         viewModel = ViewModelProvider(this).get(AlbumSlidePlayViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_album_slide_play)
         binding.lifecycleOwner = this

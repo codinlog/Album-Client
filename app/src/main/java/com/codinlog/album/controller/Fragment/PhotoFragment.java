@@ -39,7 +39,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
     @Override
     public void doInitListener() {
         viewModel.getDisplayData().observe(getViewLifecycleOwner(), v -> photoRVAdapter.setData(v));
-        viewModel.getClassifiedDisplayDataMap().observe(getViewLifecycleOwner(), v -> viewModel.setDisplayData());
+        viewModel.getClassifiedDisplayData().observe(getViewLifecycleOwner(), v -> viewModel.setDisplayData());
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), v -> {
             photoRVAdapter.notifySelectChanged();
             viewModel.mainViewModel.setTitle();
@@ -94,7 +94,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
             Object o = viewModel.getDisplayData().getValue().get((int) position);
             if (o instanceof GroupBean) {
                 GroupBean groupBean = (GroupBean) o;
-                DataStoreUtil.getInstance().setDisplayData(viewModel.getClassifiedDisplayDataMap().getValue().get(groupBean));
+                DataStoreUtil.getInstance().setDisplayData(viewModel.getClassifiedDisplayData().getValue().get(groupBean));
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "photo");
                 intent.putExtra("fromValue", groupBean.getGroupId());

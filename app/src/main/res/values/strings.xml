@@ -46,4 +46,8 @@
     <string name="delete_not_all">未能删除所有项目</string>
     <string name="img_mask">mask</string>
     <string name="merge_album">合并相册</string>
+    <string name="drag_handle">拖动加载</string>
+    <string name="folder">文件夹</string>
+    <string name="personal">个人</string>
+    <string name="intellect">智能</string>
 </resources>

@@ -2,12 +2,14 @@ package com.codinlog.album.util;
 
 import com.codinlog.album.bean.PhotoBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataStoreUtil {
     private List<PhotoBean> allDisplayData;
     private List<PhotoBean> displayData;
     private List<PhotoBean> slidePlayData;
+    private List<PhotoBean> folderDisplayData;
 
     private enum SingletonEnum{
         INSTANCE;
@@ -46,4 +48,14 @@ public class DataStoreUtil {
     public void setDisplayData(List<PhotoBean> displayData) {
         this.displayData = displayData;
     }
+    public void setFolderDisplayData(List<PhotoBean> photoBeans) {
+        folderDisplayData = photoBeans;
+    }
+
+    public List<PhotoBean> getFolderDisplayData(){
+        if(folderDisplayData == null)
+            folderDisplayData = new ArrayList<>();
+        return folderDisplayData;
+    }
+
 }

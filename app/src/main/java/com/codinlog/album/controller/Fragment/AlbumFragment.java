@@ -1,12 +1,23 @@
 package com.codinlog.album.controller.Fragment;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.codinlog.album.R;
+import com.codinlog.album.adapter.kotlin.AlbumFolderRVAdapter;
 import com.codinlog.album.adapter.kotlin.AlbumRVAdapter;
+import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.Activity.kotlin.AlbumPreviewActivity;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.AlbumFragmentBinding;
@@ -17,14 +28,20 @@ import com.codinlog.album.listener.kotlin.AlbumItemListener;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumFragmentBinding> {
     private AlbumRVAdapter albumRVAdapter;
+    private AlbumFolderRVAdapter albumFolderRVAdapter;
+    private BottomSheetBehavior sheetBehavior;
+    private RecyclerView rv_sheet;
+
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
     }
@@ -37,6 +54,9 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitViewData() {
         viewModel = new ViewModelProvider(getActivity()).get(AlbumViewModel.class);
+        sheetBehavior = BottomSheetBehavior.from(binding.bottomSheet);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        rv_sheet = binding.getRoot().findViewById(R.id.rv_sheet);
     }
 
     @Override
@@ -52,7 +72,16 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                 albumRVAdapter.setMode(mode);
             if (mode == WorthStoreUtil.MODE.MODE_NORMAL)
                 viewModel.resetSelectData();
-
+        });
+        viewModel.getDisplayOption().observe(getViewLifecycleOwner(), option -> {
+            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN)
+                sheetBehavior.setState(option);
+        });
+        viewModel.getFolderDisplayData().observe(getViewLifecycleOwner(), map ->{
+            List list = new ArrayList(map.keySet());
+            Collections.sort(list);
+            Log.d("info", "Running" + list.size());
+            albumFolderRVAdapter.setDisplayData(list);
         });
     }
 
@@ -61,8 +90,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
             @Override
             public void handleEvent(int position) {
-                if (viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
-                    DataStoreUtil.getInstance().setAllDisplayData(viewModel.mainViewModel.getPhotoBeans().getValue());
+                if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN &&viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
                     Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                     intent.putExtra("from", "album");
                     intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get(position));
@@ -78,7 +106,18 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             viewModel.setSelectedData((int) position);
             albumRVAdapter.notifyItemChanged((int) position, "payload");
         });
+        albumFolderRVAdapter = new AlbumFolderRVAdapter(o -> {
+            FolderBean folderBean = (FolderBean) o;
+            DataStoreUtil.getInstance().setFolderDisplayData(viewModel.getFolderDisplayData().getValue().get(folderBean));
+            Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
+            intent.putExtra("from", "albumFolder");
+            intent.putExtra("fromValue",folderBean.getFolderName());
+            startActivity(intent);
+        });
         binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.albumItemNum));
         binding.rv.setAdapter(albumRVAdapter);
+        rv_sheet.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv_sheet.setAdapter(albumFolderRVAdapter);
+        rv_sheet.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
     }
 }

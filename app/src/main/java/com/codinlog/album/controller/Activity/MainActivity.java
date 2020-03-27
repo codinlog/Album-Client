@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -36,7 +35,6 @@ import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
 import com.codinlog.album.listener.CommonListener;
-import com.codinlog.album.listener.kotlin.AlbumItemListener;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.model.MainViewModel;
 import com.codinlog.album.model.PhotoViewModel;
@@ -45,6 +43,7 @@ import com.codinlog.album.util.ClassifyUtil;
 import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.codinlog.album.widget.AlbumDialog;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -70,7 +68,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
     private ArrayList<FragmentBean> fragmentBeans;
     private MainVPAdapter mainVPAdapter;
     private String currentPhotoPath;
-    private PopupMenu popupMenu;
+    private PopupMenu popupMenuMore;
+    private PopupMenu popupMenuOperation;
     private Handler handler = new Handler();
     private static final Object lock = new Object();
 
@@ -87,8 +86,11 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         viewModel.photoViewModel.mainViewModel = viewModel;
         viewModel.albumViewModel.mainViewModel = viewModel;
         viewModel.timeViewModel.mainViewModel = viewModel;
-        popupMenu = new PopupMenu(this, binding.btnMore);
-        popupMenu.getMenuInflater().inflate(R.menu.top_menu, popupMenu.getMenu());
+        viewModel.setLock(new Object());
+        popupMenuMore = new PopupMenu(this, binding.btnMore);
+        popupMenuOperation = new PopupMenu(this,binding.btnOperation);
+        popupMenuMore.getMenuInflater().inflate(R.menu.top_menu, popupMenuMore.getMenu());
+        popupMenuOperation.getMenuInflater().inflate(R.menu.album_display, popupMenuOperation.getMenu());
     }
 
     @Override
@@ -114,7 +116,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         });
         viewModel.getPhotoBeans().observe(this, it -> {
             DataStoreUtil.getInstance().setAllDisplayData(it);
-            viewModel.photoViewModel.setClassifiedData(it);
+            viewModel.photoViewModel.setGroupClassifiedData(it);
+            viewModel.albumViewModel.setFolderClassifiedData(it);
         });
         viewModel.getMode().observe(this, mode -> {
             binding.viewPager.setCanScroll(mode == MODE_NORMAL);
@@ -135,12 +138,15 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 case WorthStoreUtil.photoPager:
                     binding.bottomNavigation.getMenu().getItem(1).setIcon(R.drawable.ic_add_black_24dp);
                     binding.bottomNavigation.getMenu().getItem(1).setTitle(getString(R.string.addto_album));
+                    binding.btnOperation.setImageDrawable(getDrawable(R.drawable.ic_camera_black_24dp));
                     break;
                 case WorthStoreUtil.albumPager:
                     binding.bottomNavigation.getMenu().getItem(1).setIcon(R.drawable.ic_call_merge_black_24dp);
                     binding.bottomNavigation.getMenu().getItem(1).setTitle(getString(R.string.merge_album));
+                    binding.btnOperation.setImageDrawable(getDrawable(R.drawable.ic_remove_red_eye_black_24dp));
                     break;
                 case WorthStoreUtil.timePager:
+                    binding.btnOperation.setImageDrawable(getDrawable(R.drawable.ic_add_black_24dp));
                     break;
             }
         });
@@ -266,13 +272,30 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 .setNegativeButton(R.string.btn_cancel, (dialog, which) -> dialog.dismiss()).show();
                     }
                     break;
+                case albumPager:
+                    if (viewModel.getMode().getValue() == MODE_NORMAL) {
+                        popupMenuOperation.show();
+                    }else{
+
+                    }
+                    break;
             }
         });
 
-        binding.btnMore.setOnClickListener(v -> popupMenu.show());
-        popupMenu.setOnMenuItemClickListener(item -> {
+        binding.btnMore.setOnClickListener(v -> popupMenuMore.show());
+        popupMenuMore.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.setting_1:
+                    break;
+            }
+            return false;
+        });
+        popupMenuOperation.setOnMenuItemClickListener(item->{
+            switch (item.getItemId()){
+                case R.id.personal:break;
+                case R.id.intellect:break;
+                case R.id.folder:
+                    viewModel.albumViewModel.setDisplayOption(BottomSheetBehavior.STATE_COLLAPSED);
                     break;
             }
             return false;

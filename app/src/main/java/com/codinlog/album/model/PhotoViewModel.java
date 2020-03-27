@@ -22,10 +22,11 @@ public class PhotoViewModel extends ViewModel {
     private MutableLiveData<List<Object>> displayData; //图片+分组数据
     private MutableLiveData<List<PhotoBean>> selectedData;//已选择
     private MutableLiveData<WorthStoreUtil.MODE> mode;
-    private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayDataMap;
+    private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayData;
     public MainViewModel mainViewModel;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
+    public Object lock;
 
     public MutableLiveData<WorthStoreUtil.MODE> getMode() {
         if(mode == null){
@@ -55,36 +56,35 @@ public class PhotoViewModel extends ViewModel {
         return selectedData;
     }
 
-    public MutableLiveData<Map<GroupBean, List<PhotoBean>>> getClassifiedDisplayDataMap() {
-        if (classifiedDisplayDataMap == null) {
-            classifiedDisplayDataMap = new MutableLiveData<>();
-            classifiedDisplayDataMap.setValue(new LinkedHashMap<>());
+    public MutableLiveData<Map<GroupBean, List<PhotoBean>>> getClassifiedDisplayData() {
+        if (classifiedDisplayData == null) {
+            classifiedDisplayData = new MutableLiveData<>();
+            classifiedDisplayData.setValue(new LinkedHashMap<>());
         }
-        return classifiedDisplayDataMap;
+        return classifiedDisplayData;
     }
 
-    public void setClassifiedDisplayDataMap(Map<GroupBean, List<PhotoBean>> value) {
-        getClassifiedDisplayDataMap().setValue(value);
+    public void setClassifiedDisplayData(Map<GroupBean, List<PhotoBean>> value) {
+        getClassifiedDisplayData().setValue(value);
     }
 
-    public void setClassifiedData(List<PhotoBean> it) {
-        if (classifiedRunnable != null)
+    public void setGroupClassifiedData(List<PhotoBean> it) {
+        synchronized (lock){
+            if (classifiedRunnable == null)
+                classifiedRunnable = () -> setClassifiedDisplayData(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayData().getValue()));
             handler.removeCallbacks(classifiedRunnable);
-        else
-            classifiedRunnable = () -> {
-                setClassifiedDisplayDataMap(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayDataMap().getValue()));
-            };
-        handler.post(classifiedRunnable);
+            handler.post(classifiedRunnable);
+        }
     }
 
     public void setDisplayData() {
         getDisplayData().getValue().clear();
         getSelectedData().getValue().clear();
-        List<GroupBean> groupBeans = new ArrayList<>(getClassifiedDisplayDataMap().getValue().keySet());
+        List<GroupBean> groupBeans = new ArrayList<>(getClassifiedDisplayData().getValue().keySet());
         Collections.sort(groupBeans);
         groupBeans.forEach(it -> {
             getDisplayData().getValue().add(it);
-            getClassifiedDisplayDataMap().getValue().get(it).forEach(in -> {
+            getClassifiedDisplayData().getValue().get(it).forEach(in -> {
                 getDisplayData().getValue().add(in);
                 if (in.isSelected())
                     getSelectedData().getValue().add(in);
@@ -100,21 +100,21 @@ public class PhotoViewModel extends ViewModel {
         if (o instanceof PhotoBean) {
             PhotoBean photoBean = (PhotoBean) o;
             photoBean.setSelected(!photoBean.isSelected());
-            for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+            for (GroupBean groupBean : getClassifiedDisplayData().getValue().keySet()) {
                 if (groupBean.getGroupId().equals(photoBean.getGroupId())) {
-                    groupBean.setSelectNum(getClassifiedDisplayDataMap().getValue().get(groupBean).
+                    groupBean.setSelectNum(getClassifiedDisplayData().getValue().get(groupBean).
                             stream().filter(PhotoBean::isSelected).collect(Collectors.toList()).size());
                     groupBean.setSelected(groupBean.getHaveNum() <= groupBean.getSelectNum());
                     break;
                 }
             }
         } else if (o instanceof GroupBean) {
-            for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+            for (GroupBean groupBean : getClassifiedDisplayData().getValue().keySet()) {
                 if (groupBean.getGroupId().equals(((GroupBean) o).getGroupId())) {
-                    getClassifiedDisplayDataMap().getValue().get(groupBean).forEach(it -> {
+                    getClassifiedDisplayData().getValue().get(groupBean).forEach(it -> {
                         it.setSelected(isGroupAll);
                     });
-                    groupBean.setSelectNum(getClassifiedDisplayDataMap().getValue().get(groupBean).
+                    groupBean.setSelectNum(getClassifiedDisplayData().getValue().get(groupBean).
                             stream().filter(it -> it.isSelected()).collect(Collectors.toList()).size());
                     groupBean.setSelected(groupBean.getHaveNum() <= groupBean.getSelectNum());
                     break;
@@ -129,7 +129,7 @@ public class PhotoViewModel extends ViewModel {
 
 
     public void resetDisplayData() {
-        getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
+        getClassifiedDisplayData().getValue().forEach((k, v) -> {
             k.setSelectNum(0);
             k.setSelected(false);
             v.forEach(it -> it.setSelected(false));
@@ -140,7 +140,7 @@ public class PhotoViewModel extends ViewModel {
     public void selectAllGroup(boolean isAllGroup) {
         if (isAllGroup) {
             List<PhotoBean> photoBeans = new ArrayList<>();
-            getClassifiedDisplayDataMap().getValue().forEach((k, v) -> {
+            getClassifiedDisplayData().getValue().forEach((k, v) -> {
                 v.forEach(it -> it.setSelected(isAllGroup));
                 List<PhotoBean> photoBeansTemp = v.stream().filter(it -> it.isSelected()).collect(Collectors.toList());
                 photoBeans.addAll(photoBeansTemp);
@@ -153,7 +153,7 @@ public class PhotoViewModel extends ViewModel {
     }
 
     private void setMainViewModelIsSelectAll() {
-        for (GroupBean groupBean : getClassifiedDisplayDataMap().getValue().keySet()) {
+        for (GroupBean groupBean : getClassifiedDisplayData().getValue().keySet()) {
             if (!groupBean.isSelected()) {
                 mainViewModel.setIsSelectAll(false);
                 return;

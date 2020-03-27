@@ -61,7 +61,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
         viewModel.navController.observe(this, androidx.lifecycle.Observer {
             it?.let {
                 it.addOnDestinationChangedListener { _, destination, _ ->
-                    if (viewModel.fromWhere != FromWhere.PhotoPreview) {
+                    if (viewModel.fromWhere != FromWhere.PhotoPreview && viewModel.fromWhere != FromWhere.AlbumFolderPreview) {
                         viewModel.fromWhere = when (destination.id) {
                             R.id.album_confirm -> FromWhere.AlbumPreview
                             R.id.album_add -> FromWhere.SelectPreview
@@ -83,6 +83,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
     override fun doInitDisplayData() {
         val from = when (intent.getStringExtra("from")) {
             "album" -> From(intent.getParcelableExtra("fromValue"), FromWhere.AlbumPreview)
+            "albumFolder" -> From(intent.getStringExtra("fromValue"), FromWhere.AlbumFolderPreview)
             "photo" -> From(intent.getStringExtra("fromValue"), FromWhere.PhotoPreview)
             else -> From(intent.getStringExtra("fromValue"), FromWhere.None)
         }
@@ -101,7 +102,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
                 menu?.findItem(R.id.album_play)?.isVisible = false
                 menu?.findItem(R.id.album_confirm)?.isVisible = true
             }
-            FromWhere.PhotoPreview -> {
+            FromWhere.PhotoPreview,FromWhere.AlbumFolderPreview -> {
                 menu?.findItem(R.id.album_add)?.isVisible = false
                 menu?.findItem(R.id.album_play)?.isVisible = true
                 menu?.findItem(R.id.album_confirm)?.isVisible = false
