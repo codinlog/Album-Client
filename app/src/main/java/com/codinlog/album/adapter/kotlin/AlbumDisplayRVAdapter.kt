@@ -1,5 +1,6 @@
 package com.codinlog.album.adapter.kotlin
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.WindowUtil.albumPhotoItemSize
 import com.codinlog.album.util.WorthStoreUtil
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: CommonListener,
                                         private val photoItemOnLongClickListener: CommonListener)
@@ -42,9 +45,10 @@ class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: Co
             photoItemOnLongClickListener.handleEvent(position)
             return@setOnLongClickListener true
         }
-        if (photoBeans[position].height > 0 && photoBeans[position].width > 0) {
-            val scale = albumPhotoItemSize.toFloat() / photoBeans[position].width
-            holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, (photoBeans[position].height.toFloat() * scale).toInt())
+        val photoBean = photoBeans[position]
+        if (photoBean.width > 0 && photoBean.height > 0) {
+            val scale = albumPhotoItemSize.toFloat() / photoBean.width
+            holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, (photoBeans[position].height * scale).toInt())
         }
         Glide.with(AlbumApplication.mContext).load(photoBeans[position].photoPath).thumbnail(0.4f).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
         doSelectModel(holder, position)
@@ -70,7 +74,6 @@ class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: Co
             }
         }
     }
-
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var imageView: ImageView = view.findViewById(R.id.iv)

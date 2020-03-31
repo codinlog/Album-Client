@@ -29,6 +29,8 @@ public class PhotoBean implements Comparable, Parcelable {
     private int width;                 // 图片宽度
     @ColumnInfo(name = "photoHeight")
     private int height;                // 图片高度
+    @Ignore
+    private int rotation = 0;
 
     protected PhotoBean(Parcel in) {
         photoPath = in.readString();
@@ -136,6 +138,14 @@ public class PhotoBean implements Comparable, Parcelable {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
     }
 
     @Override

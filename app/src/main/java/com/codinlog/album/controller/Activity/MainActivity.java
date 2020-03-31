@@ -3,12 +3,14 @@ package com.codinlog.album.controller.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -368,6 +370,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 photoBean.setDelete(false);
                                 photoBean.setWidth(width == null ? 0 : Integer.parseInt(width));
                                 photoBean.setHeight(height == null ? 0 : Integer.parseInt(height));
+                                photoBean.setRotation(getRotation(path));
                                 photoBeans.add(photoBean);
                             }
                         }
@@ -388,6 +391,22 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
 
             }
         });
+    }
+
+    private int getRotation(String path){
+        if("".equals(path))
+            return  0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            switch (exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)){
+                case ExifInterface.ORIENTATION_ROTATE_90:return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:return 270;
+            }
+        }catch (Exception e){
+            return  0;
+        }
+        return 0;
     }
 
     private void updateAlbum() {

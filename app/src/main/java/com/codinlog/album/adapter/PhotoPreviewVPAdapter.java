@@ -34,8 +34,8 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //holder.imageView.setOnClickListener(v -> photoCheckListener.handleEvent(position));
-        holder.imageView.setCommonListener(commonListener);
-        Glide.with(AlbumApplication.mContext).load(getPhotoBeans().get(position).getPhotoPath()).error(R.drawable.ic_photo_black_24dp).into(holder.imageView);
+        holder.iv.setCommonListener(commonListener);
+        Glide.with(AlbumApplication.mContext).load(getPhotoBeans().get(position).getPhotoPath()).error(R.drawable.ic_photo_black_24dp).into(holder.iv);
     }
 
     @Override
@@ -43,12 +43,17 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
         return getPhotoBeans().size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        AlbumImageView imageView;
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        recyclerView.setItemViewCacheSize(0);
+    }
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.iv);
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder.iv != null) {
+            holder.iv.initMatrix();
         }
     }
 
@@ -58,9 +63,17 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
         return photoBeans;
     }
 
-
     public void setData(List<PhotoBean> data) {
         this.photoBeans = data;
         notifyDataSetChanged();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        AlbumImageView iv;
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            iv = itemView.findViewById(R.id.iv);
+        }
     }
 }
