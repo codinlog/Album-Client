@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bm.library.PhotoView
 import com.bumptech.glide.Glide
 import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
