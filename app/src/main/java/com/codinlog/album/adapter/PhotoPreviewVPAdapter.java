@@ -33,7 +33,6 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        //holder.imageView.setOnClickListener(v -> photoCheckListener.handleEvent(position));
         holder.iv.setCommonListener(commonListener);
         Glide.with(AlbumApplication.mContext).load(getPhotoBeans().get(position).getPhotoPath()).error(R.drawable.ic_photo_black_24dp).into(holder.iv);
     }
@@ -53,7 +52,7 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
         if (holder.iv != null) {
-            holder.iv.initMatrix();
+            holder.iv.resetMatrix();
         }
     }
 

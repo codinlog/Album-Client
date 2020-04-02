@@ -15,7 +15,7 @@ import com.codinlog.album.listener.kotlin.AlbumItemListener
 import com.codinlog.album.util.WindowUtil
 import com.codinlog.album.util.WorthStoreUtil
 
-class AlbumRVAdapter(private val albumItemOnClickListener: AlbumItemListener,
+class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
                      private val albumItemLongClickListener: CommonListener)
     : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
     private var mode = WorthStoreUtil.MODE.MODE_NORMAL
@@ -35,10 +35,11 @@ class AlbumRVAdapter(private val albumItemOnClickListener: AlbumItemListener,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.tv.text = displayData[position].albumName
+        val albumEntity = displayData[position]
+        holder.tv.text = albumEntity.albumName
         holder.iv.setOnClickListener { albumItemOnClickListener.handleEvent(position) }
         holder.iv.setOnLongClickListener { albumItemLongClickListener.handleEvent(position);return@setOnLongClickListener true; }
-        Glide.with(AlbumApplication.mContext).load(displayData[position].photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
+        Glide.with(AlbumApplication.mContext).load(albumEntity.photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
         doSelectMode(holder, position)
     }
 

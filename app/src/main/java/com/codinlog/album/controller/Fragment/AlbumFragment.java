@@ -65,7 +65,16 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             albumRVAdapter.setDisplayData(displayData);
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
+            if(viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
+                int displaySize = viewModel.getDisplayData().getValue().size();
+                int selectSize = viewModel.getSelectedData().getValue().size();
+                boolean allSelect = selectSize >= displaySize;
+                viewModel.mainViewModel.setIsSelectAll(allSelect);
+            }
             viewModel.mainViewModel.setTitle();
+        });
+        viewModel.getIsSelectAll().observe(getViewLifecycleOwner(),isAll ->{
+            albumRVAdapter.notifyDataSetChanged();
         });
         viewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
             if (albumRVAdapter != null)
@@ -87,24 +96,21 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
 
     @Override
     public void doInitDisplayData() {
-        albumRVAdapter = new AlbumRVAdapter(new AlbumItemListener() {
-            @Override
-            public void handleEvent(int position) {
-                if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN &&viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
-                    Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
-                    intent.putExtra("from", "album");
-                    intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get(position));
-                    startActivity(intent);
-                } else {
-                    viewModel.setSelectedData(position);
-                    albumRVAdapter.notifyItemChanged(position, "payload");
-                }
+        albumRVAdapter = new AlbumRVAdapter(o -> {
+            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN &&viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
+                Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
+                intent.putExtra("from", "album");
+                intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get((int)o));
+                startActivity(intent);
+            } else {
+                viewModel.setSelectedData((int)o);
+                albumRVAdapter.notifyItemChanged((int)o, "payload");
             }
-        }, position -> {
+        }, o -> {
             if (viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
                 viewModel.mainViewModel.setMode(WorthStoreUtil.MODE.MODE_SELECT);
-            viewModel.setSelectedData((int) position);
-            albumRVAdapter.notifyItemChanged((int) position, "payload");
+            viewModel.setSelectedData((int) o);
+            albumRVAdapter.notifyItemChanged((int) o, "payload");
         });
         albumFolderRVAdapter = new AlbumFolderRVAdapter(o -> {
             FolderBean folderBean = (FolderBean) o;

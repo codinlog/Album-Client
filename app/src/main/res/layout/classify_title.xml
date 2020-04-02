@@ -22,7 +22,7 @@
         android:layout_width="@dimen/top_bar_width"
         android:layout_height="50dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/navigtion_more_notice"
+        android:contentDescription="@string/navigation_more_notice"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

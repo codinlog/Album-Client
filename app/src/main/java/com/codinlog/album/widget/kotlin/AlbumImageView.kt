@@ -29,16 +29,16 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
     private var initMatrix = Matrix()
     private val rectF = RectF()
     private var isOnce = true
-    private var initScale = 1F
+    private var minScale = 1F
     private var maxScale = 1F
     private var midScale = 1F
     private var firstPointF = PointF()
     private var twoPointsDown = false
     private var firstClickTime = 0L
     private val handle = Handler()
-    private var lastVector: PointF? = null
+    private var lastVector = PointF()
+
     private val runCommonListener = Runnable {
-        Log.d("click", "$isDoubleClick")
         if (isDoubleClick)
             isDoubleClick = false
         else
@@ -47,6 +47,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
 
     companion object {
         var isDoubleClick = false
+        var lock = Any()
     }
 
     constructor(context: Context?) : this(context, null) {}
@@ -70,21 +71,21 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
     override fun onGlobalLayout() {
         if (isOnce) {
             drawable ?: return
-            initMatrix()
+            resetMatrix()
             isOnce = false
         }
     }
 
-    fun initMatrix() {
+    fun resetMatrix() {
         drawable ?: return
         val dw = drawable.intrinsicWidth
         val dh = drawable.intrinsicHeight
-        initScale = width / dw.toFloat()
-        midScale = initScale * 2
-        maxScale = initScale * 4
+        minScale = width / dw.toFloat()
+        midScale = minScale * 2
+        maxScale = minScale * 4
         initMatrix.reset()
         initMatrix.postTranslate(width.toFloat() / 2 - dw / 2, height.toFloat() / 2 - dh / 2)
-        initMatrix.postScale(initScale, initScale, width.toFloat() / 2, height.toFloat() / 2)
+        initMatrix.postScale(minScale, minScale, width.toFloat() / 2, height.toFloat() / 2)
         imageMatrix = initMatrix
     }
 
@@ -95,17 +96,22 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
     override fun onScale(gestureDetector: ScaleGestureDetector?): Boolean {
         drawable ?: return true
         gestureDetector?.let {
-            var scaleFactor = it.scaleFactor
-            val scale = initMatrix.values()[Matrix.MSCALE_X]
-            if (scale < maxScale && scaleFactor > 1 || scale > initScale && scaleFactor < 1) {
-                if (scale * scaleFactor < initScale && scaleFactor < 1)
-                    scaleFactor = initScale / scale
-                if (scale * scaleFactor > maxScale && scaleFactor > 1)
-                    scaleFactor = maxScale / scale
-                initMatrix.postScale(scaleFactor, scaleFactor, it.focusX, it.focusY)
-                checkBorderAndCenter()
-                imageMatrix = initMatrix
+            val scaleFactor  = when {
+                rectF.width() > width * 3f -> width * 3f / rectF.width()
+                else -> it.scaleFactor
             }
+            initMatrix.postScale(scaleFactor, scaleFactor, it.focusX, it.focusY)
+            checkBorderAndCenter()
+//            val scale = abs(initMatrix.values()[Matrix.MSCALE_X])
+//            Log.i("scale", "onScale,$scale,$minScale,$maxScale,$scaleFactor")
+//            if (scale < maxScale && scaleFactor > 1 || scale > minScale && scaleFactor < 1) {
+//                if (scale * scaleFactor < minScale && scaleFactor < 1)
+//                    scaleFactor = minScale / scale
+//                if (scale * scaleFactor > maxScale && scaleFactor > 1)
+//                    scaleFactor = maxScale / scale
+//                initMatrix.preScale(scaleFactor, scaleFactor, it.focusX, it.focusY)
+//                checkBorderAndCenter()
+//            }
         }
         return true
     }
@@ -113,6 +119,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
     private fun checkBorderAndCenter() {
         var mx = 0f
         var my = 0f
+        var ms = 0f
         if (drawable != null) {
             rectF.set(0f, 0f, drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat())
             initMatrix.mapRect(rectF)
@@ -124,8 +131,10 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
             if (rectF.right < width) {
                 mx = width - rectF.right;
             }
-        } else
-            mx = width * 0.5f - rectF.right + 0.5f * rectF.width();
+        } else {
+            mx = width * 0.5f - rectF.right + 0.5f * rectF.width()
+            ms = width / rectF.width()
+        }
         if (rectF.height() >= height) {
             if (rectF.top > 0) {
                 my = -rectF.top;
@@ -134,8 +143,11 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
                 my = height - rectF.bottom
             }
         } else
-            my = height * 0.5f - rectF.bottom + 0.5f * rectF.height();
+            my = height * 0.5f - rectF.bottom + 0.5f * rectF.height()
         initMatrix.postTranslate(mx, my)
+        if(ms > 0f)
+            initMatrix.postScale(ms,ms,rectF.centerX(),rectF.centerY())
+        imageMatrix = initMatrix
     }
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
@@ -156,7 +168,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
                 twoPointsDown = false
                 firstPointF.set(event.x, event.y)
                 if (System.currentTimeMillis() - firstClickTime < 300) {
-                    initMatrix()
+                    resetMatrix()
                     isDoubleClick = true
                 }
                 firstClickTime = System.currentTimeMillis()
@@ -164,12 +176,26 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
             MotionEvent.ACTION_POINTER_DOWN -> {
                 twoPointsDown = true
                 disallowIntercept = true
+                val dx = event.getX(0) - event.getX(1)
+                val dy = event.getY(0) - event.getY(1)
+                lastVector.set(dx, dy)
             }
             MotionEvent.ACTION_POINTER_UP -> {
+                twoPointsDown = false
                 backRotation();
             }
             MotionEvent.ACTION_MOVE -> {
-                if (!twoPointsDown) {
+                if (twoPointsDown) {
+                    val dx = event.getX(0) - event.getX(1)
+                    val dy = event.getY(0) - event.getY(1)
+                    val nowDegree = Math.toDegrees(atan2(dx.toDouble(), dy.toDouble())).toFloat()
+                    val oldDegree = Math.toDegrees(atan2(lastVector.x.toDouble(), lastVector.y.toDouble())).toFloat()
+                    lastVector.set(dx, dy)
+                    initMatrix.postRotate(oldDegree - nowDegree, rectF.centerX(), rectF.centerY())
+                    rectF.set(0f, 0f, drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat())
+                    initMatrix.mapRect(rectF)
+                    imageMatrix = initMatrix
+                } else {
                     val mx = event.x - firstPointF.x
                     val my = event.y - firstPointF.y
                     firstPointF.x = event.x
@@ -187,6 +213,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
                 }
             }
             MotionEvent.ACTION_UP -> {
+                checkBorderAndCenter()
                 if (!disallowIntercept) {
                     handle.removeCallbacks(runCommonListener)
                     handle.postDelayed(runCommonListener, 200)
@@ -196,22 +223,9 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         return true
     }
 
-    private fun calculateDeltaDegree(lastVector: PointF?, vector: PointF): Float {
-        lastVector?.let {
-            val lastDegree = atan2(it.x.toDouble(), it.x.toDouble())
-            val degree = atan2(vector.y.toDouble(), vector.x.toDouble())
-            val deltaDegree = degree - lastDegree
-            return Math.toDegrees(deltaDegree).toFloat()
-        }
-        return 0f
-    }
-
     private fun backRotation() {
-        //x轴方向的单位向量，在极坐标中，角度为0
         val x_vector = floatArrayOf(1.0f, 0.0f)
-        //映射向量
         initMatrix.mapVectors(x_vector)
-        //计算x轴方向的单位向量转过的角度
         val totalDegree = Math.toDegrees(atan2(x_vector[1].toDouble(), x_vector[0].toDouble())).toFloat()
         var degree = totalDegree
         degree = abs(degree)
@@ -223,9 +237,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         }
         degree = if (totalDegree < 0) -degree else degree
         initMatrix.postRotate(degree - totalDegree, rectF.centerX(), rectF.centerY())
-        rectF.set(0f, 0f, drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat())
-        initMatrix.mapRect(rectF)
-        imageMatrix = initMatrix
+////        imageMatrix = initMatrix
+        checkBorderAndCenter()
     }
-
 }

@@ -113,7 +113,8 @@ public class MainViewModel extends ViewModel {
         switch (getCurrentPager().getValue()){
             case photoPager:
                 photoViewModel.selectAllGroup(!getIsSelectAll().getValue());break;
-            case albumPager:break;
+            case albumPager:
+                albumViewModel.selectAllAlbum(!getIsSelectAll().getValue()); break;
             case timePager:break;
         }
     }
@@ -139,5 +140,4 @@ public class MainViewModel extends ViewModel {
         albumViewModel.lock = lock;
         photoViewModel.lock = lock;
     }
-
 }

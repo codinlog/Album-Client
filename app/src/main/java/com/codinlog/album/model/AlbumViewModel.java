@@ -1,6 +1,7 @@
 package com.codinlog.album.model;
 
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -39,27 +40,28 @@ import java.util.jar.Attributes;
 
 public class AlbumViewModel extends ViewModel {
 
-    public MutableLiveData<Integer> displayOption;
+    private MutableLiveData<Integer> displayOption;
     private LiveData<List<AlbumEntity>> displayData;
-    private MutableLiveData<Map<FolderBean,List<PhotoBean>>> folderDisplayData;
+    private MutableLiveData<Map<FolderBean, List<PhotoBean>>> folderDisplayData;
     private MutableLiveData<WorthStoreUtil.MODE> mode;
     private MutableLiveData<List<AlbumEntity>> selectedData;
+    private MutableLiveData<Boolean> isSelectAll;
     public MainViewModel mainViewModel;
     private AlbumDAO albumDAO;
     private AlbumItemDAO albumItemDAO;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
-    public Object lock;
+    Object lock;
 
     public LiveData<List<AlbumEntity>> getDisplayData() {
-        if(displayData == null){
+        if (displayData == null) {
             displayData = getAlbumDAO().queryAllAlbum();
         }
         return displayData;
     }
 
     public MutableLiveData<WorthStoreUtil.MODE> getMode() {
-        if(mode == null){
+        if (mode == null) {
             mode = new MediatorLiveData<>();
             mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
         }
@@ -71,7 +73,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public MutableLiveData<List<AlbumEntity>> getSelectedData() {
-        if(selectedData == null){
+        if (selectedData == null) {
             selectedData = new MediatorLiveData<>();
             selectedData.setValue(new ArrayList<>());
         }
@@ -81,10 +83,10 @@ public class AlbumViewModel extends ViewModel {
     public void setSelectedData(int position) {
         AlbumEntity albumEntity = displayData.getValue().get(position);
         albumEntity.setSelect(!albumEntity.isSelect());
-        if(albumEntity.isSelect()){
-            if(!getSelectedData().getValue().contains(albumEntity))
+        if (albumEntity.isSelect()) {
+            if (!getSelectedData().getValue().contains(albumEntity))
                 getSelectedData().getValue().add(albumEntity);
-        }else{
+        } else {
             getSelectedData().getValue().remove(albumEntity);
         }
         getSelectedData().setValue(getSelectedData().getValue());
@@ -95,47 +97,47 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public AlbumDAO getAlbumDAO() {
-        if(albumDAO == null)
+        if (albumDAO == null)
             albumDAO = AlbumDatabase.getInstance().getAlbumDAO();
         return albumDAO;
     }
 
     public AlbumItemDAO getAlbumItemDAO() {
-        if(albumItemDAO == null)
+        if (albumItemDAO == null)
             albumItemDAO = AlbumDatabase.getInstance().getAlbumItemDAO();
         return albumItemDAO;
     }
 
-    public void insertAlbum(AlbumEntity... albumEntities){
+    public void insertAlbum(AlbumEntity... albumEntities) {
         new AlbumInsertDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
-    public void deleteAlbum(AlbumEntity... albumEntities){
+    public void deleteAlbum(AlbumEntity... albumEntities) {
         new AlbumDeleteDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
-    public void queryAlbum(CommonListener commonListener){
-        new AlbumQueryDBUtil(getAlbumDAO(),commonListener).execute();
+    public void queryAlbum(CommonListener commonListener) {
+        new AlbumQueryDBUtil(getAlbumDAO(), commonListener).execute();
     }
 
-    public void queryAlbumById(int albumId, CommonListener commonListener){
-        new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(),commonListener).execute(albumId);
+    public void queryAlbumById(int albumId, CommonListener commonListener) {
+        new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(), commonListener).execute(albumId);
     }
 
-    public void updateAlbum(AlbumEntity... albumEntities){
+    public void updateAlbum(AlbumEntity... albumEntities) {
         new AlbumUpdateDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
-    public void deleteAlbumItem(AlbumItemEntity ... albumItemEntities){
+    public void deleteAlbumItem(AlbumItemEntity... albumItemEntities) {
         new AlbumItemDeleteDBUtil(getAlbumItemDAO()).execute(albumItemEntities);
     }
 
-    public void queryAlbumItemById(int albumId, CommonListener commonListener){
-        new AlbumItemQueryByAlbumIdDBUtil(getAlbumItemDAO(),commonListener).execute(albumId);
+    public void queryAlbumItemById(int albumId, CommonListener commonListener) {
+        new AlbumItemQueryByAlbumIdDBUtil(getAlbumItemDAO(), commonListener).execute(albumId);
     }
 
-    public void insertAlbumWithPhotoBeans(AlbumEntity albumEntity,List<PhotoBean> photoBeans,CommonListener commonListener){
-        new AlbumInsertWithPhotoBeansDBUtil(albumDAO,getAlbumItemDAO(),albumEntity,commonListener).execute(photoBeans.stream().map(v -> {
+    public void insertAlbumWithPhotoBeans(AlbumEntity albumEntity, List<PhotoBean> photoBeans, CommonListener commonListener) {
+        new AlbumInsertWithPhotoBeansDBUtil(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
@@ -144,8 +146,8 @@ public class AlbumViewModel extends ViewModel {
         }).toArray(AlbumItemEntity[]::new));
     }
 
-    public void insertExistAlbumWithPhotoBeans(AlbumEntity albumEntity,List<PhotoBean> photoBeans,CommonListener commonListener){
-        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO,getAlbumItemDAO(),albumEntity,commonListener).execute(photoBeans.stream().map(v -> {
+    public void insertExistAlbumWithPhotoBeans(AlbumEntity albumEntity, List<PhotoBean> photoBeans, CommonListener commonListener) {
+        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
@@ -154,27 +156,29 @@ public class AlbumViewModel extends ViewModel {
         }).toArray(AlbumItemEntity[]::new));
     }
 
-    public void resetSelectData(){
+    public void resetSelectData() {
         getSelectedData().getValue().forEach(
-                it ->{it.setSelect(false);}
+                it -> {
+                    it.setSelect(false);
+                }
         );
         getSelectedData().setValue(new ArrayList<>());
     }
 
     public MutableLiveData<Integer> getDisplayOption() {
-        if(displayOption == null){
+        if (displayOption == null) {
             displayOption = new MediatorLiveData<>();
             displayOption.setValue(BottomSheetBehavior.STATE_HIDDEN);
         }
         return displayOption;
     }
 
-    public void setDisplayOption(int value){
+    public void setDisplayOption(int value) {
         getDisplayOption().setValue(value);
     }
 
     public MutableLiveData<Map<FolderBean, List<PhotoBean>>> getFolderDisplayData() {
-        if(folderDisplayData == null){
+        if (folderDisplayData == null) {
             folderDisplayData = new MediatorLiveData<>();
             Map<FolderBean, List<PhotoBean>> map = new LinkedHashMap<>();
             folderDisplayData.setValue(map);
@@ -182,16 +186,39 @@ public class AlbumViewModel extends ViewModel {
         return folderDisplayData;
     }
 
-    public void setFolderDisplayData(Map<FolderBean, List<PhotoBean>> value) {
+    private void setFolderDisplayData(Map<FolderBean, List<PhotoBean>> value) {
         getFolderDisplayData().setValue(value);
     }
 
     public void setFolderClassifiedData(List<PhotoBean> it) {
-        synchronized (lock){
+        synchronized (lock) {
             if (classifiedRunnable == null)
                 classifiedRunnable = () -> setFolderDisplayData(ClassifyUtil.PhotoBeansFolderClassify(it, getFolderDisplayData().getValue()));
             handler.removeCallbacks(classifiedRunnable);
             handler.post(classifiedRunnable);
         }
+    }
+
+    public MutableLiveData<Boolean> getIsSelectAll() {
+        if(isSelectAll == null)
+            isSelectAll = new MediatorLiveData<>();
+        return isSelectAll;
+    }
+
+    public void setIsSelectAll(boolean isSelectAll) {
+        getIsSelectAll().setValue(isSelectAll);
+    }
+
+    public void selectAllAlbum(boolean isAll) {
+        displayData.getValue().forEach(it -> {
+            it.setSelect(isAll);
+            if (it.isSelect()) {
+                if (!getSelectedData().getValue().contains(it))
+                    getSelectedData().getValue().add(it);
+            } else
+                getSelectedData().getValue().remove(it);
+        });
+        getSelectedData().setValue(getSelectedData().getValue());
+        setIsSelectAll(isAll);
     }
 }

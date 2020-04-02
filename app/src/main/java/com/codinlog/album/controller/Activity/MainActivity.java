@@ -1,6 +1,9 @@
 package com.codinlog.album.controller.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.ExifInterface;
@@ -10,15 +13,26 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -27,6 +41,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.MainVPAdapter;
+import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.BaseActivityController;
@@ -72,6 +87,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
     private String currentPhotoPath;
     private PopupMenu popupMenuMore;
     private PopupMenu popupMenuOperation;
+    private static boolean noOperation = true;
     private Handler handler = new Handler();
     private static final Object lock = new Object();
 
@@ -90,7 +106,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         viewModel.timeViewModel.mainViewModel = viewModel;
         viewModel.setLock(new Object());
         popupMenuMore = new PopupMenu(this, binding.btnMore);
-        popupMenuOperation = new PopupMenu(this,binding.btnOperation);
+        popupMenuOperation = new PopupMenu(this, binding.btnOperation);
         popupMenuMore.getMenuInflater().inflate(R.menu.top_menu, popupMenuMore.getMenu());
         popupMenuOperation.getMenuInflater().inflate(R.menu.album_display, popupMenuOperation.getMenu());
     }
@@ -108,6 +124,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         loadPhotoData();
     }
 
+    @SuppressLint("StringFormatMatches")
     @Override
     public void doInitListener() {
         viewModel.getFragments().observe(this, fragmentBeans -> {
@@ -235,6 +252,81 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             } else if (viewModel.getCurrentPager().getValue() == albumPager) {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_func:
+                        final List<String> noticeStrings = new ArrayList<>();//albumEntities.stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList());
+                        viewModel.albumViewModel.getSelectedData().getValue().forEach(it -> {
+                            noticeStrings.add(it.getAlbumName());
+                        });
+                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
+                            if (!noticeStrings.contains(it.getAlbumName()))
+                                noticeStrings.add(it.getAlbumName());
+                        });
+                        View view = LayoutInflater.from(this).inflate(R.layout.dialog_item, null);
+                        AutoCompleteTextView autoTv = view.findViewById(R.id.autoTv);
+                        ImageButton imgBtn = view.findViewById(R.id.imgBtn);
+                        TextView tv = view.findViewById(R.id.tv);
+                        CheckBox cb = view.findViewById(R.id.cb);
+                        autoTv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, noticeStrings));
+                        imgBtn.setOnClickListener(v -> autoTv.showDropDown());
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                .setTitle(R.string.merge_album)
+                                .setCancelable(false)
+                                .setView(view)
+                                .setNegativeButton(R.string.btn_cancel, (dialog, i) -> {
+                                    viewModel.setMode(MODE_NORMAL);
+                                    dialog.dismiss();
+                                })
+                                .setPositiveButton(R.string.btn_ok, null).create();
+                        alertDialog.setOnShowListener(__ -> {
+                            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            button.setText(R.string.btn_ok);
+                            button.setOnClickListener(v -> {
+                                if(noOperation)
+                                    Toast.makeText(MainActivity.this, R.string.no_operation, Toast.LENGTH_SHORT).show();
+                                else {
+                                    String albumName = autoTv.getText().toString().trim();
+                                    viewModel.setMode(MODE_NORMAL);
+                                    alertDialog.dismiss();
+                                }
+                            });
+                            autoTv.requestFocus();
+                            InputMethodManager inputManager = (InputMethodManager) AlbumApplication.mContext
+                                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+                            handler.postDelayed(() -> inputManager.showSoftInput(autoTv, 0),200);
+                        });
+                        alertDialog.show();
+                        autoTv.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            }
+
+                            @SuppressLint("ResourceAsColor")
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+                                String albumName = editable.toString();
+                                cb.setVisibility(View.VISIBLE);
+                                noOperation = false;
+                                if (albumName.isEmpty()) {
+                                    tv.setText(R.string.album_name_invalid);
+                                    cb.setVisibility(View.INVISIBLE);
+                                    noOperation = true;
+                                } else if (noticeStrings.contains(albumName)) {
+                                    List<AlbumEntity> value = viewModel.albumViewModel.getSelectedData().getValue();
+                                    if (value.size() == 1 && value.get(0).getAlbumName().equals(albumName)) {
+                                        cb.setVisibility(View.INVISIBLE);
+                                        tv.setText(R.string.no_operation);
+                                        noOperation = true;
+                                        return;
+                                    }
+                                    tv.setText(R.string.add_to_exists_album);
+                                }
+                                else
+                                    tv.setText(R.string.add_to_new_album);
+                            }
+                        });
                         break;
                     case R.id.menu_cancel:
                         viewModel.setMode(MODE_NORMAL);
@@ -277,7 +369,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 case albumPager:
                     if (viewModel.getMode().getValue() == MODE_NORMAL) {
                         popupMenuOperation.show();
-                    }else{
+                    } else {
 
                     }
                     break;
@@ -292,10 +384,12 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             }
             return false;
         });
-        popupMenuOperation.setOnMenuItemClickListener(item->{
-            switch (item.getItemId()){
-                case R.id.personal:break;
-                case R.id.intellect:break;
+        popupMenuOperation.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.personal:
+                    break;
+                case R.id.intellect:
+                    break;
                 case R.id.folder:
                     viewModel.albumViewModel.setDisplayOption(BottomSheetBehavior.STATE_COLLAPSED);
                     break;
@@ -393,18 +487,21 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         });
     }
 
-    private int getRotation(String path){
-        if("".equals(path))
-            return  0;
+    private int getRotation(String path) {
+        if ("".equals(path))
+            return 0;
         try {
             ExifInterface exifInterface = new ExifInterface(path);
-            switch (exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)){
-                case ExifInterface.ORIENTATION_ROTATE_90:return 90;
-                case ExifInterface.ORIENTATION_ROTATE_180:return 180;
-                case ExifInterface.ORIENTATION_ROTATE_270:return 270;
+            switch (exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
             }
-        }catch (Exception e){
-            return  0;
+        } catch (Exception e) {
+            return 0;
         }
         return 0;
     }
