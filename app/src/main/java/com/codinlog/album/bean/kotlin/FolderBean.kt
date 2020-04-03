@@ -2,7 +2,7 @@ package com.codinlog.album.bean.kotlin
 
 import com.codinlog.album.bean.PhotoBean
 
-class FolderBean(var folderName: String, var folderNum: Int = 0,var photoBean: PhotoBean? = null): Comparable<FolderBean> {
+class FolderBean(var folderName: String, var folderPath: String, var folderNum: Int = 0, var photoBean: PhotoBean? = null) : Comparable<FolderBean> {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -17,6 +17,6 @@ class FolderBean(var folderName: String, var folderNum: Int = 0,var photoBean: P
     }
 
     override fun compareTo(other: FolderBean): Int {
-       return this.folderName.compareTo(other.folderName,true)
+        return this.folderName.compareTo(other.folderName, true)
     }
 }

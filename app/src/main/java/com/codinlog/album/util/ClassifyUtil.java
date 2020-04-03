@@ -81,7 +81,8 @@ public class ClassifyUtil {
         for (PhotoBean photoBean : photoBeans) {
             photoBean.setDelete(false);
             String folder = getFolderString(photoBean.getPhotoPath().toCharArray(), '/');
-            FolderBean folderBean = new FolderBean(folder, 0, null);
+            String folderPath = photoBean.getPhotoPath().substring(0, photoBean.getPhotoPath().lastIndexOf('/'));
+            FolderBean folderBean = new FolderBean(folder,folderPath, 0, null);
             if (classifiedFolderMap.containsKey(folderBean)) {
                 if (!classifiedFolderMap.get(folderBean).contains(photoBean)) {
                     classifiedFolderMap.get(folderBean).add(photoBean);

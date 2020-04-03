@@ -186,7 +186,7 @@ public class AlbumViewModel extends ViewModel {
         return folderDisplayData;
     }
 
-    private void setFolderDisplayData(Map<FolderBean, List<PhotoBean>> value) {
+    public void setFolderDisplayData(Map<FolderBean, List<PhotoBean>> value) {
         getFolderDisplayData().setValue(value);
     }
 

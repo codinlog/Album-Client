@@ -3,9 +3,15 @@ package com.codinlog.album.controller.Fragment;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.kotlin.AlbumFolderRVAdapter;
 import com.codinlog.album.adapter.kotlin.AlbumRVAdapter;
+import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.Activity.kotlin.AlbumPreviewActivity;
 import com.codinlog.album.controller.BaseFragmentController;
@@ -31,16 +38,21 @@ import com.codinlog.album.util.WorthStoreUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import kotlin.Pair;
+import kotlin.Triple;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumFragmentBinding> {
     private AlbumRVAdapter albumRVAdapter;
     private AlbumFolderRVAdapter albumFolderRVAdapter;
     private BottomSheetBehavior sheetBehavior;
     private RecyclerView rv_sheet;
+    private Handler handler = new Handler();
 
     public static AlbumFragment newInstance() {
         return new AlbumFragment();
@@ -65,7 +77,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             albumRVAdapter.setDisplayData(displayData);
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
-            if(viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
+            if (viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
                 int displaySize = viewModel.getDisplayData().getValue().size();
                 int selectSize = viewModel.getSelectedData().getValue().size();
                 boolean allSelect = selectSize >= displaySize;
@@ -73,7 +85,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             }
             viewModel.mainViewModel.setTitle();
         });
-        viewModel.getIsSelectAll().observe(getViewLifecycleOwner(),isAll ->{
+        viewModel.getIsSelectAll().observe(getViewLifecycleOwner(), isAll -> {
             albumRVAdapter.notifyDataSetChanged();
         });
         viewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
@@ -86,10 +98,9 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN)
                 sheetBehavior.setState(option);
         });
-        viewModel.getFolderDisplayData().observe(getViewLifecycleOwner(), map ->{
+        viewModel.getFolderDisplayData().observe(getViewLifecycleOwner(), map -> {
             List list = new ArrayList(map.keySet());
             Collections.sort(list);
-            Log.d("info", "Running" + list.size());
             albumFolderRVAdapter.setDisplayData(list);
         });
     }
@@ -97,14 +108,14 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitDisplayData() {
         albumRVAdapter = new AlbumRVAdapter(o -> {
-            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN &&viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
+            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL) {
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
-                intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get((int)o));
+                intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get((int) o));
                 startActivity(intent);
             } else {
-                viewModel.setSelectedData((int)o);
-                albumRVAdapter.notifyItemChanged((int)o, "payload");
+                viewModel.setSelectedData((int) o);
+                albumRVAdapter.notifyItemChanged((int) o, "payload");
             }
         }, o -> {
             if (viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_NORMAL)
@@ -117,13 +128,48 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             DataStoreUtil.getInstance().setFolderDisplayData(viewModel.getFolderDisplayData().getValue().get(folderBean));
             Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
             intent.putExtra("from", "albumFolder");
-            intent.putExtra("fromValue",folderBean.getFolderName());
+            intent.putExtra("fromValue", folderBean.getFolderName());
             startActivity(intent);
+        }, o -> {
+            WeakReference<Triple<FolderBean,View,Integer>> reference = (WeakReference<Triple<FolderBean,View,Integer>>)o;
+            Triple<FolderBean,View,Integer> folderBeanViewPair = reference.get();
+            PopupMenu popupMenu = new PopupMenu(getContext(), folderBeanViewPair.component2());
+            popupMenu.inflate(R.menu.delete_menu);
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                if(menuItem.getItemId() == R.id.delete){
+                    FolderBean folderBean = folderBeanViewPair.component1();
+                    List<PhotoBean> photoBeans = viewModel.getFolderDisplayData().getValue().get(folderBean);
+                    boolean isDeleteAll =  deletePhotoBeans(photoBeans);
+                    if(!isDeleteAll)
+                        Toast.makeText(getContext(),R.string.delete_not_all, Toast.LENGTH_SHORT).show();
+                    else
+                        viewModel.getFolderDisplayData().getValue().remove(folderBean);
+                    albumFolderRVAdapter.notifyItemRemoved(folderBeanViewPair.component3());
+                    handler.postDelayed(() -> viewModel.setFolderDisplayData(viewModel.getFolderDisplayData().getValue()), 550);
+                }
+                return true;
+            });
+            popupMenu.show();
         });
         binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStoreUtil.albumItemNum));
         binding.rv.setAdapter(albumRVAdapter);
         rv_sheet.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_sheet.setAdapter(albumFolderRVAdapter);
-        rv_sheet.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        rv_sheet.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+    }
+
+    public boolean deletePhotoBeans(List<PhotoBean> photoBeans){
+        Iterator<PhotoBean> iterator = photoBeans.iterator();
+        while (iterator.hasNext()){
+            PhotoBean photoBean = iterator.next();
+            File file = new File(photoBean.getPhotoPath());
+            if (file.exists() && file.isFile() && file.delete())
+                iterator.remove();
+        }
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
+        mediaScanIntent.setData(contentUri);
+        getContext().sendBroadcast(mediaScanIntent);
+        return photoBeans.size() <= 0;
     }
 }

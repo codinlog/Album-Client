@@ -1,5 +1,6 @@
 package com.codinlog.album.adapter.kotlin
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,9 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.kotlin.FolderBean
 import com.codinlog.album.listener.CommonListener
+import java.lang.ref.WeakReference
 
-class AlbumFolderRVAdapter(private val onClickListener:CommonListener) : RecyclerView.Adapter<AlbumFolderRVAdapter.ViewHolder>() {
+class AlbumFolderRVAdapter(private val onClickListener: CommonListener, private val onLongClickListener: CommonListener) : RecyclerView.Adapter<AlbumFolderRVAdapter.ViewHolder>() {
     var displayData = listOf<FolderBean>()
         set(value) {
             field = value
@@ -20,7 +22,7 @@ class AlbumFolderRVAdapter(private val onClickListener:CommonListener) : Recycle
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.folder_item,parent,false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.folder_item, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -29,9 +31,11 @@ class AlbumFolderRVAdapter(private val onClickListener:CommonListener) : Recycle
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(AlbumApplication.mContext).load(displayData[position].photoBean?.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
-        holder.tvFolder.text = displayData[position].folderName
-        holder.tvNum.text = displayData[position].folderNum.toString()
-        holder.view.setOnClickListener { onClickListener.handleEvent(displayData[position]) }
+        val folderBean = displayData[position]
+        holder.tvFolder.text = folderBean.folderName
+        holder.tvNum.text = folderBean.folderNum.toString()
+        holder.view.setOnClickListener { onClickListener.handleEvent(folderBean)}
+        holder.view.setOnLongClickListener { onLongClickListener.handleEvent(WeakReference(Triple(folderBean,holder.view,position)));return@setOnLongClickListener true }
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
