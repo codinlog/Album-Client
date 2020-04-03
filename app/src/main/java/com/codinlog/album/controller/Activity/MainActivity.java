@@ -284,6 +284,10 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                     Toast.makeText(MainActivity.this, R.string.no_operation, Toast.LENGTH_SHORT).show();
                                 else {
                                     String albumName = autoTv.getText().toString().trim();
+                                    boolean keepOldAlbum = cb.isChecked();
+                                    if(noticeStrings.contains(albumName)){
+
+                                    }
                                     viewModel.setMode(MODE_NORMAL);
                                     alertDialog.dismiss();
                                 }
