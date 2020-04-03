@@ -10,11 +10,11 @@ class AlbumMergeDBUtil(private val albumDAO: AlbumDAO
                        , private val albumItemDAO: AlbumItemDAO
                        , private val albumEntity: AlbumEntity
                        , private val keepOldAlbum: Boolean
-                       ,private val createNew:Boolean
+                       , private val createNew: Boolean
                        , private val commonListener: CommonListener)
     : AsyncTask<List<AlbumEntity>, Unit, Boolean>() {
     override fun doInBackground(vararg params: List<AlbumEntity>?): Boolean {
-        return albumDAO.mergeAlbum(albumEntity,albumItemDAO,keepOldAlbum,createNew,params[0])
+        return albumDAO.mergeAlbum(albumEntity, albumItemDAO, keepOldAlbum, createNew, params[0])
     }
 
     override fun onPostExecute(result: Boolean?) {
