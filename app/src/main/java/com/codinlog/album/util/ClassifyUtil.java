@@ -142,7 +142,7 @@ public class ClassifyUtil {
 
     public static boolean removeDeletePhotoBeans(List<PhotoBean> photoBeans, boolean isResetStatus) {
         if (photoBeans == null || photoBeans.isEmpty())
-            return false;
+            return true;
         Iterator<PhotoBean> iterator = photoBeans.iterator();
         boolean flag = false;
         while (iterator.hasNext()) {

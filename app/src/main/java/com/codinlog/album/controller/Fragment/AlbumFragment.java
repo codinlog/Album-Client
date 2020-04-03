@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,6 +75,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitListener() {
         viewModel.getDisplayData().observe(getViewLifecycleOwner(), displayData -> {
+            Log.d("msg", "change");
             albumRVAdapter.setDisplayData(displayData);
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
@@ -139,7 +141,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                 if(menuItem.getItemId() == R.id.delete){
                     FolderBean folderBean = folderBeanViewPair.component1();
                     List<PhotoBean> photoBeans = viewModel.getFolderDisplayData().getValue().get(folderBean);
-                    boolean isDeleteAll =  deletePhotoBeans(photoBeans);
+                    boolean isDeleteAll =  deletePhotoBeans(photoBeans,folderBean);
                     if(!isDeleteAll)
                         Toast.makeText(getContext(),R.string.delete_not_all, Toast.LENGTH_SHORT).show();
                     else
@@ -158,7 +160,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         rv_sheet.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
-    public boolean deletePhotoBeans(List<PhotoBean> photoBeans){
+    public boolean deletePhotoBeans(List<PhotoBean> photoBeans,FolderBean folderBean){
         Iterator<PhotoBean> iterator = photoBeans.iterator();
         while (iterator.hasNext()){
             PhotoBean photoBean = iterator.next();
@@ -166,6 +168,8 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             if (file.exists() && file.isFile() && file.delete())
                 iterator.remove();
         }
+        getContext().getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Images.Media.DATA + "=\"" + folderBean.getFolderPath() + "\"", null);
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
         mediaScanIntent.setData(contentUri);

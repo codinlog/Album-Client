@@ -3,7 +3,6 @@ package com.codinlog.album.controller.Activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.ExifInterface;
@@ -32,7 +31,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -256,11 +254,11 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                         viewModel.albumViewModel.getSelectedData().getValue().forEach(it -> {
                             noticeStrings.add(it.getAlbumName());
                         });
-                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
-                            if (!noticeStrings.contains(it.getAlbumName()))
-                                noticeStrings.add(it.getAlbumName());
-                        });
-                        View view = LayoutInflater.from(this).inflate(R.layout.dialog_item, null);
+//                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
+//                            if (!noticeStrings.contains(it.getAlbumName()))
+//                                noticeStrings.add(it.getAlbumName());
+//                        });
+                        View view = LayoutInflater.from(this).inflate(R.layout.mergeto_album_dialog, null);
                         AutoCompleteTextView autoTv = view.findViewById(R.id.autoTv);
                         ImageButton imgBtn = view.findViewById(R.id.imgBtn);
                         TextView tv = view.findViewById(R.id.tv);
@@ -285,7 +283,14 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 else {
                                     String albumName = autoTv.getText().toString().trim();
                                     boolean keepOldAlbum = cb.isChecked();
-                                    if (noticeStrings.contains(albumName)) {
+                                    List<AlbumEntity> albumEntities = viewModel.albumViewModel.getSelectedData().getValue();
+                                    if (albumEntities.size() <= 1) {
+                                        AlbumEntity albumEntity = albumEntities.get(0);
+                                        viewModel.albumViewModel.renameAlbum(albumEntity.getAlbumId(),albumName,o -> {
+                                            if (o != null && (int) o > 0)
+                                                Toast.makeText(MainActivity.this, R.string.rename_success, Toast.LENGTH_SHORT).show();
+                                        });
+                                    } else {
 
                                     }
                                     viewModel.setMode(MODE_NORMAL);
@@ -310,24 +315,32 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                             @SuppressLint("ResourceAsColor")
                             @Override
                             public void afterTextChanged(Editable editable) {
-                                String albumName = editable.toString();
+                                List<AlbumEntity> value = viewModel.albumViewModel.getSelectedData().getValue();
+                                String albumName = editable.toString().trim();
                                 cb.setVisibility(View.VISIBLE);
                                 noOperation = false;
                                 if (albumName.isEmpty()) {
                                     tv.setText(R.string.album_name_invalid);
                                     cb.setVisibility(View.INVISIBLE);
                                     noOperation = true;
-                                } else if (noticeStrings.contains(albumName)) {
-                                    List<AlbumEntity> value = viewModel.albumViewModel.getSelectedData().getValue();
-                                    if (value.size() == 1 && value.get(0).getAlbumName().equals(albumName)) {
-                                        cb.setVisibility(View.INVISIBLE);
+                                    return;
+                                }
+                                if (value.size() == 1) {
+                                    cb.setVisibility(View.INVISIBLE);
+                                    if (noticeStrings.contains(albumName)) {
                                         tv.setText(R.string.no_operation);
                                         noOperation = true;
-                                        return;
+                                    }else{
+                                        tv.setText(R.string.rename);
+                                        noOperation = false;
                                     }
-                                    tv.setText(R.string.add_to_exists_album);
-                                } else
-                                    tv.setText(R.string.add_to_new_album);
+                                }else{
+                                    if (noticeStrings.contains(albumName))
+                                        tv.setText(R.string.add_to_exists_album);
+                                     else
+                                        tv.setText(R.string.add_to_new_album);
+                                    noOperation = false;
+                                }
                             }
                         });
                         break;
@@ -394,6 +407,10 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 case R.id.intellect:
                     break;
                 case R.id.folder:
+                    if (viewModel.albumViewModel.getFolderDisplayData().getValue().size() <= 0) {
+                        Toast.makeText(this, R.string.no_folder_view, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     viewModel.albumViewModel.setDisplayOption(BottomSheetBehavior.STATE_COLLAPSED);
                     break;
             }
@@ -460,12 +477,12 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 String height = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5]));
                                 PhotoBean photoBean = PhotoBean.newInstance();
                                 photoBean.setPhotoPath(path);
-                                photoBean.setPhotoSize(Long.parseLong(size));
                                 photoBean.setPhotoId(Integer.parseInt(id));
                                 photoBean.setTokenDate(Long.parseLong(tokenData));
                                 photoBean.setDelete(false);
                                 photoBean.setWidth(width == null ? 0 : Integer.parseInt(width));
                                 photoBean.setHeight(height == null ? 0 : Integer.parseInt(height));
+                                photoBean.setPhotoSize(size == null ? 0 : Long.parseLong(size));
                                 photoBean.setRotation(getRotation(path));
                                 photoBeans.add(photoBean);
                             }
@@ -530,7 +547,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                         }
                         if (albumItemEntities.size() > 0) {
                             viewModel.albumViewModel.deleteAlbumItem(albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
-                            viewModel.albumViewModel.updateAlbum(albumEntity);
+                            viewModel.albumViewModel.updateAlbum(o -> {
+                            }, albumEntity);
                         }
                     }
                 }

@@ -25,6 +25,9 @@ public abstract class AlbumDAO {
     @Delete
     public abstract int deleteAlbum(AlbumEntity... albumEntities);
 
+    @Query("update albumTB set albumId=:newId,albumName=:albumName where albumId=:oldId")
+    public abstract int renameAlbum(int oldId,int newId,String albumName);
+
     @Query("select * from albumTB order by createDate desc")
     public abstract LiveData<List<AlbumEntity>> queryAllAlbum();
 

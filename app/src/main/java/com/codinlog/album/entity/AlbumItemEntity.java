@@ -6,8 +6,8 @@ import com.codinlog.album.bean.PhotoBean;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "albumItemTB",foreignKeys = @ForeignKey(entity = AlbumEntity.class,
-        parentColumns = "albumId",childColumns = "belongToId",onDelete = CASCADE),indices = {@Index("belongToId")})
+@Entity(tableName = "albumItemTB", foreignKeys = @ForeignKey(entity = AlbumEntity.class,
+        parentColumns = "albumId", childColumns = "belongToId", onDelete = CASCADE, onUpdate = CASCADE), indices = {@Index("belongToId")})
 public class AlbumItemEntity {
     @PrimaryKey
     @ColumnInfo(name = "uuid")

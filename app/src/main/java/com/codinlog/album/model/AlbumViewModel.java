@@ -26,6 +26,7 @@ import com.codinlog.album.util.kotlin.AlbumItemDeleteDBUtil;
 import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryDBUtil;
+import com.codinlog.album.util.kotlin.AlbumRenameDBUtil;
 import com.codinlog.album.util.kotlin.AlbumUpdateDBUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -124,8 +125,12 @@ public class AlbumViewModel extends ViewModel {
         new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(), commonListener).execute(albumId);
     }
 
-    public void updateAlbum(AlbumEntity... albumEntities) {
-        new AlbumUpdateDBUtil(getAlbumDAO()).execute(albumEntities);
+    public void renameAlbum(int oldId,String albumName,CommonListener commonListener){
+        new AlbumRenameDBUtil(commonListener, oldId, getAlbumDAO()).execute(albumName);
+    }
+
+    public void updateAlbum(CommonListener commonListener,AlbumEntity... albumEntities) {
+        new AlbumUpdateDBUtil(getAlbumDAO(),commonListener).execute(albumEntities);
     }
 
     public void deleteAlbumItem(AlbumItemEntity... albumItemEntities) {

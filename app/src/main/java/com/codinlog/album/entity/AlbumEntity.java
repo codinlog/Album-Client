@@ -17,6 +17,10 @@ import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.util.TypeConverterUtitl;
 
 import java.util.Date;
+
+import static androidx.room.ForeignKey.CASCADE;
+import static androidx.room.ForeignKey.RESTRICT;
+
 @TypeConverters(TypeConverterUtitl.class)
 @Entity(tableName = "albumTB",indices = {@Index(value = {"albumName","albumId"},unique = true)})
 public class AlbumEntity implements Parcelable{
@@ -24,12 +28,12 @@ public class AlbumEntity implements Parcelable{
     @ColumnInfo(name = "albumId")
     private int albumId;
 
-    @ColumnInfo(name = "createDate")
-    private Date date;
-
     @NonNull
     @ColumnInfo(name = "albumName")
     private String albumName;
+
+    @ColumnInfo(name = "createDate")
+    private Date date;
 
     @Ignore
     private boolean isSelect = false;
