@@ -280,12 +280,12 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                             button.setText(R.string.btn_ok);
                             button.setOnClickListener(v -> {
-                                if(noOperation)
+                                if (noOperation)
                                     Toast.makeText(MainActivity.this, R.string.no_operation, Toast.LENGTH_SHORT).show();
                                 else {
                                     String albumName = autoTv.getText().toString().trim();
                                     boolean keepOldAlbum = cb.isChecked();
-                                    if(noticeStrings.contains(albumName)){
+                                    if (noticeStrings.contains(albumName)) {
 
                                     }
                                     viewModel.setMode(MODE_NORMAL);
@@ -295,7 +295,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                             autoTv.requestFocus();
                             InputMethodManager inputManager = (InputMethodManager) AlbumApplication.mContext
                                     .getSystemService(Context.INPUT_METHOD_SERVICE);
-                            handler.postDelayed(() -> inputManager.showSoftInput(autoTv, 0),200);
+                            handler.postDelayed(() -> inputManager.showSoftInput(autoTv, 0), 200);
                         });
                         alertDialog.show();
                         autoTv.addTextChangedListener(new TextWatcher() {
@@ -326,8 +326,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                         return;
                                     }
                                     tv.setText(R.string.add_to_exists_album);
-                                }
-                                else
+                                } else
                                     tv.setText(R.string.add_to_new_album);
                             }
                         });
@@ -441,7 +440,6 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 List<PhotoBean> photoBeans = viewModel.getPhotoBeans().getValue();
                 boolean isFirstScanning = photoBeans.isEmpty();
                 boolean isReloadData = false;
-
                 ClassifyUtil.removeDeletePhotoBeans(photoBeans, true);
                 if (data != null && data.getCount() > 0) {
                     data.moveToFirst();
@@ -453,13 +451,13 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 break;
                         File file = new File(path);
                         if (file.exists() && !isContain) {
-                            String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
-                            String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
-                            String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
-                            String width = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[4]));
-                            String height = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5]));
                             if (isFirstScanning || (ClassifyUtil.isPhotoRepeat(photoBeans, path) == WorthStoreUtil.photoIsNew)) {
                                 isReloadData = true;
+                                String size = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[1]));
+                                String id = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[2]));
+                                String tokenData = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[3]));
+                                String width = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[4]));
+                                String height = data.getString(data.getColumnIndexOrThrow(WorthStoreUtil.imageProjection[5]));
                                 PhotoBean photoBean = PhotoBean.newInstance();
                                 photoBean.setPhotoPath(path);
                                 photoBean.setPhotoSize(Long.parseLong(size));
