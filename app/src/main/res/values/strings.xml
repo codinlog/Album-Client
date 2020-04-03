@@ -58,11 +58,13 @@
     <string name="keep_album">保留旧相册</string>
     <string name="no_operation">没有操作</string>
     <string name="delete">删除</string>
-    <string name="menu">删除</string>
+    <string name="delete_success">删除成功</string>
     <string name="no_folder_view">没有文件夹视图</string>
     <string name="rename_success">重命名成功</string>
     <string name="merge_success">合并成功</string>
     <string name="rename">重命名</string>
     <string name="album_exists">已存在该相册</string>
     <string name="no_notice">没有提示</string>
+    <string name="todo">TODO</string>
+    <string name="no_album">没有相册啦!!试试其他视图</string>
 </resources>

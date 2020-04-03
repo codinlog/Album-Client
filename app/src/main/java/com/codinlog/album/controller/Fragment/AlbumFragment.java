@@ -75,8 +75,11 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitListener() {
         viewModel.getDisplayData().observe(getViewLifecycleOwner(), displayData -> {
-            Log.d("msg", "change");
             albumRVAdapter.setDisplayData(displayData);
+            if (displayData.size() <= 0)
+                binding.noticeLayout.setVisibility(View.VISIBLE);
+            else
+                binding.noticeLayout.setVisibility(View.INVISIBLE);
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
             if (viewModel.getMode().getValue() == WorthStoreUtil.MODE.MODE_SELECT) {
@@ -133,17 +136,17 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             intent.putExtra("fromValue", folderBean.getFolderName());
             startActivity(intent);
         }, o -> {
-            WeakReference<Triple<FolderBean,View,Integer>> reference = (WeakReference<Triple<FolderBean,View,Integer>>)o;
-            Triple<FolderBean,View,Integer> folderBeanViewPair = reference.get();
+            WeakReference<Triple<FolderBean, View, Integer>> reference = (WeakReference<Triple<FolderBean, View, Integer>>) o;
+            Triple<FolderBean, View, Integer> folderBeanViewPair = reference.get();
             PopupMenu popupMenu = new PopupMenu(getContext(), folderBeanViewPair.component2());
             popupMenu.inflate(R.menu.delete_menu);
             popupMenu.setOnMenuItemClickListener(menuItem -> {
-                if(menuItem.getItemId() == R.id.delete){
+                if (menuItem.getItemId() == R.id.delete) {
                     FolderBean folderBean = folderBeanViewPair.component1();
                     List<PhotoBean> photoBeans = viewModel.getFolderDisplayData().getValue().get(folderBean);
-                    boolean isDeleteAll =  deletePhotoBeans(photoBeans,folderBean);
-                    if(!isDeleteAll)
-                        Toast.makeText(getContext(),R.string.delete_not_all, Toast.LENGTH_SHORT).show();
+                    boolean isDeleteAll = deletePhotoBeans(photoBeans, folderBean);
+                    if (!isDeleteAll)
+                        Toast.makeText(getContext(), R.string.delete_not_all, Toast.LENGTH_SHORT).show();
                     else
                         viewModel.getFolderDisplayData().getValue().remove(folderBean);
                     albumFolderRVAdapter.notifyItemRemoved(folderBeanViewPair.component3());
@@ -160,9 +163,9 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         rv_sheet.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
-    public boolean deletePhotoBeans(List<PhotoBean> photoBeans,FolderBean folderBean){
+    public boolean deletePhotoBeans(List<PhotoBean> photoBeans, FolderBean folderBean) {
         Iterator<PhotoBean> iterator = photoBeans.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             PhotoBean photoBean = iterator.next();
             File file = new File(photoBean.getPhotoPath());
             if (file.exists() && file.isFile() && file.delete())

@@ -114,8 +114,8 @@ public class AlbumViewModel extends ViewModel {
         new AlbumInsertDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
-    public void deleteAlbum(AlbumEntity... albumEntities) {
-        new AlbumDeleteDBUtil(getAlbumDAO()).execute(albumEntities);
+    public void deleteAlbum(CommonListener commonListener,AlbumEntity... albumEntities) {
+        new AlbumDeleteDBUtil(getAlbumDAO(),commonListener).execute(albumEntities);
     }
 
     public void queryAlbum(CommonListener commonListener) {
@@ -162,9 +162,9 @@ public class AlbumViewModel extends ViewModel {
         }).toArray(AlbumItemEntity[]::new));
     }
 
-    public void mergeAlbum(AlbumEntity targetAlbumEntity,List<AlbumEntity> todoAlbumEntities,boolean keepOldAlbum,CommonListener commonListener){
+    public void mergeAlbum(AlbumEntity targetAlbumEntity,List<AlbumEntity> todoAlbumEntities,boolean keepOldAlbum,boolean createNew,CommonListener commonListener){
         new AlbumMergeDBUtil(getAlbumDAO(),getAlbumItemDAO(),targetAlbumEntity
-        ,keepOldAlbum,commonListener).execute(todoAlbumEntities);
+        ,keepOldAlbum,createNew,commonListener).execute(todoAlbumEntities);
     }
 
     public void resetSelectData() {

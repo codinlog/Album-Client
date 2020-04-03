@@ -227,7 +227,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                                 });
                                             } else {
                                                 AlbumEntity opAlbumEntity = (AlbumEntity) o1;
-                                                if(opAlbumEntity.getPhotoBean().getTokenDate() < albumEntity.getPhotoBean().getTokenDate())
+                                                if (opAlbumEntity.getPhotoBean().getTokenDate() < albumEntity.getPhotoBean().getTokenDate())
                                                     opAlbumEntity.setPhotoBean(albumEntity.getPhotoBean());
                                                 viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(opAlbumEntity, viewModel.photoViewModel.getSelectedData().getValue(), o3 -> {
                                                     if (o3 != null && ((List<Long>) o3).size() > 0)
@@ -300,27 +300,29 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                         });
                                     } else {
                                         boolean keepOldAlbum = cb.isChecked();
-                                        if (noticeStrings.contains(albumName)) {
-                                            AlbumEntity targetAlbumEntity = null;
-                                            List<AlbumEntity> todoAlbumEntities = new ArrayList<>();
-                                            for (AlbumEntity e:albumEntities) {
-                                                if (e.getAlbumName().equals(albumName))
-                                                    targetAlbumEntity = e;
-                                                else
-                                                    todoAlbumEntities.add(e);
-                                            }
-                                            if(targetAlbumEntity == null) return;
-                                            viewModel.albumViewModel.mergeAlbum(targetAlbumEntity,todoAlbumEntities,keepOldAlbum,o ->{
-                                                if(o != null && (boolean)o)
-                                                    Toast.makeText(MainActivity.this,R.string.merge_success, Toast.LENGTH_SHORT).show();
-                                            });
-                                        } else {
-
+                                        boolean createNew = !noticeStrings.contains(albumName);
+                                        AlbumEntity targetAlbumEntity = null;
+                                        List<AlbumEntity> todoAlbumEntities = new ArrayList<>();
+                                        for (AlbumEntity e : albumEntities) {
+                                            if (e.getAlbumName().equals(albumName))
+                                                targetAlbumEntity = e;
+                                            else
+                                                todoAlbumEntities.add(e);
                                         }
+                                        if (!createNew && targetAlbumEntity == null) return;
+                                        if (createNew) {
+                                            targetAlbumEntity = new AlbumEntity();
+                                            targetAlbumEntity.setAlbumName(albumName);
+                                            targetAlbumEntity.setDate(new Date());
+                                        }
+                                        viewModel.albumViewModel.mergeAlbum(targetAlbumEntity, todoAlbumEntities, keepOldAlbum, createNew, o -> {
+                                            if (o != null && (boolean) o)
+                                                Toast.makeText(MainActivity.this, R.string.merge_success, Toast.LENGTH_SHORT).show();
+                                        });
                                     }
-                                    viewModel.setMode(MODE_NORMAL);
-                                    alertDialog.dismiss();
                                 }
+                                viewModel.setMode(MODE_NORMAL);
+                                alertDialog.dismiss();
                             });
                             autoTv.requestFocus();
                             InputMethodManager inputManager = (InputMethodManager) AlbumApplication.mContext
@@ -387,7 +389,9 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             return true;
         });
 
-        binding.btnOperation.setOnClickListener(v -> {
+        binding.btnOperation.setOnClickListener(v ->
+
+        {
             switch (viewModel.getCurrentPager().getValue()) {
                 case photoPager:
                     if (viewModel.getMode().getValue() == MODE_NORMAL) {
@@ -418,21 +422,42 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                     if (viewModel.getMode().getValue() == MODE_NORMAL) {
                         popupMenuOperation.show();
                     } else {
-
+                        List<AlbumEntity> albumEntities = viewModel.albumViewModel.getSelectedData().getValue();
+                        if (albumEntities.size() <= 0)
+                            Toast.makeText(this, R.string.choice_item, Toast.LENGTH_SHORT).show();
+                        else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                    .setCancelable(false)
+                                    .setMessage(getString(R.string.delete_notice, albumEntities.size()))
+                                    .setNegativeButton(R.string.btn_cancel, (dialog, i) -> {
+                                        dialog.dismiss();
+                                    })
+                                    .setPositiveButton(R.string.btn_ok, (dialog, i) -> {
+                                        viewModel.albumViewModel.deleteAlbum(o -> {
+                                            if (o != null && (int) o > 0)
+                                                Toast.makeText(MainActivity.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
+                                                viewModel.setMode(MODE_NORMAL);
+                                            }, albumEntities.stream().toArray(AlbumEntity[]::new));
+                                    });
+                            builder.show();
+                        }
                     }
                     break;
             }
         });
 
         binding.btnMore.setOnClickListener(v -> popupMenuMore.show());
-        popupMenuMore.setOnMenuItemClickListener(item -> {
+        popupMenuMore.setOnMenuItemClickListener(item ->
+
+        {
             switch (item.getItemId()) {
                 case R.id.setting_1:
                     break;
             }
             return false;
         });
-        popupMenuOperation.setOnMenuItemClickListener(item -> {
+        popupMenuOperation.setOnMenuItemClickListener(item ->
+        {
             switch (item.getItemId()) {
                 case R.id.personal:
                     break;
@@ -653,6 +678,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
         }
+
     }
 
     private String[] deletePhotoBeans(String... filePaths) {

@@ -50,7 +50,9 @@ public abstract class AlbumDAO {
     }
 
     @Transaction
-    public boolean mergeAlbum(AlbumEntity albumEntity,AlbumItemDAO albumItemDAO,boolean keepOldAlbum,List<AlbumEntity> albumEntities){
+    public boolean mergeAlbum(AlbumEntity albumEntity,AlbumItemDAO albumItemDAO,boolean keepOldAlbum,boolean createNew,List<AlbumEntity> albumEntities){
+        if(createNew)
+            insertAlbum(albumEntity);
         albumEntities.forEach(it ->{
             List<AlbumItemEntity> albumItemEntities = albumItemDAO.queryAllAlbumItem(it.getAlbumId());
             albumItemDAO.insertAlbumItem(albumItemEntities.stream().peek(i ->{
