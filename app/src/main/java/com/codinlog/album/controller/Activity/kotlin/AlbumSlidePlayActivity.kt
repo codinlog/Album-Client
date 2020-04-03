@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.codinlog.album.R
@@ -41,6 +43,7 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
                 albumSlidePlayRVMinAdapter?.notifyItemChanged(oldPos, "payload")
                 albumSlidePlayRVMinAdapter?.notifyItemChanged(newPos, "payload")
                 binding.vp.currentItem = newPos
+                binding.rv.scrollToPosition(newPos)
             } catch (e: IndexOutOfBoundsException) {
 
             } catch (e: Exception) {
@@ -85,10 +88,22 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
             albumSlidePlayRVFullAdapter.displayData = it
             binding.vp.currentItem = currentPosition
         })
-        binding.vp.registerOnPageChangeCallback(object:OnPageChangeCallback(){
+        binding.vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 currentPosition = position
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                if(state == SCROLL_STATE_DRAGGING){
+                    viewModel.displayData.value?.let {
+                        if(currentPosition >= it.size - 1)
+                            Toast.makeText(this@AlbumSlidePlayActivity,R.string.last_page,Toast.LENGTH_SHORT).show()
+                        else if(currentPosition <= 0)
+                            Toast.makeText(this@AlbumSlidePlayActivity,R.string.first_page,Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         })
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {

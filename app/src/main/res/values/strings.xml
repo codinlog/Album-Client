@@ -66,5 +66,7 @@
     <string name="album_exists">已存在该相册</string>
     <string name="no_notice">没有提示</string>
     <string name="todo">TODO</string>
+    <string name="last_page">最后一页</string>
+    <string name="first_page">第一页</string>
     <string name="no_album">没有相册啦!!试试其他视图</string>
 </resources>
