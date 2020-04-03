@@ -48,4 +48,23 @@ public abstract class AlbumDAO {
         updateAlbum(albumEntity);
         return albumItemDAO.insertAlbumItem(albumItemEntities);
     }
+
+    @Transaction
+    public boolean mergeAlbum(AlbumEntity albumEntity,AlbumItemDAO albumItemDAO,boolean keepOldAlbum,List<AlbumEntity> albumEntities){
+        albumEntities.forEach(it ->{
+            List<AlbumItemEntity> albumItemEntities = albumItemDAO.queryAllAlbumItem(it.getAlbumId());
+            albumItemDAO.insertAlbumItem(albumItemEntities.stream().peek(i ->{
+              i.setBelongToId(albumEntity.getAlbumId());
+              i.setUuid((i.getPhotoBean().getPhotoPath() + albumEntity.getAlbumName()).hashCode());
+            }).toArray(AlbumItemEntity[]::new));
+        });
+        AlbumItemEntity albumItemEntity = albumItemDAO.queryTopOneAlbumItem(albumEntity.getAlbumId());
+        if(albumItemEntity != null){
+            albumEntity.setPhotoBean(albumItemEntity.getPhotoBean());
+            updateAlbum(albumEntity);
+        }
+        if(!keepOldAlbum)
+            deleteAlbum(albumEntities.stream().toArray(AlbumEntity[]::new));
+        return true;
+    }
 }

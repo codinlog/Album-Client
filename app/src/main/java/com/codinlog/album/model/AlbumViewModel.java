@@ -24,6 +24,7 @@ import com.codinlog.album.util.kotlin.AlbumInsertDBUtil;
 import com.codinlog.album.util.kotlin.AlbumInsertWithPhotoBeansDBUtil;
 import com.codinlog.album.util.kotlin.AlbumItemDeleteDBUtil;
 import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil;
+import com.codinlog.album.util.kotlin.AlbumMergeDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryDBUtil;
 import com.codinlog.album.util.kotlin.AlbumRenameDBUtil;
@@ -159,6 +160,11 @@ public class AlbumViewModel extends ViewModel {
             albumItemEntity.setUuid((v.getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             return albumItemEntity;
         }).toArray(AlbumItemEntity[]::new));
+    }
+
+    public void mergeAlbum(AlbumEntity targetAlbumEntity,List<AlbumEntity> todoAlbumEntities,boolean keepOldAlbum,CommonListener commonListener){
+        new AlbumMergeDBUtil(getAlbumDAO(),getAlbumItemDAO(),targetAlbumEntity
+        ,keepOldAlbum,commonListener).execute(todoAlbumEntities);
     }
 
     public void resetSelectData() {

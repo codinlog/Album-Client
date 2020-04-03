@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -70,6 +69,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -226,7 +226,10 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                                         Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
                                                 });
                                             } else {
-                                                viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(albumEntity, viewModel.photoViewModel.getSelectedData().getValue(), o3 -> {
+                                                AlbumEntity opAlbumEntity = (AlbumEntity) o1;
+                                                if(opAlbumEntity.getPhotoBean().getTokenDate() < albumEntity.getPhotoBean().getTokenDate())
+                                                    opAlbumEntity.setPhotoBean(albumEntity.getPhotoBean());
+                                                viewModel.albumViewModel.insertExistAlbumWithPhotoBeans(opAlbumEntity, viewModel.photoViewModel.getSelectedData().getValue(), o3 -> {
                                                     if (o3 != null && ((List<Long>) o3).size() > 0)
                                                         Toast.makeText(MainActivity.this, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show();
                                                 });
@@ -251,20 +254,26 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 switch (menuItem.getItemId()) {
                     case R.id.menu_func:
                         final List<String> noticeStrings = new ArrayList<>();//albumEntities.stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList());
+                        final List<String> invalidStrings = new ArrayList<>();
                         viewModel.albumViewModel.getSelectedData().getValue().forEach(it -> {
                             noticeStrings.add(it.getAlbumName());
                         });
-//                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
-//                            if (!noticeStrings.contains(it.getAlbumName()))
-//                                noticeStrings.add(it.getAlbumName());
-//                        });
+                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
+                            if (!noticeStrings.contains(it.getAlbumName()))
+                                invalidStrings.add(it.getAlbumName());
+                        });
                         View view = LayoutInflater.from(this).inflate(R.layout.mergeto_album_dialog, null);
                         AutoCompleteTextView autoTv = view.findViewById(R.id.autoTv);
                         ImageButton imgBtn = view.findViewById(R.id.imgBtn);
                         TextView tv = view.findViewById(R.id.tv);
                         CheckBox cb = view.findViewById(R.id.cb);
                         autoTv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, noticeStrings));
-                        imgBtn.setOnClickListener(v -> autoTv.showDropDown());
+                        imgBtn.setOnClickListener(v -> {
+                            if (noticeStrings.size() > 0)
+                                autoTv.showDropDown();
+                            else
+                                Toast.makeText(MainActivity.this, R.string.no_notice, Toast.LENGTH_SHORT).show();
+                        });
                         AlertDialog alertDialog = new AlertDialog.Builder(this)
                                 .setTitle(R.string.merge_album)
                                 .setCancelable(false)
@@ -282,16 +291,32 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                     Toast.makeText(MainActivity.this, R.string.no_operation, Toast.LENGTH_SHORT).show();
                                 else {
                                     String albumName = autoTv.getText().toString().trim();
-                                    boolean keepOldAlbum = cb.isChecked();
                                     List<AlbumEntity> albumEntities = viewModel.albumViewModel.getSelectedData().getValue();
                                     if (albumEntities.size() <= 1) {
                                         AlbumEntity albumEntity = albumEntities.get(0);
-                                        viewModel.albumViewModel.renameAlbum(albumEntity.getAlbumId(),albumName,o -> {
+                                        viewModel.albumViewModel.renameAlbum(albumEntity.getAlbumId(), albumName, o -> {
                                             if (o != null && (int) o > 0)
                                                 Toast.makeText(MainActivity.this, R.string.rename_success, Toast.LENGTH_SHORT).show();
                                         });
                                     } else {
+                                        boolean keepOldAlbum = cb.isChecked();
+                                        if (noticeStrings.contains(albumName)) {
+                                            AlbumEntity targetAlbumEntity = null;
+                                            List<AlbumEntity> todoAlbumEntities = new ArrayList<>();
+                                            for (AlbumEntity e:albumEntities) {
+                                                if (e.getAlbumName().equals(albumName))
+                                                    targetAlbumEntity = e;
+                                                else
+                                                    todoAlbumEntities.add(e);
+                                            }
+                                            if(targetAlbumEntity == null) return;
+                                            viewModel.albumViewModel.mergeAlbum(targetAlbumEntity,todoAlbumEntities,keepOldAlbum,o ->{
+                                                if(o != null && (boolean)o)
+                                                    Toast.makeText(MainActivity.this,R.string.merge_success, Toast.LENGTH_SHORT).show();
+                                            });
+                                        } else {
 
+                                        }
                                     }
                                     viewModel.setMode(MODE_NORMAL);
                                     alertDialog.dismiss();
@@ -318,10 +343,17 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 List<AlbumEntity> value = viewModel.albumViewModel.getSelectedData().getValue();
                                 String albumName = editable.toString().trim();
                                 cb.setVisibility(View.VISIBLE);
+                                cb.setEnabled(true);
                                 noOperation = false;
                                 if (albumName.isEmpty()) {
                                     tv.setText(R.string.album_name_invalid);
                                     cb.setVisibility(View.INVISIBLE);
+                                    noOperation = true;
+                                    return;
+                                }
+                                if (invalidStrings.contains(albumName)) {
+                                    tv.setText(R.string.album_exists);
+                                    cb.setEnabled(false);
                                     noOperation = true;
                                     return;
                                 }
@@ -330,14 +362,14 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                     if (noticeStrings.contains(albumName)) {
                                         tv.setText(R.string.no_operation);
                                         noOperation = true;
-                                    }else{
+                                    } else {
                                         tv.setText(R.string.rename);
                                         noOperation = false;
                                     }
-                                }else{
+                                } else {
                                     if (noticeStrings.contains(albumName))
                                         tv.setText(R.string.add_to_exists_album);
-                                     else
+                                    else
                                         tv.setText(R.string.add_to_new_album);
                                     noOperation = false;
                                 }
