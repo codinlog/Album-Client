@@ -2,7 +2,7 @@
     <string name="app_name">Album</string>
     <string name="photo">照片</string>
     <string name="album">相册</string>
-    <string name="time">时刻</string>
+    <string name="time">日记</string>
     <string name="search">搜索</string>
     <string name="more">更多</string>
     <string name="permission_storage_read">读取手机内容</string>

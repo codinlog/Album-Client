@@ -89,6 +89,8 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
             binding.vp.currentItem = currentPosition
         })
         binding.vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            var showToast = false
+
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 currentPosition = position
@@ -96,12 +98,17 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
 
             override fun onPageScrollStateChanged(state: Int) {
                 super.onPageScrollStateChanged(state)
-                if(state == SCROLL_STATE_DRAGGING){
+                showToast = (state == SCROLL_STATE_DRAGGING)
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                if(showToast && positionOffset <= 0){
                     viewModel.displayData.value?.let {
-                        if(currentPosition >= it.size - 1)
-                            Toast.makeText(this@AlbumSlidePlayActivity,R.string.last_page,Toast.LENGTH_SHORT).show()
-                        else if(currentPosition <= 0)
-                            Toast.makeText(this@AlbumSlidePlayActivity,R.string.first_page,Toast.LENGTH_SHORT).show()
+                        if (position >= it.size - 1)
+                            Toast.makeText(this@AlbumSlidePlayActivity, R.string.last_page, Toast.LENGTH_SHORT).show()
+                        else if (position <= 0)
+                            Toast.makeText(this@AlbumSlidePlayActivity, R.string.first_page, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
