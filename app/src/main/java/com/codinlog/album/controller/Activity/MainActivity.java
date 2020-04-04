@@ -404,6 +404,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle(R.string.notice)
                                 .setCancelable(false)
+                                .setIcon(R.drawable.ic_priority_high_black_24dp)
                                 .setMessage(String.format(getString(R.string.delete_notice), viewModel.photoViewModel.getSelectedData().getValue().size()))
                                 .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
                                     new deletePhotoBeansAsyncTask(o -> {
@@ -427,6 +428,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                             Toast.makeText(this, R.string.choice_item, Toast.LENGTH_SHORT).show();
                         else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                    .setTitle(R.string.notice)
+                                    .setIcon(R.drawable.ic_priority_high_black_24dp)
                                     .setCancelable(false)
                                     .setMessage(getString(R.string.delete_notice, albumEntities.size()))
                                     .setNegativeButton(R.string.btn_cancel, (dialog, i) -> {
