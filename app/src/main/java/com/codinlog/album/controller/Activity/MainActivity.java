@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -439,8 +440,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                         viewModel.albumViewModel.deleteAlbum(o -> {
                                             if (o != null && (int) o > 0)
                                                 Toast.makeText(MainActivity.this, R.string.delete_success, Toast.LENGTH_SHORT).show();
-                                                viewModel.setMode(MODE_NORMAL);
-                                            }, albumEntities.stream().toArray(AlbumEntity[]::new));
+                                            viewModel.setMode(MODE_NORMAL);
+                                        }, albumEntities.stream().toArray(AlbumEntity[]::new));
                                     });
                             builder.show();
                         }
@@ -589,6 +590,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         synchronized (lock) {
             List<AlbumEntity> albumEntities = viewModel.albumViewModel.getAlbumDAO().queryAllAlbumWithList();
             if (albumEntities != null) {
+                Log.d("msg", "Runnning");
                 for (AlbumEntity albumEntity : albumEntities) {
                     List<AlbumItemEntity> albumItemEntities = viewModel.albumViewModel.getAlbumItemDAO().queryAllAlbumItem(albumEntity.getAlbumId());
                     if (albumItemEntities != null) {
@@ -605,8 +607,12 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 iterator.remove();
                             }
                         }
-                        if (albumItemEntities.size() > 0) {
-                            viewModel.albumViewModel.deleteAlbumItem(albumItemEntities.toArray(new AlbumItemEntity[albumItemEntities.size()]));
+                        if(flag){
+                            viewModel.albumViewModel.deleteAlbum(o -> {
+                            }, albumEntity);
+                            return;
+                        }else{
+                            viewModel.albumViewModel.deleteAlbumItem(albumItemEntities.toArray(new AlbumItemEntity[0]));
                             viewModel.albumViewModel.updateAlbum(o -> {
                             }, albumEntity);
                         }
