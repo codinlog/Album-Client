@@ -70,7 +70,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -326,7 +325,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 alertDialog.dismiss();
                             });
                             autoTv.requestFocus();
-                            InputMethodManager inputManager = (InputMethodManager) AlbumApplication.mContext
+                            InputMethodManager inputManager = (InputMethodManager) AlbumApplication.context
                                     .getSystemService(Context.INPUT_METHOD_SERVICE);
                             handler.postDelayed(() -> inputManager.showSoftInput(autoTv, 0), 200);
                         });

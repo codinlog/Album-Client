@@ -34,7 +34,7 @@ public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.iv.setCommonListener(commonListener);
-        Glide.with(AlbumApplication.mContext).load(getPhotoBeans().get(position).getPhotoPath()).error(R.drawable.ic_photo_black_24dp).into(holder.iv);
+        Glide.with(AlbumApplication.context).load(getPhotoBeans().get(position).getPhotoPath()).error(R.drawable.ic_photo_black_24dp).into(holder.iv);
     }
 
     @Override

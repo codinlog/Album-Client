@@ -24,7 +24,7 @@ public abstract class AlbumDatabase extends RoomDatabase {
         INSTANCE;
         AlbumDatabase albumDatabase;
         SingletonEnum(){
-            albumDatabase = Room.databaseBuilder(AlbumApplication.mContext, AlbumDatabase.class,AlbumApplication.mContext.getString(R.string.albumDB))
+            albumDatabase = Room.databaseBuilder(AlbumApplication.context, AlbumDatabase.class,AlbumApplication.context.getString(R.string.albumDB))
                     .addMigrations(migration_1_2)
                     .build();
         }

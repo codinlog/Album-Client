@@ -11,7 +11,6 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.listener.kotlin.AlbumItemListener
 import com.codinlog.album.util.WindowUtil
 import com.codinlog.album.util.WorthStoreUtil
 
@@ -39,7 +38,7 @@ class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
         holder.tv.text = albumEntity.albumName
         holder.iv.setOnClickListener { albumItemOnClickListener.handleEvent(position) }
         holder.iv.setOnLongClickListener { albumItemLongClickListener.handleEvent(position);return@setOnLongClickListener true; }
-        Glide.with(AlbumApplication.mContext).load(albumEntity.photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
+        Glide.with(AlbumApplication.context).load(albumEntity.photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
         doSelectMode(holder, position)
     }
 

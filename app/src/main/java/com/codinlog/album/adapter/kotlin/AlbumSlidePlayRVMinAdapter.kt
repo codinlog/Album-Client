@@ -34,7 +34,7 @@ class AlbumSlidePlayRVMinAdapter(private val onClickListener: CommonListener) : 
             val scale = gallerySize.toFloat() / disPlayData[position].height
             holder.v.layoutParams = ViewGroup.LayoutParams((disPlayData[position].width.toFloat() * scale).toInt(), gallerySize)
         }
-        Glide.with(AlbumApplication.mContext).load(disPlayData[position].photoPath).thumbnail(0.2f).into(holder.iv)
+        Glide.with(AlbumApplication.context).load(disPlayData[position].photoPath).thumbnail(0.2f).into(holder.iv)
         doOpIvMask(holder,position)
     }
 

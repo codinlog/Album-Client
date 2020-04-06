@@ -36,7 +36,7 @@ class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickList
         holder.cb.setOnClickListener { cbOnClickListener.handleEvent(position,holder.cb.isChecked) }
         holder.iv.setOnClickListener { ivOnClickListener.handleEvent(position) }
         doSelectModel(holder, position)
-        Glide.with(AlbumApplication.mContext).load(displayData[position].photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.2f).into(holder.iv)
+        Glide.with(AlbumApplication.context).load(displayData[position].photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.2f).into(holder.iv)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {

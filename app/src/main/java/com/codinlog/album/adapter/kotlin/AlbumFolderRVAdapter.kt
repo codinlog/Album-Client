@@ -1,6 +1,5 @@
 package com.codinlog.album.adapter.kotlin
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ class AlbumFolderRVAdapter(private val onClickListener: CommonListener, private 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(AlbumApplication.mContext).load(displayData[position].photoBean?.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
+        Glide.with(AlbumApplication.context).load(displayData[position].photoBean?.photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
         val folderBean = displayData[position]
         holder.tvFolder.text = folderBean.folderName
         holder.tvNum.text = folderBean.folderNum.toString()

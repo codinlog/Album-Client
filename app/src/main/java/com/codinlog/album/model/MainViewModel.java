@@ -53,9 +53,9 @@ public class MainViewModel extends ViewModel {
         String title = "";
         switch (getCurrentPager().getValue()) {
             case photoPager:
-                title = String.format(AlbumApplication.mContext.getString(R.string.top_bar_select_notice),photoViewModel.getSelectedData().getValue().size());break;
+                title = String.format(AlbumApplication.context.getString(R.string.top_bar_select_notice),photoViewModel.getSelectedData().getValue().size());break;
             case albumPager:
-                title = String.format(AlbumApplication.mContext.getString(R.string.top_bar_select_notice),albumViewModel.getSelectedData().getValue().size());break;
+                title = String.format(AlbumApplication.context.getString(R.string.top_bar_select_notice),albumViewModel.getSelectedData().getValue().size());break;
             case timePager:break;
         }
         getTitle().setValue(title);
