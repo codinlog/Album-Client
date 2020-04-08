@@ -41,7 +41,6 @@
         </FrameLayout>
         <include android:id="@+id/bottomSheet"
             layout="@layout/folder_bottom_sheet"/>
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

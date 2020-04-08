@@ -48,6 +48,10 @@ import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
 import com.codinlog.album.controller.Fragment.kotlin.DiaryFragment;
+import com.codinlog.album.controller.BaseActivityController;
+import com.codinlog.album.controller.Fragment.AlbumFragment;
+import com.codinlog.album.controller.Fragment.PhotoFragment;
+import com.codinlog.album.controller.Fragment.TimeFragment;
 import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
@@ -72,6 +76,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;

@@ -10,6 +10,7 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
+import com.codinlog.album.widget.kotlin.AlbumImageView
 
 class AlbumSlidePlayRVFullAdapter(private val onClickListener: CommonListener)
     : RecyclerView.Adapter<AlbumSlidePlayRVFullAdapter.ViewHolder>() {
