@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 public class AlbumViewPager extends ViewPager {
 
     private boolean canScroll = true;
+
     public AlbumViewPager(@NonNull Context context) {
         super(context);
     }
@@ -25,7 +26,7 @@ public class AlbumViewPager extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if(!canScroll)
+        if (!canScroll)
             return false;
         return super.onTouchEvent(ev);
     }
@@ -33,7 +34,7 @@ public class AlbumViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if(!canScroll)
+        if (!canScroll)
             return false;
         return super.onInterceptTouchEvent(ev);
     }

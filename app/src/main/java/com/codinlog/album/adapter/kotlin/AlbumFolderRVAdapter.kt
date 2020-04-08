@@ -1,7 +1,6 @@
 package com.codinlog.album.adapter.kotlin
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,8 +34,8 @@ class AlbumFolderRVAdapter(private val onClickListener: CommonListener, private 
         val folderBean = displayData[position]
         holder.tvFolder.text = folderBean.folderName
         holder.tvNum.text = folderBean.folderNum.toString()
-        holder.view.setOnClickListener { onClickListener.handleEvent(folderBean)}
-        holder.view.setOnLongClickListener { onLongClickListener.handleEvent(WeakReference(Triple(folderBean,holder.view,position)));return@setOnLongClickListener true }
+        holder.view.setOnClickListener { onClickListener.handleEvent(folderBean) }
+        holder.view.setOnLongClickListener { onLongClickListener.handleEvent(WeakReference(Triple(folderBean, holder.view, position)));return@setOnLongClickListener true }
     }
 
     class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {

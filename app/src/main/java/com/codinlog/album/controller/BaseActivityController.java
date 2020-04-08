@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static com.codinlog.album.util.WorthStoreUtil.permission_RequestCode;
 
-public abstract class BaseActivityController<T extends ViewModel,V extends ViewDataBinding> extends AppCompatActivity implements IBaseController{
+public abstract class BaseActivityController<T extends ViewModel, V extends ViewDataBinding> extends AppCompatActivity implements IBaseController {
     protected static final String TAG = "BaseActivityController";
     protected T viewModel;
     protected V binding;
@@ -56,7 +56,7 @@ public abstract class BaseActivityController<T extends ViewModel,V extends ViewD
         }
         if (notAllowPermissions.size() > 0) {
             showPermissionDialog(notAllowPermissions);
-        }else{
+        } else {
             doInitListener();
             doInitDisplayData();
             doUpgrade();

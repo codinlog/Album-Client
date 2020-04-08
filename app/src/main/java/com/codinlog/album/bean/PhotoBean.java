@@ -11,6 +11,17 @@ import androidx.room.Ignore;
 import java.text.SimpleDateFormat;
 
 public class PhotoBean implements Comparable, Parcelable {
+    public static final Creator<PhotoBean> CREATOR = new Creator<PhotoBean>() {
+        @Override
+        public PhotoBean createFromParcel(Parcel in) {
+            return new PhotoBean(in);
+        }
+
+        @Override
+        public PhotoBean[] newArray(int size) {
+            return new PhotoBean[size];
+        }
+    };
     @ColumnInfo(name = "photoPath")
     private String photoPath;                    // 路径
     @ColumnInfo(name = "photoSize")
@@ -44,28 +55,17 @@ public class PhotoBean implements Comparable, Parcelable {
         height = in.readInt();
     }
 
-    public static final Creator<PhotoBean> CREATOR = new Creator<PhotoBean>() {
-        @Override
-        public PhotoBean createFromParcel(Parcel in) {
-            return new PhotoBean(in);
-        }
-
-        @Override
-        public PhotoBean[] newArray(int size) {
-            return new PhotoBean[size];
-        }
-    };
-
-    public PhotoBean() {}
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "isSelected:" + isSelected + ";Path:" + photoPath + "; Id :" + photoId + ";tokenDate:" +  new SimpleDateFormat("yyyy-MM-dd").format(tokenDate);
+    public PhotoBean() {
     }
 
     public static PhotoBean newInstance() {
         return new PhotoBean();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "isSelected:" + isSelected + ";Path:" + photoPath + "; Id :" + photoId + ";tokenDate:" + new SimpleDateFormat("yyyy-MM-dd").format(tokenDate);
     }
 
     public String getPhotoPath() {
@@ -151,21 +151,21 @@ public class PhotoBean implements Comparable, Parcelable {
     @Override
     public int compareTo(Object o) {
         PhotoBean photoBean = (PhotoBean) o;
-        if(this.tokenDate > photoBean.getTokenDate())
+        if (this.tokenDate > photoBean.getTokenDate())
             return -1;
         return 1;
     }
 
     @Override
     public int hashCode() {
-        if(photoPath != null)
+        if (photoPath != null)
             return photoPath.hashCode();
         return super.hashCode();
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(obj instanceof PhotoBean){
+        if (obj instanceof PhotoBean) {
             PhotoBean photoBean = (PhotoBean) obj;
             return this.photoPath.equals(photoBean.getPhotoPath());
         }

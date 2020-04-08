@@ -26,7 +26,7 @@ public abstract class AlbumDAO {
     public abstract int deleteAlbum(AlbumEntity... albumEntities);
 
     @Query("update albumTB set albumId=:newId,albumName=:albumName where albumId=:oldId")
-    public abstract int renameAlbum(int oldId,int newId,String albumName);
+    public abstract int renameAlbum(int oldId, int newId, String albumName);
 
     @Query("select * from albumTB order by createDate desc")
     public abstract LiveData<List<AlbumEntity>> queryAllAlbum();
@@ -50,22 +50,22 @@ public abstract class AlbumDAO {
     }
 
     @Transaction
-    public boolean mergeAlbum(AlbumEntity albumEntity,AlbumItemDAO albumItemDAO,boolean keepOldAlbum,boolean createNew,List<AlbumEntity> albumEntities){
-        if(createNew)
+    public boolean mergeAlbum(AlbumEntity albumEntity, AlbumItemDAO albumItemDAO, boolean keepOldAlbum, boolean createNew, List<AlbumEntity> albumEntities) {
+        if (createNew)
             insertAlbum(albumEntity);
-        albumEntities.forEach(it ->{
+        albumEntities.forEach(it -> {
             List<AlbumItemEntity> albumItemEntities = albumItemDAO.queryAllAlbumItem(it.getAlbumId());
-            albumItemDAO.insertAlbumItem(albumItemEntities.stream().peek(i ->{
-              i.setBelongToId(albumEntity.getAlbumId());
-              i.setUuid((i.getPhotoBean().getPhotoPath() + albumEntity.getAlbumName()).hashCode());
+            albumItemDAO.insertAlbumItem(albumItemEntities.stream().peek(i -> {
+                i.setBelongToId(albumEntity.getAlbumId());
+                i.setUuid((i.getPhotoBean().getPhotoPath() + albumEntity.getAlbumName()).hashCode());
             }).toArray(AlbumItemEntity[]::new));
         });
         AlbumItemEntity albumItemEntity = albumItemDAO.queryTopOneAlbumItem(albumEntity.getAlbumId());
-        if(albumItemEntity != null){
+        if (albumItemEntity != null) {
             albumEntity.setPhotoBean(albumItemEntity.getPhotoBean());
             updateAlbum(albumEntity);
         }
-        if(!keepOldAlbum)
+        if (!keepOldAlbum)
             deleteAlbum(albumEntities.stream().toArray(AlbumEntity[]::new));
         return true;
     }

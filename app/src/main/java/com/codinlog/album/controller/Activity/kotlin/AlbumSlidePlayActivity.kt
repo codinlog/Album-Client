@@ -3,7 +3,6 @@ package com.codinlog.album.controller.Activity.kotlin
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
-import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.codinlog.album.R
 import com.codinlog.album.adapter.kotlin.AlbumSlidePlayRVFullAdapter
@@ -28,8 +26,7 @@ import com.codinlog.album.model.kotlin.AlbumSlidePlayViewModel
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WindowUtil.gallerySize
 import kotlinx.android.synthetic.main.activity_album_slide_play.*
-import java.lang.Exception
-import java.util.ArrayList
+import java.util.*
 import kotlin.properties.Delegates
 
 class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, ActivityAlbumSlidePlayBinding>() {
@@ -103,7 +100,7 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                if(showToast && positionOffset <= 0){
+                if (showToast && positionOffset <= 0) {
                     viewModel.displayData.value?.let {
                         if (position >= it.size - 1)
                             Toast.makeText(this@AlbumSlidePlayActivity, R.string.last_page, Toast.LENGTH_SHORT).show()

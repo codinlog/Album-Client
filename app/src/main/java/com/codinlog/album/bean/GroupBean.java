@@ -8,10 +8,15 @@ public class GroupBean implements Comparable {
     private int haveNum = 0;
     private int selectNum = 0;
 
-    private GroupBean(String groupId){
+    private GroupBean(String groupId) {
         this.groupId = groupId;
         this.isSelected = false;
     }
+
+    public static GroupBean newInstance(String groupId) {
+        return new GroupBean(groupId);
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -46,27 +51,23 @@ public class GroupBean implements Comparable {
 
     @Override
     public int hashCode() {
-        if(groupId != null)
+        if (groupId != null)
             return groupId.hashCode();
         return super.hashCode();
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if(obj instanceof GroupBean){
-            GroupBean groupBean = (GroupBean)obj;
+        if (obj instanceof GroupBean) {
+            GroupBean groupBean = (GroupBean) obj;
             return this.groupId.equals(groupBean.getGroupId());
         }
         return super.equals(obj);
     }
 
-    public static GroupBean newInstance(String groupId){
-        return new GroupBean(groupId);
-    }
-
     @Override
     public int compareTo(Object o) {
-        if(o instanceof GroupBean){
+        if (o instanceof GroupBean) {
             GroupBean groupBean = (GroupBean) o;
             return groupBean.getGroupId().compareTo(groupId);
         }

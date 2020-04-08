@@ -1,20 +1,18 @@
 package com.codinlog.album.util.kotlin
 
 import android.os.AsyncTask
-import android.util.Log
-import androidx.lifecycle.LiveData
 import com.codinlog.album.dao.AlbumDAO
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.listener.CommonListener
 
-class AlbumQueryByAlbumIdDBUtil(albumDAO: AlbumDAO,commonListener: CommonListener) : AsyncTask<Int, Unit, AlbumEntity>() {
+class AlbumQueryByAlbumIdDBUtil(albumDAO: AlbumDAO, commonListener: CommonListener) : AsyncTask<Int, Unit, AlbumEntity>() {
     private val albumDao: AlbumDAO? = albumDAO
-    private val commonListener : CommonListener = commonListener
+    private val commonListener: CommonListener = commonListener
     override fun doInBackground(vararg params: Int?): AlbumEntity? {
-       return params[0]?.let { albumDao?.queryByAlbumId(it)}
+        return params[0]?.let { albumDao?.queryByAlbumId(it) }
     }
 
-    override fun onPostExecute(result:AlbumEntity?) {
+    override fun onPostExecute(result: AlbumEntity?) {
         commonListener.handleEvent(result)
     }
 }

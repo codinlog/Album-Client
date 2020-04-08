@@ -10,7 +10,6 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.widget.kotlin.AlbumImageView
 
 class AlbumSlidePlayRVFullAdapter(private val onClickListener: CommonListener)
     : RecyclerView.Adapter<AlbumSlidePlayRVFullAdapter.ViewHolder>() {
@@ -29,11 +28,11 @@ class AlbumSlidePlayRVFullAdapter(private val onClickListener: CommonListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.iv.setOnClickListener {onClickListener.handleEvent(position)}
+        holder.iv.setOnClickListener { onClickListener.handleEvent(position) }
         Glide.with(AlbumApplication.context).load(displayData[position].photoPath).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var iv : ImageView = view.findViewById(R.id.iv)
+        var iv: ImageView = view.findViewById(R.id.iv)
     }
 }

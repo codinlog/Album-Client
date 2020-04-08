@@ -31,7 +31,7 @@ import static android.view.View.VISIBLE;
 public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> displayData = new ArrayList<>();
     private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
-    private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener,photoItemCheckBoxListener,imgBtnClickListener;
+    private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener, photoItemCheckBoxListener, imgBtnClickListener;
     private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
     public PhotoRVAdapter(CommonListener photoItemIVOnLongListener, CommonListener photoItemIVOnClickListener, CommonListener photoItemCheckBoxListener,
@@ -83,11 +83,11 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final PhotoGroupViewHolder photoGroupViewHolder = (PhotoGroupViewHolder) holder;
             GroupBean groupBean = (GroupBean) displayData.get(position);
             photoGroupViewHolder.textView.setText(groupBean.getGroupId());
-            photoGroupViewHolder.checkBox.setOnClickListener(v -> (photoGroupCheckBoxListener).handleEvent(position,((CheckBox)v).isChecked()));
+            photoGroupViewHolder.checkBox.setOnClickListener(v -> (photoGroupCheckBoxListener).handleEvent(position, ((CheckBox) v).isChecked()));
             photoGroupViewHolder.imageButton.setOnClickListener(v -> imgBtnClickListener.handleEvent(position));
             photoGroupViewHolder.textView.setOnLongClickListener(v -> {
-                CheckBox checkBox = ((View)v.getParent()).findViewById(R.id.cb);
-                (photoGroupTVOnLongListener).handleEvent(position,checkBox.isChecked());
+                CheckBox checkBox = ((View) v.getParent()).findViewById(R.id.cb);
+                (photoGroupTVOnLongListener).handleEvent(position, checkBox.isChecked());
                 return true;
             });
         }
@@ -110,8 +110,8 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     photoGroupViewHolder.checkBox.setVisibility(INVISIBLE);
                     photoGroupViewHolder.imageButton.setEnabled(true);
                     Object o = displayData.get(position);
-                    if(o instanceof GroupBean){
-                        GroupBean groupBean = (GroupBean)o;
+                    if (o instanceof GroupBean) {
+                        GroupBean groupBean = (GroupBean) o;
                         photoGroupViewHolder.checkBox.setChecked(groupBean.isSelected());
                     }
                 }
@@ -130,8 +130,8 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     photoGroupViewHolder.checkBox.setVisibility(VISIBLE);
                     photoGroupViewHolder.imageButton.setEnabled(false);
                     Object o = displayData.get(position);
-                    if(o instanceof GroupBean){
-                        GroupBean groupBean = (GroupBean)o;
+                    if (o instanceof GroupBean) {
+                        GroupBean groupBean = (GroupBean) o;
                         photoGroupViewHolder.checkBox.setChecked(groupBean.isSelected());
                     }
                 }
@@ -182,7 +182,8 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.mode = mode;
         notifyItemRangeChanged(0, displayData.size(), "payload");
     }
-    public void notifySelectChanged(){
+
+    public void notifySelectChanged() {
         notifyItemRangeChanged(0, displayData.size(), "payload");
     }
 

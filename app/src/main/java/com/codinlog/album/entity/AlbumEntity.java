@@ -18,38 +18,9 @@ import com.codinlog.album.util.TypeConverterUtitl;
 
 import java.util.Date;
 
-import static androidx.room.ForeignKey.CASCADE;
-import static androidx.room.ForeignKey.RESTRICT;
-
 @TypeConverters(TypeConverterUtitl.class)
-@Entity(tableName = "albumTB",indices = {@Index(value = {"albumName","albumId"},unique = true)})
-public class AlbumEntity implements Parcelable{
-    @PrimaryKey
-    @ColumnInfo(name = "albumId")
-    private int albumId;
-
-    @NonNull
-    @ColumnInfo(name = "albumName")
-    private String albumName;
-
-    @ColumnInfo(name = "createDate")
-    private Date date;
-
-    @Ignore
-    private boolean isSelect = false;
-
-    @Embedded
-    private PhotoBean photoBean;
-
-    public AlbumEntity(){}
-
-    protected AlbumEntity(Parcel in) {
-        albumId = in.readInt();
-        date = new Date(in.readLong());
-        albumName = in.readString();
-        photoBean = (PhotoBean) in.readValue(Thread.currentThread().getContextClassLoader());
-    }
-
+@Entity(tableName = "albumTB", indices = {@Index(value = {"albumName", "albumId"}, unique = true)})
+public class AlbumEntity implements Parcelable {
     public static final Creator<AlbumEntity> CREATOR = new Creator<AlbumEntity>() {
         @Override
         public AlbumEntity createFromParcel(Parcel in) {
@@ -61,10 +32,33 @@ public class AlbumEntity implements Parcelable{
             return new AlbumEntity[size];
         }
     };
+    @PrimaryKey
+    @ColumnInfo(name = "albumId")
+    private int albumId;
+    @NonNull
+    @ColumnInfo(name = "albumName")
+    private String albumName;
+    @ColumnInfo(name = "createDate")
+    private Date date;
+    @Ignore
+    private boolean isSelect = false;
+    @Embedded
+    private PhotoBean photoBean;
+
+    public AlbumEntity() {
+    }
+
+    protected AlbumEntity(Parcel in) {
+        albumId = in.readInt();
+        date = new Date(in.readLong());
+        albumName = in.readString();
+        photoBean = (PhotoBean) in.readValue(Thread.currentThread().getContextClassLoader());
+    }
 
     public int getAlbumId() {
         return albumId;
     }
+
     public void setAlbumId(int albumId) {
         this.albumId = albumId;
     }

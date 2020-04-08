@@ -11,19 +11,19 @@ public class FragmentBean {
         Title = title;
     }
 
-    public void setFragment(Fragment fragment) {
-        this.fragment = fragment;
-    }
-
-    public void setTitle(String title) {
-        Title = title;
-    }
-
     public Fragment getFragment() {
         return fragment;
     }
 
+    public void setFragment(Fragment fragment) {
+        this.fragment = fragment;
+    }
+
     public String getTitle() {
         return Title;
+    }
+
+    public void setTitle(String title) {
+        Title = title;
     }
 }

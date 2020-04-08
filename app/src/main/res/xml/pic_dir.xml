@@ -3,9 +3,9 @@
     <!--存储卡的Pictures目录放图片文件-->
     <external-path
         name="my_images"
-        path="MyAlbum/Pictures"/>
+        path="MyAlbum/Pictures" />
     <!--存储卡的apk目录放安装包文件-->
     <external-path
         name="my_download"
-        path="MyAlbum/apk"/>
+        path="MyAlbum/apk" />
 </paths>

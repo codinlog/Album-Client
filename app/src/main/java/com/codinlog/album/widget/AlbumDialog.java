@@ -3,16 +3,12 @@ package com.codinlog.album.widget;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.text.SymbolTable;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,7 +21,7 @@ import java.util.List;
 
 public class AlbumDialog extends Dialog {
     private TextView tvTitle;
-    private Button btn_cancel,btn_ok;
+    private Button btn_cancel, btn_ok;
     private AutoCompleteTextView autoCompleteTextView;
     private String title;
     private CommonListener btnOkListener;
@@ -89,12 +85,12 @@ public class AlbumDialog extends Dialog {
         return this;
     }
 
-    public AlbumDialog setNoticeAdapterData(List<String> data){
-        arrayAdapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,data);
+    public AlbumDialog setNoticeAdapterData(List<String> data) {
+        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, data);
         return this;
     }
 
-    public String getInputContent(){
+    public String getInputContent() {
         return autoCompleteTextView.getText().toString();
     }
 

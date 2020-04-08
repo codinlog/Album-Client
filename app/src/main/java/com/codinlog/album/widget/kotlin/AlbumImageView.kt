@@ -7,13 +7,11 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
-import androidx.core.graphics.values
 import com.codinlog.album.listener.CommonListener
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -96,7 +94,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
     override fun onScale(gestureDetector: ScaleGestureDetector?): Boolean {
         drawable ?: return true
         gestureDetector?.let {
-            val scaleFactor  = when {
+            val scaleFactor = when {
                 rectF.width() > width * 3f -> width * 3f / rectF.width()
                 else -> it.scaleFactor
             }
@@ -145,8 +143,8 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         } else
             my = height * 0.5f - rectF.bottom + 0.5f * rectF.height()
         initMatrix.postTranslate(mx, my)
-        if(ms > 0f)
-            initMatrix.postScale(ms,ms,rectF.centerX(),rectF.centerY())
+        if (ms > 0f)
+            initMatrix.postScale(ms, ms, rectF.centerX(), rectF.centerY())
         imageMatrix = initMatrix
     }
 

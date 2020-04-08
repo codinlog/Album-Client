@@ -11,7 +11,6 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.listener.kotlin.AlbumItemListener
 import com.codinlog.album.util.WindowUtil
 import com.codinlog.album.util.WorthStoreUtil
 

@@ -1,6 +1,5 @@
 package com.codinlog.album.model.kotlin
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -12,8 +11,6 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.DataStoreUtil
 import com.codinlog.album.util.WorthStoreUtil
 import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDBUtil
-import kotlinx.coroutines.flow.asFlow
-import kotlin.streams.toList
 
 class AlbumPreviewViewModel : ViewModel() {
     private val albumDAO = AlbumDatabase.getInstance().albumDAO
@@ -71,7 +68,7 @@ class AlbumPreviewViewModel : ViewModel() {
             val albumEntity = fromValue as AlbumEntity
             val photoBeans = albumPhotoSelectViewModel?.selectData?.value
             photoBeans?.let {
-                val data = it.map<PhotoBean,AlbumItemEntity> { v ->
+                val data = it.map<PhotoBean, AlbumItemEntity> { v ->
                     if (v.tokenDate > albumEntity.photoBean.tokenDate)
                         albumEntity.photoBean = v
                     AlbumItemEntity().apply {

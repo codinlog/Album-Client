@@ -13,7 +13,7 @@ public class PhotoPreviewViewModel extends ViewModel {
     private MutableLiveData<Integer> currentPosition;
 
     public MutableLiveData<List<PhotoBean>> getDisplayData() {
-        if(displayData == null){
+        if (displayData == null) {
             displayData = new MutableLiveData<>();
             displayData.setValue(new ArrayList<>());
         }
@@ -25,7 +25,7 @@ public class PhotoPreviewViewModel extends ViewModel {
     }
 
     public MutableLiveData<Integer> getCurrentPosition() {
-        if(currentPosition == null){
+        if (currentPosition == null) {
             currentPosition = new MutableLiveData<>();
             currentPosition.setValue(1);
         }

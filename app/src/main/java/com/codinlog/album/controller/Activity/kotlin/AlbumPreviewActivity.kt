@@ -102,7 +102,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
                 menu?.findItem(R.id.album_play)?.isVisible = false
                 menu?.findItem(R.id.album_confirm)?.isVisible = true
             }
-            FromWhere.PhotoPreview,FromWhere.AlbumFolderPreview -> {
+            FromWhere.PhotoPreview, FromWhere.AlbumFolderPreview -> {
                 menu?.findItem(R.id.album_add)?.isVisible = false
                 menu?.findItem(R.id.album_play)?.isVisible = true
                 menu?.findItem(R.id.album_confirm)?.isVisible = false
@@ -127,7 +127,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
                     startActivity(intent)
                 }
                 R.id.album_confirm -> {
-                    viewModel.insertExistAlbumWithPhotoBeans(CommonListener {i->
+                    viewModel.insertExistAlbumWithPhotoBeans(CommonListener { i ->
                         viewModel.resetSelectData()
                         if ((i as List<Long>).size > 0)
                             Toast.makeText(this@AlbumPreviewActivity, getString(R.string.addto_album_success), Toast.LENGTH_SHORT).show()

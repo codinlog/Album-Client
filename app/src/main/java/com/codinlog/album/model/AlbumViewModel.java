@@ -1,7 +1,6 @@
 package com.codinlog.album.model;
 
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -29,37 +28,37 @@ import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDBUtil;
 import com.codinlog.album.util.kotlin.AlbumQueryDBUtil;
 import com.codinlog.album.util.kotlin.AlbumRenameDBUtil;
 import com.codinlog.album.util.kotlin.AlbumUpdateDBUtil;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.time.Month;
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.Attributes;
 
 public class AlbumViewModel extends ViewModel {
 
+    public MainViewModel mainViewModel;
+    Object lock;
     private MutableLiveData<Integer> displayOption;
     private LiveData<List<AlbumEntity>> displayData;
     private MutableLiveData<Map<FolderBean, List<PhotoBean>>> folderDisplayData;
     private MutableLiveData<WorthStoreUtil.MODE> mode;
     private MutableLiveData<List<AlbumEntity>> selectedData;
     private MutableLiveData<Boolean> isSelectAll;
-    public MainViewModel mainViewModel;
     private AlbumDAO albumDAO;
     private AlbumItemDAO albumItemDAO;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
-    Object lock;
 
     public LiveData<List<AlbumEntity>> getDisplayData() {
         if (displayData == null) {
             displayData = getAlbumDAO().queryAllAlbum();
         }
         return displayData;
+    }
+
+    public void setDisplayData(List<AlbumEntity> value) {
+        getSelectedData().setValue(value);
     }
 
     public MutableLiveData<WorthStoreUtil.MODE> getMode() {
@@ -70,8 +69,8 @@ public class AlbumViewModel extends ViewModel {
         return mode;
     }
 
-    public void setDisplayData(List<AlbumEntity> value) {
-        getSelectedData().setValue(value);
+    public void setMode(WorthStoreUtil.MODE mode) {
+        getMode().setValue(mode);
     }
 
     public MutableLiveData<List<AlbumEntity>> getSelectedData() {
@@ -94,10 +93,6 @@ public class AlbumViewModel extends ViewModel {
         getSelectedData().setValue(getSelectedData().getValue());
     }
 
-    public void setMode(WorthStoreUtil.MODE mode) {
-        getMode().setValue(mode);
-    }
-
     public AlbumDAO getAlbumDAO() {
         if (albumDAO == null)
             albumDAO = AlbumDatabase.getInstance().getAlbumDAO();
@@ -114,8 +109,8 @@ public class AlbumViewModel extends ViewModel {
         new AlbumInsertDBUtil(getAlbumDAO()).execute(albumEntities);
     }
 
-    public void deleteAlbum(CommonListener commonListener,AlbumEntity... albumEntities) {
-        new AlbumDeleteDBUtil(getAlbumDAO(),commonListener).execute(albumEntities);
+    public void deleteAlbum(CommonListener commonListener, AlbumEntity... albumEntities) {
+        new AlbumDeleteDBUtil(getAlbumDAO(), commonListener).execute(albumEntities);
     }
 
     public void queryAlbum(CommonListener commonListener) {
@@ -126,12 +121,12 @@ public class AlbumViewModel extends ViewModel {
         new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(), commonListener).execute(albumId);
     }
 
-    public void renameAlbum(int oldId,String albumName,CommonListener commonListener){
+    public void renameAlbum(int oldId, String albumName, CommonListener commonListener) {
         new AlbumRenameDBUtil(commonListener, oldId, getAlbumDAO()).execute(albumName);
     }
 
-    public void updateAlbum(CommonListener commonListener,AlbumEntity... albumEntities) {
-        new AlbumUpdateDBUtil(getAlbumDAO(),commonListener).execute(albumEntities);
+    public void updateAlbum(CommonListener commonListener, AlbumEntity... albumEntities) {
+        new AlbumUpdateDBUtil(getAlbumDAO(), commonListener).execute(albumEntities);
     }
 
     public void deleteAlbumItem(AlbumItemEntity... albumItemEntities) {
@@ -162,9 +157,9 @@ public class AlbumViewModel extends ViewModel {
         }).toArray(AlbumItemEntity[]::new));
     }
 
-    public void mergeAlbum(AlbumEntity targetAlbumEntity,List<AlbumEntity> todoAlbumEntities,boolean keepOldAlbum,boolean createNew,CommonListener commonListener){
-        new AlbumMergeDBUtil(getAlbumDAO(),getAlbumItemDAO(),targetAlbumEntity
-        ,keepOldAlbum,createNew,commonListener).execute(todoAlbumEntities);
+    public void mergeAlbum(AlbumEntity targetAlbumEntity, List<AlbumEntity> todoAlbumEntities, boolean keepOldAlbum, boolean createNew, CommonListener commonListener) {
+        new AlbumMergeDBUtil(getAlbumDAO(), getAlbumItemDAO(), targetAlbumEntity
+                , keepOldAlbum, createNew, commonListener).execute(todoAlbumEntities);
     }
 
     public void resetSelectData() {
@@ -211,7 +206,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public MutableLiveData<Boolean> getIsSelectAll() {
-        if(isSelectAll == null)
+        if (isSelectAll == null)
             isSelectAll = new MediatorLiveData<>();
         return isSelectAll;
     }

@@ -29,25 +29,25 @@ class AlbumSlidePlayRVMinAdapter(private val onClickListener: CommonListener) : 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.iv.setOnClickListener {onClickListener.handleEvent(position) }
+        holder.iv.setOnClickListener { onClickListener.handleEvent(position) }
         if (disPlayData[position].height > 0 && disPlayData[position].width > 0) {
             val scale = gallerySize.toFloat() / disPlayData[position].height
             holder.v.layoutParams = ViewGroup.LayoutParams((disPlayData[position].width.toFloat() * scale).toInt(), gallerySize)
         }
         Glide.with(AlbumApplication.context).load(disPlayData[position].photoPath).thumbnail(0.2f).into(holder.iv)
-        doOpIvMask(holder,position)
+        doOpIvMask(holder, position)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty())
             onBindViewHolder(holder, position)
         else
-            doOpIvMask(holder,position)
+            doOpIvMask(holder, position)
     }
 
-    private fun doOpIvMask(holder: ViewHolder, position: Int){
-        Log.d("select","" + disPlayData[position].isSelected + "" + position)
-        holder.ivMask.visibility = if(disPlayData[position].isSelected) View.VISIBLE else View.INVISIBLE
+    private fun doOpIvMask(holder: ViewHolder, position: Int) {
+        Log.d("select", "" + disPlayData[position].isSelected + "" + position)
+        holder.ivMask.visibility = if (disPlayData[position].isSelected) View.VISIBLE else View.INVISIBLE
     }
 
 

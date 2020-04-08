@@ -19,17 +19,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PhotoViewModel extends ViewModel {
+    public MainViewModel mainViewModel;
+    public Object lock;
     private MutableLiveData<List<Object>> displayData; //图片+分组数据
     private MutableLiveData<List<PhotoBean>> selectedData;//已选择
     private MutableLiveData<WorthStoreUtil.MODE> mode;
     private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayData;
-    public MainViewModel mainViewModel;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
-    public Object lock;
 
     public MutableLiveData<WorthStoreUtil.MODE> getMode() {
-        if(mode == null){
+        if (mode == null) {
             mode = new MediatorLiveData<>();
             mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
         }
@@ -69,7 +69,7 @@ public class PhotoViewModel extends ViewModel {
     }
 
     public void setGroupClassifiedData(List<PhotoBean> it) {
-        synchronized (lock){
+        synchronized (lock) {
             if (classifiedRunnable == null)
                 classifiedRunnable = () -> setClassifiedDisplayData(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayData().getValue()));
             handler.removeCallbacks(classifiedRunnable);

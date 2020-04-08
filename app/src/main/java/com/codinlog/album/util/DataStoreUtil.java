@@ -11,17 +11,7 @@ public class DataStoreUtil {
     private List<PhotoBean> slidePlayData;
     private List<PhotoBean> folderDisplayData;
 
-    private enum SingletonEnum{
-        INSTANCE;
-        DataStoreUtil dataStoreUtil;
-        SingletonEnum(){
-            dataStoreUtil = new DataStoreUtil();
-        }
-        public DataStoreUtil getDataStoreUtil(){
-            return dataStoreUtil;
-        }
-    }
-    public static DataStoreUtil getInstance(){
+    public static DataStoreUtil getInstance() {
         return SingletonEnum.INSTANCE.getDataStoreUtil();
     }
 
@@ -48,14 +38,28 @@ public class DataStoreUtil {
     public void setDisplayData(List<PhotoBean> displayData) {
         this.displayData = displayData;
     }
+
+    public List<PhotoBean> getFolderDisplayData() {
+        if (folderDisplayData == null)
+            folderDisplayData = new ArrayList<>();
+        return folderDisplayData;
+    }
+
     public void setFolderDisplayData(List<PhotoBean> photoBeans) {
         folderDisplayData = photoBeans;
     }
 
-    public List<PhotoBean> getFolderDisplayData(){
-        if(folderDisplayData == null)
-            folderDisplayData = new ArrayList<>();
-        return folderDisplayData;
+    private enum SingletonEnum {
+        INSTANCE;
+        DataStoreUtil dataStoreUtil;
+
+        SingletonEnum() {
+            dataStoreUtil = new DataStoreUtil();
+        }
+
+        public DataStoreUtil getDataStoreUtil() {
+            return dataStoreUtil;
+        }
     }
 
 }

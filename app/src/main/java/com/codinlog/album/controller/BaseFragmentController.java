@@ -12,13 +12,14 @@ import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 
-public abstract class BaseFragmentController<T extends ViewModel,V extends ViewDataBinding>  extends Fragment implements IBaseController   {
+public abstract class BaseFragmentController<T extends ViewModel, V extends ViewDataBinding> extends Fragment implements IBaseController {
     protected T viewModel;
     protected V binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(inflater,getLayoutId(),container,false);
+        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
         return binding.getRoot();
     }
 
@@ -29,5 +30,6 @@ public abstract class BaseFragmentController<T extends ViewModel,V extends ViewD
         doInitListener();
         doInitDisplayData();
     }
+
     protected abstract int getLayoutId();
 }

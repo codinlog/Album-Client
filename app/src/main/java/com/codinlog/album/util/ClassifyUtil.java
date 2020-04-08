@@ -1,25 +1,16 @@
 package com.codinlog.album.util;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.bean.PhotoSelectedNumBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static com.codinlog.album.util.WorthStoreUtil.errorCode;
@@ -82,7 +73,7 @@ public class ClassifyUtil {
             photoBean.setDelete(false);
             String folder = getFolderString(photoBean.getPhotoPath().toCharArray(), '/');
             String folderPath = photoBean.getPhotoPath().substring(0, photoBean.getPhotoPath().lastIndexOf('/'));
-            FolderBean folderBean = new FolderBean(folder,folderPath, 0, null);
+            FolderBean folderBean = new FolderBean(folder, folderPath, 0, null);
             if (classifiedFolderMap.containsKey(folderBean)) {
                 if (!classifiedFolderMap.get(folderBean).contains(photoBean)) {
                     classifiedFolderMap.get(folderBean).add(photoBean);

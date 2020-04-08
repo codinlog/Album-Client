@@ -15,5 +15,5 @@ public class WindowUtil {
     public static int thumbnailImageSize = Math.min(displayWidth / thumbnailPhotoNum, displayHeight / thumbnailPhotoNum);
     public static int albumItemSize = Math.min(displayWidth / albumItemNum, displayHeight / albumItemNum);
     public static int albumPhotoItemSize = Math.min(displayWidth / albumPhotoItemNum, displayHeight / albumPhotoItemNum);
-    public static int gallerySize = displayWidth / 4 ;
+    public static int gallerySize = displayWidth / 4;
 }

@@ -48,10 +48,6 @@ import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.controller.Fragment.AlbumFragment;
 import com.codinlog.album.controller.Fragment.PhotoFragment;
 import com.codinlog.album.controller.Fragment.kotlin.DiaryFragment;
-import com.codinlog.album.controller.BaseActivityController;
-import com.codinlog.album.controller.Fragment.AlbumFragment;
-import com.codinlog.album.controller.Fragment.PhotoFragment;
-import com.codinlog.album.controller.Fragment.TimeFragment;
 import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
@@ -76,7 +72,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -87,13 +82,13 @@ import static com.codinlog.album.util.WorthStoreUtil.loaderManager_ID;
 import static com.codinlog.album.util.WorthStoreUtil.photoPager;
 
 public class MainActivity extends BaseActivityController<MainViewModel, ActivityMainBinding> {
+    private static final Object lock = new Object();
+    private static boolean noOperation = true;
     private ArrayList<FragmentBean> fragmentBeans;
     private MainVPAdapter mainVPAdapter;
     private String currentPhotoPath;
     private PopupMenu popupMenuOperation;
-    private static boolean noOperation = true;
     private Handler handler = new Handler();
-    private static final Object lock = new Object();
 
     @Override
     public void doInitViewData() {
@@ -104,7 +99,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         binding.bottomNavigation.setVisibility(View.GONE);
         viewModel.photoViewModel = new ViewModelProvider(this).get(PhotoViewModel.class);
         viewModel.albumViewModel = new ViewModelProvider(this).get(AlbumViewModel.class);
-        viewModel.diaryViewModel = new ViewModelProvider(this,new SavedStateViewModelFactory(getApplication(), this)).get(DiaryViewModel.class);
+        viewModel.diaryViewModel = new ViewModelProvider(this, new SavedStateViewModelFactory(getApplication(), this)).get(DiaryViewModel.class);
         viewModel.photoViewModel.mainViewModel = viewModel;
         viewModel.albumViewModel.mainViewModel = viewModel;
         viewModel.diaryViewModel.setMainViewModel(viewModel);
@@ -454,7 +449,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         });
 
         binding.btnMore.setOnClickListener(v -> {
-            Intent intent = new Intent(this,SettingsActivity.class);
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         });
         popupMenuOperation.setOnMenuItemClickListener(item ->
@@ -604,11 +599,11 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 iterator.remove();
                             }
                         }
-                        if(flag){
+                        if (flag) {
                             viewModel.albumViewModel.deleteAlbum(o -> {
                             }, albumEntity);
                             return;
-                        }else{
+                        } else {
                             viewModel.albumViewModel.deleteAlbumItem(albumItemEntities.toArray(new AlbumItemEntity[0]));
                             viewModel.albumViewModel.updateAlbum(o -> {
                             }, albumEntity);
@@ -661,6 +656,21 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         return photoFile;
     }
 
+    private String[] deletePhotoBeans(String... filePaths) {
+        for (int i = 0; i < filePaths.length; i++) {
+            File file = new File(filePaths[i]);
+            if (file.exists() && file.isFile() && file.delete()) {
+                getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        MediaStore.Images.Media.DATA + "=\"" + filePaths[i] + "\"", null);
+                filePaths[i] = null;
+            }
+        }
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+        return filePaths;
+    }
 
     class deletePhotoBeansAsyncTask extends AsyncTask<List<PhotoBean>, Integer, String[]> {
         private CommonListener commonListener;
@@ -685,21 +695,5 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             super.onProgressUpdate(values);
         }
 
-    }
-
-    private String[] deletePhotoBeans(String... filePaths) {
-        for (int i = 0; i < filePaths.length; i++) {
-            File file = new File(filePaths[i]);
-            if (file.exists() && file.isFile() && file.delete()) {
-                getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        MediaStore.Images.Media.DATA + "=\"" + filePaths[i] + "\"", null);
-                filePaths[i] = null;
-            }
-        }
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri contentUri = Uri.fromFile(new File(Environment.getExternalStorageState()));
-        mediaScanIntent.setData(contentUri);
-        sendBroadcast(mediaScanIntent);
-        return filePaths;
     }
 }

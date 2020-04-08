@@ -1,9 +1,6 @@
 package com.codinlog.album.controller.Fragment;
 
 import android.content.Intent;
-
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -11,13 +8,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
+
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -32,21 +23,18 @@ import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.Activity.kotlin.AlbumPreviewActivity;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.databinding.AlbumFragmentBinding;
-import com.codinlog.album.entity.AlbumEntity;
-import com.codinlog.album.entity.AlbumItemEntity;
-import com.codinlog.album.listener.CommonListener;
-import com.codinlog.album.listener.kotlin.AlbumItemListener;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.util.WorthStoreUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import kotlin.Pair;
+
 import kotlin.Triple;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumFragmentBinding> {

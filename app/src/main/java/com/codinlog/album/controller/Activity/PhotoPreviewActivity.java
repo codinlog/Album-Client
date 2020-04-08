@@ -4,25 +4,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
+
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
-import com.codinlog.album.util.DataStoreUtil;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
-import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.model.PhotoPreviewViewModel;
+import com.codinlog.album.util.DataStoreUtil;
 
 import java.util.ArrayList;
 
-public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel,ActivityPhotoPreviewBinding> {
+public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel, ActivityPhotoPreviewBinding> {
+    private static boolean isShowAppBar = false;
     private ActivityPhotoPreviewBinding binding;
     private PhotoPreviewVPAdapter photoPreviewVPAdapter;
-    private static boolean isShowAppBar = false;
     private TranslateAnimation animation;
 
     @Override

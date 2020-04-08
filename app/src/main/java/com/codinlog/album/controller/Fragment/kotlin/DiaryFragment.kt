@@ -5,8 +5,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +12,6 @@ import com.codinlog.album.R
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.databinding.DiaryFragmentBinding
 import com.codinlog.album.model.kotlin.DiaryViewModel
-import com.codinlog.album.util.WindowUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBinding>() {
@@ -37,7 +34,7 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
     }
 
     override fun doInitListener() {
-        layout.setOnClickListener{ Toast.makeText(context, "click", Toast.LENGTH_SHORT).show()}
+        layout.setOnClickListener { Toast.makeText(context, "click", Toast.LENGTH_SHORT).show() }
     }
 
     override fun doInitDisplayData() {

@@ -4,7 +4,7 @@ public class PhotoSelectedNumBean {
     private int size = 0;
     private int selected = 0;
 
-    public static PhotoSelectedNumBean newInstance(){
+    public static PhotoSelectedNumBean newInstance() {
         return new PhotoSelectedNumBean();
     }
 
@@ -30,7 +30,7 @@ public class PhotoSelectedNumBean {
     }
 
     public void sub() {
-        if(selected > 0)
+        if (selected > 0)
             selected--;
     }
 }
