@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="top_bar_width">50dp</dimen>
+    <dimen name="top_bar_font_size">30sp</dimen>
+    <dimen name="classify_title_size">20sp</dimen>
+    <dimen name="item_magin">1dp</dimen>
+    <dimen name="normal_size">20sp</dimen>
+    <dimen name="normal_marign">5dp</dimen>
+    <dimen name="dialog_marign">20dp</dimen>
+    <dimen name="dialog_height">250dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="gallery_height">200dp</dimen>
+    <dimen name="bottom_sheet_height">400dp</dimen>
+    <dimen name="drag_size">30dp</dimen>
+    <dimen name="folder_size">120dp</dimen>
+    <dimen name="drag_down">40dp</dimen>
+    <dimen name="user_header_size">100dp</dimen>
+    <dimen name="drag_height">35dp</dimen>
+</resources>

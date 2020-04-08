@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <AutoCompleteTextView
+        android:id="@+id/autoTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dialog_marign"
+        android:focusedByDefault="true"
+        android:hint="@string/enter_album_name"
+        android:labelFor="@id/imgBtn"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        app:layout_constraintBottom_toBottomOf="@+id/imgBtn"
+        app:layout_constraintEnd_toStartOf="@+id/imgBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imgBtn" />
+
+    <ImageButton
+        android:id="@+id/imgBtn"
+        android:layout_width="@dimen/drag_down"
+        android:layout_height="@dimen/drag_down"
+        android:layout_marginVertical="@dimen/dialog_marign"
+        android:layout_marginEnd="@dimen/dialog_marign"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/drop_dowm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/album_name_invalid"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cb"
+        app:layout_constraintStart_toStartOf="@+id/autoTv"
+        app:layout_constraintTop_toTopOf="@+id/cb" />
+
+    <CheckBox
+        android:id="@+id/cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/keep_album"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/autoTv"
+        app:layout_constraintTop_toBottomOf="@+id/autoTv" />
+</androidx.constraintlayout.widget.ConstraintLayout>

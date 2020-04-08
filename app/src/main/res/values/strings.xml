@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">Album</string>
+    <string name="photo">照片</string>
+    <string name="album">相册</string>
+    <string name="time">日记</string>
+    <string name="search">搜索</string>
+    <string name="more">更多</string>
+    <string name="permission_storage_read">读取手机内容</string>
+    <string name="permission_storage_write">写入手机内容</string>
+    <string name="permission_network">网络权限</string>
+    <string name="permission_camera">相机权限</string>
+    <string name="certain">确定</string>
+    <string name="notice">提示</string>
+    <string name="photo_item_des">photo_item</string>
+    <string name="classify_title">TextView</string>
+    <string name="navigation_more_notice">更多</string>
+    <string name="top_bar_select_notice">已选择%d个项目</string>
+    <string name="addto_album">添加到相册</string>
+    <string name="addto_album_success">成功添加到相册</string>
+    <string name="album_name">相册名:</string>
+    <string name="enter_album_name">请输入相册名</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_ok">确定</string>
+    <string name="btn_all">全选</string>
+    <string name="btn_all_cancel">全不选</string>
+    <string name="token_photo">拍照</string>
+    <string name="photo_detail_title">%d/%d</string>
+    <string name="albumDB">albumDB</string>
+    <string name="albumItemDB">albumItemDB</string>
+    <string name="choice_item">请选择项目</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_photo_preview">photoPreview</string>
+    <string name="title_activity_album_preview">albumPreview</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="album_add_photo">添加照片</string>
+    <string name="album_slide_play">幻灯片播放</string>
+    <string name="finish">完成</string>
+
+    <string name="title_activity_album_slide_play">AlbumSlidePlayActivity</string>
+    <string name="cancel_select">您有已选择的项目,是否取消并退出?</string>
+    <string name="delete_notice">是否删除%d个项目</string>
+    <string name="delete_not_all">未能删除所有项目</string>
+    <string name="img_mask">mask</string>
+    <string name="merge_album">合并相册</string>
+    <string name="drag_handle">拖动加载</string>
+    <string name="folder">文件夹</string>
+    <string name="personal">个人</string>
+    <string name="intellect">智能</string>
+    <string name="select_num">选择项目少于%s</string>
+    <string name="drop_dowm">下拉</string>
+    <string name="album_name_invalid">无效的名称</string>
+    <string name="add_to_exists_album">合并到已有相册</string>
+    <string name="add_to_new_album">合并到新相册</string>
+    <string name="keep_album">保留旧相册</string>
+    <string name="no_operation">没有操作</string>
+    <string name="delete">删除</string>
+    <string name="delete_success">删除成功</string>
+    <string name="no_folder_view">没有文件夹视图</string>
+    <string name="rename_success">重命名成功</string>
+    <string name="merge_success">合并成功</string>
+    <string name="rename">重命名</string>
+    <string name="album_exists">已存在该相册</string>
+    <string name="no_notice">没有提示</string>
+    <string name="todo">TODO</string>
+    <string name="last_page">最后一页</string>
+    <string name="first_page">第一页</string>
+    <string name="no_album">没有相册啦!!试试其他视图</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="user_header">用户头像</string>
+    <string name="click_login">点击登录</string>
+    <string name="user_friend">好友%s</string>
+</resources>
