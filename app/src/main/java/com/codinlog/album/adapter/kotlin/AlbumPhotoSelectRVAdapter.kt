@@ -12,7 +12,7 @@ import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.listener.PhotoGroupListener
-import com.codinlog.album.util.WindowUtil
+import com.codinlog.album.util.Window
 
 class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickListener: CommonListener) : RecyclerView.Adapter<AlbumPhotoSelectRVAdapter.ViewHolder>() {
     private var ivOnClickListener = ivOnClickListener
@@ -55,7 +55,7 @@ class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickList
         var iv: ImageView
 
         init {
-            view.layoutParams = ViewGroup.LayoutParams(WindowUtil.thumbnailImageSize, WindowUtil.thumbnailImageSize)
+            view.layoutParams = ViewGroup.LayoutParams(Window.thumbnailImageSize, Window.thumbnailImageSize)
             cb = view.findViewById(R.id.cb)
             iv = view.findViewById(R.id.iv)
         }

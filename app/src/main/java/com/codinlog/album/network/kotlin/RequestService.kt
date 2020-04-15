@@ -15,7 +15,7 @@ class RequestService {
         service.Login(userModel).enqueue(callback)
     }
 
-    fun verifyAuthen(accessToken: String, callback: Callback<Void>) {
+    fun verifyAuthen(accessToken: String?, callback: Callback<Void>) {
         service.verifyAuthen("Bearer$accessToken").enqueue(callback)
     }
 

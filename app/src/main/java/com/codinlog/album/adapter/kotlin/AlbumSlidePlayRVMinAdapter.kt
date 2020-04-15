@@ -11,7 +11,7 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.util.WindowUtil.gallerySize
+import com.codinlog.album.util.Window.gallerySize
 
 class AlbumSlidePlayRVMinAdapter(private val onClickListener: CommonListener) : RecyclerView.Adapter<AlbumSlidePlayRVMinAdapter.ViewHolder>() {
     var disPlayData = listOf<PhotoBean>()

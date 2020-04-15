@@ -11,13 +11,13 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.util.WindowUtil.albumPhotoItemSize
-import com.codinlog.album.util.WorthStoreUtil
+import com.codinlog.album.util.Window.albumPhotoItemSize
+import com.codinlog.album.util.WorthStore
 
 class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: CommonListener,
                                         private val photoItemOnLongClickListener: CommonListener)
     : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
-    private var mode: WorthStoreUtil.MODE = WorthStoreUtil.MODE.MODE_NORMAL
+    private var mode: WorthStore.MODE = WorthStore.MODE.MODE_NORMAL
         set(value) {
             field = value
             notifyItemRangeChanged(0, photoBeans.size, "payloads")
@@ -61,11 +61,11 @@ class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: Co
 
     private fun doSelectModel(holder: ViewHolder, position: Int) {
         when (mode) {
-            WorthStoreUtil.MODE.MODE_NORMAL -> {
+            WorthStore.MODE.MODE_NORMAL -> {
                 holder.checkBox.visibility = View.INVISIBLE
                 holder.checkBox.isChecked = photoBeans[position].isSelected
             }
-            WorthStoreUtil.MODE.MODE_SELECT -> {
+            WorthStore.MODE.MODE_SELECT -> {
                 holder.checkBox.visibility = View.VISIBLE
                 holder.checkBox.isChecked = photoBeans[position].isSelected
             }

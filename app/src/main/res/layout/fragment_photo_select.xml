@@ -12,7 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".controller.Fragment.kotlin.AlbumPhotoSelectFragment">
+        tools:context=".controller.fragment.kotlin.AlbumPhotoSelectFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv"

@@ -11,13 +11,13 @@ import com.codinlog.album.R
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.util.WindowUtil
-import com.codinlog.album.util.WorthStoreUtil
+import com.codinlog.album.util.Window
+import com.codinlog.album.util.WorthStore
 
 class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
                      private val albumItemLongClickListener: CommonListener)
     : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
-    private var mode = WorthStoreUtil.MODE.MODE_NORMAL
+    private var mode = WorthStore.MODE.MODE_NORMAL
     var displayData: List<AlbumEntity> = listOf()
         set(value) {
             field = value
@@ -51,13 +51,13 @@ class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
 
     private fun doSelectMode(holder: ViewHolder, position: Int) {
         when (mode) {
-            WorthStoreUtil.MODE.MODE_NORMAL -> holder.ivMask.visibility = View.INVISIBLE
-            WorthStoreUtil.MODE.MODE_SELECT -> holder.ivMask.visibility = if (displayData[position].isSelect) View.VISIBLE else View.INVISIBLE
+            WorthStore.MODE.MODE_NORMAL -> holder.ivMask.visibility = View.INVISIBLE
+            WorthStore.MODE.MODE_SELECT -> holder.ivMask.visibility = if (displayData[position].isSelect) View.VISIBLE else View.INVISIBLE
         }
     }
 
-    fun setMode(mode: WorthStoreUtil.MODE) {
-        this.mode = mode;
+    fun setMode(mode: WorthStore.MODE) {
+        this.mode = mode
         notifyItemRangeChanged(0, displayData.size, "payload")
     }
 
@@ -67,7 +67,7 @@ class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
         var ivMask: ImageView
 
         init {
-            view.layoutParams = ViewGroup.LayoutParams(WindowUtil.albumItemSize, WindowUtil.albumItemSize / 4 * 5)
+            view.layoutParams = ViewGroup.LayoutParams(Window.albumItemSize, Window.albumItemSize / 4 * 5)
             iv = view.findViewById(R.id.iv)
             tv = view.findViewById(R.id.tv)
             ivMask = view.findViewById(R.id.ivMask)

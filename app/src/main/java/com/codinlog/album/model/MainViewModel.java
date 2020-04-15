@@ -8,15 +8,15 @@ import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.model.kotlin.DiaryViewModel;
-import com.codinlog.album.util.WorthStoreUtil;
+import com.codinlog.album.util.WorthStore;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codinlog.album.util.WorthStoreUtil.MODE.MODE_NORMAL;
-import static com.codinlog.album.util.WorthStoreUtil.albumPager;
-import static com.codinlog.album.util.WorthStoreUtil.diaryPager;
-import static com.codinlog.album.util.WorthStoreUtil.photoPager;
+import static com.codinlog.album.util.WorthStore.MODE.MODE_NORMAL;
+import static com.codinlog.album.util.WorthStore.albumPager;
+import static com.codinlog.album.util.WorthStore.diaryPager;
+import static com.codinlog.album.util.WorthStore.photoPager;
 
 public class MainViewModel extends ViewModel {
     public PhotoViewModel photoViewModel;
@@ -24,7 +24,7 @@ public class MainViewModel extends ViewModel {
     public DiaryViewModel diaryViewModel;
     private MutableLiveData<ArrayList<FragmentBean>> fragments;//界面
     private MutableLiveData<List<PhotoBean>> photoBeans;//图片数据
-    private MutableLiveData<WorthStoreUtil.MODE> mode;//选择模式
+    private MutableLiveData<WorthStore.MODE> mode;//选择模式
     private MutableLiveData<Boolean> isSelectAll;//是否选择所有
     private MutableLiveData<Integer> currentPager;//当前页面
     private MutableLiveData<String> title;
@@ -77,15 +77,15 @@ public class MainViewModel extends ViewModel {
         getPhotoBeans().setValue(value);
     }
 
-    public MutableLiveData<WorthStoreUtil.MODE> getMode() {
+    public MutableLiveData<WorthStore.MODE> getMode() {
         if (mode == null) {
             mode = new MutableLiveData<>();
-            mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+            mode.setValue(WorthStore.MODE.MODE_NORMAL);
         }
         return mode;
     }
 
-    public void setMode(WorthStoreUtil.MODE value) {
+    public void setMode(WorthStore.MODE value) {
         getMode().setValue(value);
     }
 

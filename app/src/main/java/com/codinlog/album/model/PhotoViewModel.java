@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.util.ClassifyUtil;
-import com.codinlog.album.util.WorthStoreUtil;
+import com.codinlog.album.util.Classify;
+import com.codinlog.album.util.WorthStore;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,20 +23,20 @@ public class PhotoViewModel extends ViewModel {
     public Object lock;
     private MutableLiveData<List<Object>> displayData; //图片+分组数据
     private MutableLiveData<List<PhotoBean>> selectedData;//已选择
-    private MutableLiveData<WorthStoreUtil.MODE> mode;
+    private MutableLiveData<WorthStore.MODE> mode;
     private MutableLiveData<Map<GroupBean, List<PhotoBean>>> classifiedDisplayData;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
 
-    public MutableLiveData<WorthStoreUtil.MODE> getMode() {
+    public MutableLiveData<WorthStore.MODE> getMode() {
         if (mode == null) {
             mode = new MediatorLiveData<>();
-            mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+            mode.setValue(WorthStore.MODE.MODE_NORMAL);
         }
         return mode;
     }
 
-    public void setMode(WorthStoreUtil.MODE mode) {
+    public void setMode(WorthStore.MODE mode) {
         getMode().setValue(mode);
     }
 
@@ -71,7 +71,7 @@ public class PhotoViewModel extends ViewModel {
     public void setGroupClassifiedData(List<PhotoBean> it) {
         synchronized (lock) {
             if (classifiedRunnable == null)
-                classifiedRunnable = () -> setClassifiedDisplayData(ClassifyUtil.PhotoBeansClassify(it, getClassifiedDisplayData().getValue()));
+                classifiedRunnable = () -> setClassifiedDisplayData(Classify.PhotoBeansClassify(it, getClassifiedDisplayData().getValue()));
             handler.removeCallbacks(classifiedRunnable);
             handler.post(classifiedRunnable);
         }

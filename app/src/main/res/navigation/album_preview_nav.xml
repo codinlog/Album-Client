@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/album_confirm"
-        android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoDisplayFragment"
+        android:name="com.codinlog.album.controller.fragment.kotlin.AlbumPhotoDisplayFragment"
         android:label="相册预览"
         tools:layout="@layout/fragment_album_display">
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/album_add"
-        android:name="com.codinlog.album.controller.Fragment.kotlin.AlbumPhotoSelectFragment"
+        android:name="com.codinlog.album.controller.fragment.kotlin.AlbumPhotoSelectFragment"
         android:label="添加到相册"
         tools:layout="@layout/fragment_photo_select">
         <action

@@ -48,8 +48,8 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         var lock = Any()
     }
 
-    constructor(context: Context?) : this(context, null) {}
-    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0) {}
+    constructor(context: Context?) : this(context, null)
+    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         scaleType = ScaleType.MATRIX
         scaleGestureDetector = ScaleGestureDetector(context, this)
@@ -124,10 +124,10 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         }
         if (rectF.width() >= width) {
             if (rectF.left > 0) {
-                mx = -rectF.left;
+                mx = -rectF.left
             }
             if (rectF.right < width) {
-                mx = width - rectF.right;
+                mx = width - rectF.right
             }
         } else {
             mx = width * 0.5f - rectF.right + 0.5f * rectF.width()
@@ -135,7 +135,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
         }
         if (rectF.height() >= height) {
             if (rectF.top > 0) {
-                my = -rectF.top;
+                my = -rectF.top
             }
             if (rectF.bottom < height) {
                 my = height - rectF.bottom
@@ -180,7 +180,7 @@ class AlbumImageView : ImageView, ViewTreeObserver.OnGlobalLayoutListener
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 twoPointsDown = false
-                backRotation();
+                backRotation()
             }
             MotionEvent.ACTION_MOVE -> {
                 if (twoPointsDown) {

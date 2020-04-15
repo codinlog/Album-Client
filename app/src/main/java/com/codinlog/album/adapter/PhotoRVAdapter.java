@@ -19,8 +19,8 @@ import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.listener.PhotoGroupListener;
-import com.codinlog.album.util.WindowUtil;
-import com.codinlog.album.util.WorthStoreUtil;
+import com.codinlog.album.util.Window;
+import com.codinlog.album.util.WorthStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import static android.view.View.VISIBLE;
 
 public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> displayData = new ArrayList<>();
-    private WorthStoreUtil.MODE mode = WorthStoreUtil.MODE.MODE_NORMAL;
+    private WorthStore.MODE mode = WorthStore.MODE.MODE_NORMAL;
     private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener, photoItemCheckBoxListener, imgBtnClickListener;
     private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
@@ -47,10 +47,10 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == WorthStoreUtil.photoItemType) {
+        if (viewType == WorthStore.photoItemType) {
             PhotoItemViewHolder photoItemViewHolder = new PhotoItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false));
             return photoItemViewHolder;
-        } else if (viewType == WorthStoreUtil.photoGroupType) {
+        } else if (viewType == WorthStore.photoGroupType) {
             PhotoGroupViewHolder photoGroupViewHolder = new PhotoGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.classify_title, parent, false));
             return photoGroupViewHolder;
         } else
@@ -143,11 +143,11 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int getItemViewType(int position) {
         Object o = displayData.get(position);
         if (o instanceof PhotoBean)
-            return WorthStoreUtil.photoItemType;
+            return WorthStore.photoItemType;
         else if (o instanceof GroupBean)
-            return WorthStoreUtil.photoGroupType;
+            return WorthStore.photoGroupType;
         else
-            return WorthStoreUtil.viewHolderNoType;
+            return WorthStore.viewHolderNoType;
     }
 
     @Override
@@ -164,10 +164,10 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    if (getItemViewType(position) == WorthStoreUtil.photoGroupType) {
-                        return WorthStoreUtil.thumbnailPhotoNum;
+                    if (getItemViewType(position) == WorthStore.photoGroupType) {
+                        return WorthStore.thumbnailPhotoNum;
                     }
-                    return WorthStoreUtil.thumbnailGroupNum;
+                    return WorthStore.thumbnailGroupNum;
                 }
             });
         }
@@ -178,7 +178,7 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void setMode(WorthStoreUtil.MODE mode) {
+    public void setMode(WorthStore.MODE mode) {
         this.mode = mode;
         notifyItemRangeChanged(0, displayData.size(), "payload");
     }
@@ -193,7 +193,7 @@ public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         PhotoItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setLayoutParams(new ViewGroup.LayoutParams(WindowUtil.thumbnailImageSize, WindowUtil.thumbnailImageSize));
+            itemView.setLayoutParams(new ViewGroup.LayoutParams(Window.thumbnailImageSize, Window.thumbnailImageSize));
             imageView = itemView.findViewById(R.id.iv);
             checkBox = itemView.findViewById(R.id.cb);
         }

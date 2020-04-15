@@ -9,11 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.ViewModel;
 
-import com.codinlog.album.util.WorthStoreUtil;
+import com.codinlog.album.util.WorthStore;
 
 import java.util.ArrayList;
 
-import static com.codinlog.album.util.WorthStoreUtil.permission_RequestCode;
+import static com.codinlog.album.util.WorthStore.permission_RequestCode;
 
 public abstract class BaseActivityController<T extends ViewModel, V extends ViewDataBinding> extends AppCompatActivity implements IBaseController {
     protected static final String TAG = "BaseActivityController";
@@ -32,13 +32,13 @@ public abstract class BaseActivityController<T extends ViewModel, V extends View
 
     protected void checkPermissions() {
         ArrayList<String> permissions = new ArrayList<>();
-        for (String permission : WorthStoreUtil.needPermissions) {
+        for (String permission : WorthStore.needPermissions) {
             int res = checkSelfPermission(permission);
             if (res == PackageManager.PERMISSION_DENIED)
                 permissions.add(permission);
         }
         if (permissions.size() > 0) {
-            requestPermissions(WorthStoreUtil.needPermissions, permission_RequestCode);
+            requestPermissions(WorthStore.needPermissions, permission_RequestCode);
         } else {
             doInitListener();
             doInitDisplayData();
@@ -52,7 +52,7 @@ public abstract class BaseActivityController<T extends ViewModel, V extends View
         ArrayList<Integer> notAllowPermissions = new ArrayList<>();
         for (int i = 0; i < grantResults.length; i++) {
             if (grantResults[i] == PackageManager.PERMISSION_DENIED)
-                notAllowPermissions.add(WorthStoreUtil.permissionsDetails[i]);
+                notAllowPermissions.add(WorthStore.permissionsDetails[i]);
         }
         if (notAllowPermissions.size() > 0) {
             showPermissionDialog(notAllowPermissions);

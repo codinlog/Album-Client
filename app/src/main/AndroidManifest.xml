@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -16,40 +17,47 @@
         android:allowBackup="true"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.Activity.kotlin.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".controller.Activity.MainActivity"
+            android:name=".controller.activity.kotlin.DiaryPublishActivity"
+            android:label="@string/title_activity_diary_public"
+            android:parentActivityName=".controller.activity.MainActivity"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeWithActionBar" />
         <activity
-            android:name=".controller.Activity.kotlin.AlbumSlidePlayActivity"
+            android:name=".controller.activity.kotlin.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".controller.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeWithActionBar" />
+        <activity
+            android:name=".controller.activity.kotlin.AlbumSlidePlayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_album_slide_play"
-            android:parentActivityName=".controller.Activity.kotlin.AlbumPreviewActivity"
+            android:parentActivityName=".controller.activity.kotlin.AlbumPreviewActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".controller.Activity.PhotoPreviewActivity"
+            android:name=".controller.activity.PhotoPreviewActivity"
             android:label="@string/title_activity_photo_preview"
             android:launchMode="singleTop"
-            android:parentActivityName=".controller.Activity.MainActivity"
+            android:parentActivityName=".controller.activity.MainActivity"
             android:theme="@style/SteepTheme" />
         <activity
-            android:name=".controller.Activity.kotlin.AlbumPreviewActivity"
+            android:name=".controller.activity.kotlin.AlbumPreviewActivity"
             android:label="@string/title_activity_album_preview"
             android:launchMode="singleTop"
-            android:parentActivityName=".controller.Activity.MainActivity"
+            android:parentActivityName=".controller.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".controller.Activity.MainActivity"
+            android:name=".controller.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

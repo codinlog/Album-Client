@@ -8,9 +8,9 @@ import com.codinlog.album.database.AlbumDatabase
 import com.codinlog.album.entity.AlbumEntity
 import com.codinlog.album.entity.AlbumItemEntity
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.util.DataStoreUtil
-import com.codinlog.album.util.WorthStoreUtil
-import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDBUtil
+import com.codinlog.album.util.DataStore
+import com.codinlog.album.util.WorthStore
+import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDB
 
 class AlbumPreviewViewModel : ViewModel() {
     private val albumDAO = AlbumDatabase.getInstance().albumDAO
@@ -20,7 +20,7 @@ class AlbumPreviewViewModel : ViewModel() {
     var albumPhotoDisplayViewModel: AlbumPhotoDisplayViewModel? = null
     var albumPhotoSelectViewModel: AlbumPhotoSelectViewModel? = null
     var title = MutableLiveData<String>().apply { value = "" }
-    var currentModel = MutableLiveData<WorthStoreUtil.MODE>().apply { value = WorthStoreUtil.MODE.MODE_NORMAL }
+    var currentModel = MutableLiveData<WorthStore.MODE>().apply { value = WorthStore.MODE.MODE_NORMAL }
     var navController = MutableLiveData<NavController>()
 
 //    private fun queryAlbumItemByAlbumEntity(value: AlbumEntity) {
@@ -39,9 +39,9 @@ class AlbumPreviewViewModel : ViewModel() {
         this.fromValue = fromValue
         this.fromWhere = fromWhere
         when (fromWhere) {
-            FromWhere.PhotoPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().displayData)
+            FromWhere.PhotoPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStore.getInstance().displayData)
             FromWhere.AlbumPreview -> albumPhotoDisplayViewModel?.displayData = albumItemDAO.queryAllAlbumPhotoItem((fromValue as AlbumEntity).albumId)
-            FromWhere.AlbumFolderPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStoreUtil.getInstance().folderDisplayData)
+            FromWhere.AlbumFolderPreview -> albumPhotoDisplayViewModel?.displayData = MutableLiveData(DataStore.getInstance().folderDisplayData)
         }
         setDisplayTitle()
     }
@@ -77,7 +77,7 @@ class AlbumPreviewViewModel : ViewModel() {
                         uuid = (v.photoPath + albumEntity.albumName).hashCode()
                     }
                 }.toTypedArray()
-                AlbumExistInsertWithPhotoBeansDBUtil(albumDAO, albumItemDAO, albumEntity, commonListener!!).execute(*data)
+                AlbumExistInsertWithPhotoBeansDB(albumDAO, albumItemDAO, albumEntity, commonListener!!).execute(*data)
             }
         }
     }

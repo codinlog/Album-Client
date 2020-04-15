@@ -14,11 +14,11 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.util.TypeConverterUtitl;
+import com.codinlog.album.util.kotlin.AlbumTypeConverter;
 
 import java.util.Date;
 
-@TypeConverters(TypeConverterUtitl.class)
+@TypeConverters(AlbumTypeConverter.class)
 @Entity(tableName = "albumTB", indices = {@Index(value = {"albumName", "albumId"}, unique = true)})
 public class AlbumEntity implements Parcelable {
     public static final Creator<AlbumEntity> CREATOR = new Creator<AlbumEntity>() {

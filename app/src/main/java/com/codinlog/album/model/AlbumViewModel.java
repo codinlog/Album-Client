@@ -15,19 +15,19 @@ import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
 import com.codinlog.album.listener.CommonListener;
-import com.codinlog.album.util.ClassifyUtil;
-import com.codinlog.album.util.WorthStoreUtil;
-import com.codinlog.album.util.kotlin.AlbumDeleteDBUtil;
-import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDBUtil;
-import com.codinlog.album.util.kotlin.AlbumInsertDBUtil;
-import com.codinlog.album.util.kotlin.AlbumInsertWithPhotoBeansDBUtil;
-import com.codinlog.album.util.kotlin.AlbumItemDeleteDBUtil;
-import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDBUtil;
-import com.codinlog.album.util.kotlin.AlbumMergeDBUtil;
-import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDBUtil;
-import com.codinlog.album.util.kotlin.AlbumQueryDBUtil;
-import com.codinlog.album.util.kotlin.AlbumRenameDBUtil;
-import com.codinlog.album.util.kotlin.AlbumUpdateDBUtil;
+import com.codinlog.album.util.Classify;
+import com.codinlog.album.util.WorthStore;
+import com.codinlog.album.util.kotlin.AlbumDeleteDB;
+import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDB;
+import com.codinlog.album.util.kotlin.AlbumInsertDB;
+import com.codinlog.album.util.kotlin.AlbumInsertWithPhotoBeansDB;
+import com.codinlog.album.util.kotlin.AlbumItemDeleteDB;
+import com.codinlog.album.util.kotlin.AlbumItemQueryByAlbumIdDB;
+import com.codinlog.album.util.kotlin.AlbumMergeDB;
+import com.codinlog.album.util.kotlin.AlbumQueryByAlbumIdDB;
+import com.codinlog.album.util.kotlin.AlbumQueryDB;
+import com.codinlog.album.util.kotlin.AlbumRenameDB;
+import com.codinlog.album.util.kotlin.AlbumUpdateDB;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class AlbumViewModel extends ViewModel {
     private MutableLiveData<Integer> displayOption;
     private LiveData<List<AlbumEntity>> displayData;
     private MutableLiveData<Map<FolderBean, List<PhotoBean>>> folderDisplayData;
-    private MutableLiveData<WorthStoreUtil.MODE> mode;
+    private MutableLiveData<WorthStore.MODE> mode;
     private MutableLiveData<List<AlbumEntity>> selectedData;
     private MutableLiveData<Boolean> isSelectAll;
     private AlbumDAO albumDAO;
@@ -61,15 +61,15 @@ public class AlbumViewModel extends ViewModel {
         getSelectedData().setValue(value);
     }
 
-    public MutableLiveData<WorthStoreUtil.MODE> getMode() {
+    public MutableLiveData<WorthStore.MODE> getMode() {
         if (mode == null) {
             mode = new MediatorLiveData<>();
-            mode.setValue(WorthStoreUtil.MODE.MODE_NORMAL);
+            mode.setValue(WorthStore.MODE.MODE_NORMAL);
         }
         return mode;
     }
 
-    public void setMode(WorthStoreUtil.MODE mode) {
+    public void setMode(WorthStore.MODE mode) {
         getMode().setValue(mode);
     }
 
@@ -106,39 +106,39 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public void insertAlbum(AlbumEntity... albumEntities) {
-        new AlbumInsertDBUtil(getAlbumDAO()).execute(albumEntities);
+        new AlbumInsertDB(getAlbumDAO()).execute(albumEntities);
     }
 
     public void deleteAlbum(CommonListener commonListener, AlbumEntity... albumEntities) {
-        new AlbumDeleteDBUtil(getAlbumDAO(), commonListener).execute(albumEntities);
+        new AlbumDeleteDB(getAlbumDAO(), commonListener).execute(albumEntities);
     }
 
     public void queryAlbum(CommonListener commonListener) {
-        new AlbumQueryDBUtil(getAlbumDAO(), commonListener).execute();
+        new AlbumQueryDB(getAlbumDAO(), commonListener).execute();
     }
 
     public void queryAlbumById(int albumId, CommonListener commonListener) {
-        new AlbumQueryByAlbumIdDBUtil(getAlbumDAO(), commonListener).execute(albumId);
+        new AlbumQueryByAlbumIdDB(getAlbumDAO(), commonListener).execute(albumId);
     }
 
     public void renameAlbum(int oldId, String albumName, CommonListener commonListener) {
-        new AlbumRenameDBUtil(commonListener, oldId, getAlbumDAO()).execute(albumName);
+        new AlbumRenameDB(commonListener, oldId, getAlbumDAO()).execute(albumName);
     }
 
     public void updateAlbum(CommonListener commonListener, AlbumEntity... albumEntities) {
-        new AlbumUpdateDBUtil(getAlbumDAO(), commonListener).execute(albumEntities);
+        new AlbumUpdateDB(getAlbumDAO(), commonListener).execute(albumEntities);
     }
 
     public void deleteAlbumItem(AlbumItemEntity... albumItemEntities) {
-        new AlbumItemDeleteDBUtil(getAlbumItemDAO()).execute(albumItemEntities);
+        new AlbumItemDeleteDB(getAlbumItemDAO()).execute(albumItemEntities);
     }
 
     public void queryAlbumItemById(int albumId, CommonListener commonListener) {
-        new AlbumItemQueryByAlbumIdDBUtil(getAlbumItemDAO(), commonListener).execute(albumId);
+        new AlbumItemQueryByAlbumIdDB(getAlbumItemDAO(), commonListener).execute(albumId);
     }
 
     public void insertAlbumWithPhotoBeans(AlbumEntity albumEntity, List<PhotoBean> photoBeans, CommonListener commonListener) {
-        new AlbumInsertWithPhotoBeansDBUtil(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
+        new AlbumInsertWithPhotoBeansDB(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
@@ -148,7 +148,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public void insertExistAlbumWithPhotoBeans(AlbumEntity albumEntity, List<PhotoBean> photoBeans, CommonListener commonListener) {
-        new AlbumExistInsertWithPhotoBeansDBUtil(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
+        new AlbumExistInsertWithPhotoBeansDB(albumDAO, getAlbumItemDAO(), albumEntity, commonListener).execute(photoBeans.stream().map(v -> {
             AlbumItemEntity albumItemEntity = new AlbumItemEntity();
             albumItemEntity.setBelongToId(albumEntity.getAlbumId());
             albumItemEntity.setPhotoBean(v);
@@ -158,7 +158,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public void mergeAlbum(AlbumEntity targetAlbumEntity, List<AlbumEntity> todoAlbumEntities, boolean keepOldAlbum, boolean createNew, CommonListener commonListener) {
-        new AlbumMergeDBUtil(getAlbumDAO(), getAlbumItemDAO(), targetAlbumEntity
+        new AlbumMergeDB(getAlbumDAO(), getAlbumItemDAO(), targetAlbumEntity
                 , keepOldAlbum, createNew, commonListener).execute(todoAlbumEntities);
     }
 
@@ -199,7 +199,7 @@ public class AlbumViewModel extends ViewModel {
     public void setFolderClassifiedData(List<PhotoBean> it) {
         synchronized (lock) {
             if (classifiedRunnable == null)
-                classifiedRunnable = () -> setFolderDisplayData(ClassifyUtil.PhotoBeansFolderClassify(it, getFolderDisplayData().getValue()));
+                classifiedRunnable = () -> setFolderDisplayData(Classify.PhotoBeansFolderClassify(it, getFolderDisplayData().getValue()));
             handler.removeCallbacks(classifiedRunnable);
             handler.post(classifiedRunnable);
         }

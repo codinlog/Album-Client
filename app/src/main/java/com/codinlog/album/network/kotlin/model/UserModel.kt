@@ -2,7 +2,7 @@ package com.codinlog.album.network.kotlin.model
 
 import com.google.gson.annotations.SerializedName
 
-data class UserModel(@SerializedName("UserName") val username: String,
-                     @SerializedName("Email") val email: String?,
-                     @SerializedName("Password") val password: String,
-                     @SerializedName("AccessToken") val accessToken: String?)
+data class UserModel(@SerializedName("userName") val username: String?,
+                     @SerializedName("email") val email: String?,
+                     @SerializedName("password") val password: String?,
+                     @SerializedName("accessToken") val accessToken: String?)
