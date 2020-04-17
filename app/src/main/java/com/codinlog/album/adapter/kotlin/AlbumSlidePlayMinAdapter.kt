@@ -1,6 +1,5 @@
 package com.codinlog.album.adapter.kotlin
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.Window.gallerySize
 
-class AlbumSlidePlayRVMinAdapter(private val onClickListener: CommonListener) : RecyclerView.Adapter<AlbumSlidePlayRVMinAdapter.ViewHolder>() {
+class AlbumSlidePlayMinAdapter(private val onClickListener: CommonListener) : RecyclerView.Adapter<AlbumSlidePlayMinAdapter.ViewHolder>() {
     var disPlayData = listOf<PhotoBean>()
         set(value) {
             field = value
@@ -46,7 +45,6 @@ class AlbumSlidePlayRVMinAdapter(private val onClickListener: CommonListener) : 
     }
 
     private fun doOpIvMask(holder: ViewHolder, position: Int) {
-        Log.d("select", "" + disPlayData[position].isSelected + "" + position)
         holder.ivMask.visibility = if (disPlayData[position].isSelected) View.VISIBLE else View.INVISIBLE
     }
 

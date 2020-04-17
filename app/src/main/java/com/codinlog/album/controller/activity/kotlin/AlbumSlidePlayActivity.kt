@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.codinlog.album.R
-import com.codinlog.album.adapter.kotlin.AlbumSlidePlayRVFullAdapter
-import com.codinlog.album.adapter.kotlin.AlbumSlidePlayRVMinAdapter
+import com.codinlog.album.adapter.kotlin.AlbumSlidePlayFullAdapter
+import com.codinlog.album.adapter.kotlin.AlbumSlidePlayMinAdapter
 import com.codinlog.album.controller.BaseActivityController
 import com.codinlog.album.databinding.ActivityAlbumSlidePlayBinding
 import com.codinlog.album.listener.CommonListener
@@ -37,8 +37,8 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
             it?.get(oldPos)?.isSelected = false
             it?.get(newPos)?.isSelected = true
             try {
-                albumSlidePlayRVMinAdapter.notifyItemChanged(oldPos, "payload")
-                albumSlidePlayRVMinAdapter.notifyItemChanged(newPos, "payload")
+                albumSlidePlayMinAdapter.notifyItemChanged(oldPos, "payload")
+                albumSlidePlayMinAdapter.notifyItemChanged(newPos, "payload")
                 binding.vp.currentItem = newPos
                 binding.rv.scrollToPosition(newPos)
             } catch (e: IndexOutOfBoundsException) {
@@ -48,8 +48,8 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
             }
         }
     }
-    private lateinit var albumSlidePlayRVFullAdapter: AlbumSlidePlayRVFullAdapter
-    private lateinit var albumSlidePlayRVMinAdapter: AlbumSlidePlayRVMinAdapter
+    private lateinit var albumSlidePlayFullAdapter: AlbumSlidePlayFullAdapter
+    private lateinit var albumSlidePlayMinAdapter: AlbumSlidePlayMinAdapter
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
         binding.vp.systemUiVisibility =
@@ -81,8 +81,8 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
 
     override fun doInitListener() {
         viewModel.displayData.observe(this, Observer {
-            albumSlidePlayRVMinAdapter.disPlayData = it.also { it[currentPosition].isSelected = true }
-            albumSlidePlayRVFullAdapter.displayData = it
+            albumSlidePlayMinAdapter.disPlayData = it.also { it[currentPosition].isSelected = true }
+            albumSlidePlayFullAdapter.displayData = it
             binding.vp.currentItem = currentPosition
         })
         binding.vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -125,15 +125,15 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
     }
 
     override fun doInitDisplayData() {
-        albumSlidePlayRVFullAdapter = AlbumSlidePlayRVFullAdapter(CommonListener {
+        albumSlidePlayFullAdapter = AlbumSlidePlayFullAdapter(CommonListener {
             toggle()
         })
-        albumSlidePlayRVMinAdapter = AlbumSlidePlayRVMinAdapter(CommonListener { it ->
+        albumSlidePlayMinAdapter = AlbumSlidePlayMinAdapter(CommonListener { it ->
             currentPosition = it as Int
         })
-        binding.vp.adapter = albumSlidePlayRVFullAdapter
+        binding.vp.adapter = albumSlidePlayFullAdapter
         binding.rv.layoutManager = LinearLayoutManager(this, HORIZONTAL, false)
-        binding.rv.adapter = albumSlidePlayRVMinAdapter
+        binding.rv.adapter = albumSlidePlayMinAdapter
         binding.rv.addItemDecoration(object : ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, itemPosition: Int, parent: RecyclerView) {
                 super.getItemOffsets(outRect, itemPosition, parent)

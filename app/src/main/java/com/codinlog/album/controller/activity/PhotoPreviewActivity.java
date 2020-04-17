@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.PhotoPreviewVPAdapter;
+import com.codinlog.album.adapter.PhotoPreviewAdapter;
 import com.codinlog.album.anim.ZoomOutPageTransformer;
 import com.codinlog.album.controller.BaseActivityController;
 import com.codinlog.album.databinding.ActivityPhotoPreviewBinding;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewViewModel, ActivityPhotoPreviewBinding> {
     private static boolean isShowAppBar = false;
     private ActivityPhotoPreviewBinding binding;
-    private PhotoPreviewVPAdapter photoPreviewVPAdapter;
+    private PhotoPreviewAdapter photoPreviewAdapter;
     private TranslateAnimation animation;
 
     @Override
@@ -52,7 +52,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
             }
         });
         viewModel.getDisplayData().observe(this, photoBeans -> {
-            photoPreviewVPAdapter.setData(photoBeans);
+            photoPreviewAdapter.setData(photoBeans);
             viewModel.setCurrentPosition(photoBeans.indexOf(getIntent().getParcelableExtra("photoBean")));
         });
         viewModel.getCurrentPosition().observe(this, integer -> binding.viewPager.setCurrentItem(integer, false));
@@ -65,7 +65,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
 
     @Override
     public void doInitDisplayData() {
-        photoPreviewVPAdapter = new PhotoPreviewVPAdapter(o -> {
+        photoPreviewAdapter = new PhotoPreviewAdapter(o -> {
             if (animation == null || animation.hasEnded()) {
                 animation = isShowAppBar ?
                         new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
@@ -82,7 +82,7 @@ public class PhotoPreviewActivity extends BaseActivityController<PhotoPreviewVie
             }
         });
         binding.viewPager.setPageTransformer(new ZoomOutPageTransformer());
-        binding.viewPager.setAdapter(photoPreviewVPAdapter);
+        binding.viewPager.setAdapter(photoPreviewAdapter);
         viewModel.setDisplayData(DataStore.getInstance().getAllDisplayData());
     }
 

@@ -28,14 +28,14 @@ import java.util.List;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class PhotoRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> displayData = new ArrayList<>();
     private WorthStore.MODE mode = WorthStore.MODE.MODE_NORMAL;
     private CommonListener photoItemIVOnLongListener, photoItemIVOnClickListener, photoItemCheckBoxListener, imgBtnClickListener;
     private PhotoGroupListener photoGroupCheckBoxListener, photoGroupTVOnLongListener;
 
-    public PhotoRVAdapter(CommonListener photoItemIVOnLongListener, CommonListener photoItemIVOnClickListener, CommonListener photoItemCheckBoxListener,
-                          PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener, CommonListener imgBtnClickListener) {
+    public PhotoAdapter(CommonListener photoItemIVOnLongListener, CommonListener photoItemIVOnClickListener, CommonListener photoItemCheckBoxListener,
+                        PhotoGroupListener photoGroupCheckBoxListener, PhotoGroupListener photoGroupTVOnLongListener, CommonListener imgBtnClickListener) {
         this.photoItemIVOnLongListener = photoItemIVOnLongListener;
         this.photoItemIVOnClickListener = photoItemIVOnClickListener;
         this.photoItemCheckBoxListener = photoItemCheckBoxListener;

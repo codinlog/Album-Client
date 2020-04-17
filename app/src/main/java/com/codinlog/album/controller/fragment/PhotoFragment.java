@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.PhotoRVAdapter;
+import com.codinlog.album.adapter.PhotoAdapter;
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.controller.BaseFragmentController;
@@ -19,7 +19,7 @@ import com.codinlog.album.util.DataStore;
 import com.codinlog.album.util.WorthStore;
 
 public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoFragmentBinding> {
-    private PhotoRVAdapter photoRVAdapter;
+    private PhotoAdapter photoAdapter;
 
     public static PhotoFragment newInstance() {
         return new PhotoFragment();
@@ -38,15 +38,15 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
 
     @Override
     public void doInitListener() {
-        viewModel.getDisplayData().observe(getViewLifecycleOwner(), v -> photoRVAdapter.setData(v));
+        viewModel.getDisplayData().observe(getViewLifecycleOwner(), v -> photoAdapter.setData(v));
         viewModel.getClassifiedDisplayData().observe(getViewLifecycleOwner(), v -> viewModel.setDisplayData());
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), v -> {
-            photoRVAdapter.notifySelectChanged();
+            photoAdapter.notifySelectChanged();
             viewModel.mainViewModel.setTitle();
         });
         viewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-            if (photoRVAdapter != null)
-                photoRVAdapter.setMode(mode);
+            if (photoAdapter != null)
+                photoAdapter.setMode(mode);
             if (mode == WorthStore.MODE.MODE_NORMAL)
                 viewModel.resetDisplayData();
         });
@@ -54,7 +54,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
 
     @Override
     public void doInitDisplayData() {
-        photoRVAdapter = new PhotoRVAdapter(position -> {
+        photoAdapter = new PhotoAdapter(position -> {
             if (viewModel.getMode().getValue() != WorthStore.MODE.MODE_SELECT) {
                 viewModel.mainViewModel.setMode(WorthStore.MODE.MODE_SELECT);
             }
@@ -102,7 +102,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
             }
         });
         binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStore.thumbnailPhotoNum));
-        binding.rv.setAdapter(photoRVAdapter);
+        binding.rv.setAdapter(photoAdapter);
     }
 
     private void selectPhotoChanged(int position, boolean isGroupAll) {

@@ -14,9 +14,9 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.Window.albumPhotoItemSize
 import com.codinlog.album.util.WorthStore
 
-class AlbumDisplayRVAdapter constructor(private val photoItemOnClickListener: CommonListener,
-                                        private val photoItemOnLongClickListener: CommonListener)
-    : RecyclerView.Adapter<AlbumDisplayRVAdapter.ViewHolder>() {
+class AlbumDisplayAdapter constructor(private val photoItemOnClickListener: CommonListener,
+                                      private val photoItemOnLongClickListener: CommonListener)
+    : RecyclerView.Adapter<AlbumDisplayAdapter.ViewHolder>() {
     private var mode: WorthStore.MODE = WorthStore.MODE.MODE_NORMAL
         set(value) {
             field = value

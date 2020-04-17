@@ -14,7 +14,7 @@ import com.codinlog.album.bean.kotlin.FolderBean
 import com.codinlog.album.listener.CommonListener
 import java.lang.ref.WeakReference
 
-class AlbumFolderRVAdapter(private val onClickListener: CommonListener, private val onLongClickListener: CommonListener) : RecyclerView.Adapter<AlbumFolderRVAdapter.ViewHolder>() {
+class AlbumFolderAdapter(private val onClickListener: CommonListener, private val onLongClickListener: CommonListener) : RecyclerView.Adapter<AlbumFolderAdapter.ViewHolder>() {
     var displayData = listOf<FolderBean>()
         set(value) {
             field = value

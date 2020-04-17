@@ -14,9 +14,9 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.util.Window
 import com.codinlog.album.util.WorthStore
 
-class AlbumRVAdapter(private val albumItemOnClickListener: CommonListener,
-                     private val albumItemLongClickListener: CommonListener)
-    : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
+class AlbumAdapter(private val albumItemOnClickListener: CommonListener,
+                   private val albumItemLongClickListener: CommonListener)
+    : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
     private var mode = WorthStore.MODE.MODE_NORMAL
     var displayData: List<AlbumEntity> = listOf()
         set(value) {

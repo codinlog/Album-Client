@@ -4,7 +4,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.codinlog.album.R
-import com.codinlog.album.adapter.kotlin.AlbumPhotoSelectRVAdapter
+import com.codinlog.album.adapter.kotlin.AlbumPhotoSelectAdapter
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.databinding.FragmentPhotoSelectBinding
 import com.codinlog.album.listener.CommonListener
@@ -15,7 +15,7 @@ import com.codinlog.album.util.WorthStore
 
 class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewModel, FragmentPhotoSelectBinding>() {
     private var clickPosition = 0
-    private var albumPhotoSelectRVAdapter: AlbumPhotoSelectRVAdapter? = null
+    private var albumPhotoSelectAdapter: AlbumPhotoSelectAdapter? = null
     override fun getLayoutId(): Int {
         return R.layout.fragment_photo_select
     }
@@ -27,11 +27,11 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
     override fun doInitListener() {
         viewModel.displayData.observe(viewLifecycleOwner, Observer {
             it?.let {
-                albumPhotoSelectRVAdapter?.displayData = it
+                albumPhotoSelectAdapter?.displayData = it
             }
         })
         viewModel.selectData.observe(viewLifecycleOwner, Observer {
-            albumPhotoSelectRVAdapter?.let {
+            albumPhotoSelectAdapter?.let {
                 it.notifyItemChanged(clickPosition, "payload")
                 viewModel.albumPreviewViewModel?.setDisplayTitle()
             }
@@ -39,7 +39,7 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
     }
 
     override fun doInitDisplayData() {
-        albumPhotoSelectRVAdapter = AlbumPhotoSelectRVAdapter(CommonListener {
+        albumPhotoSelectAdapter = AlbumPhotoSelectAdapter(CommonListener {
             clickPosition = it as Int
             viewModel.addSelectData(clickPosition, null)
         }, object : PhotoGroupListener {
@@ -50,7 +50,7 @@ class AlbumPhotoSelectFragment : BaseFragmentController<AlbumPhotoSelectViewMode
             }
         })
         binding.rv.layoutManager = GridLayoutManager(context, WorthStore.thumbnailPhotoNum)
-        binding.rv.adapter = albumPhotoSelectRVAdapter
+        binding.rv.adapter = albumPhotoSelectAdapter
     }
 
     companion object {

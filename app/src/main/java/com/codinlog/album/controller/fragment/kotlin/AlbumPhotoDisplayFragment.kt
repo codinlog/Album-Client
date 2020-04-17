@@ -5,7 +5,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.codinlog.album.R
-import com.codinlog.album.adapter.kotlin.AlbumDisplayRVAdapter
+import com.codinlog.album.adapter.kotlin.AlbumDisplayAdapter
 import com.codinlog.album.controller.BaseFragmentController
 import com.codinlog.album.controller.activity.PhotoPreviewActivity
 import com.codinlog.album.databinding.FragmentAlbumDisplayBinding
@@ -16,7 +16,7 @@ import com.codinlog.album.util.WorthStore
 
 
 class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewModel, FragmentAlbumDisplayBinding>() {
-    private lateinit var albumDisplayRVAdapter: AlbumDisplayRVAdapter
+    private lateinit var albumDisplayAdapter: AlbumDisplayAdapter
     override fun getLayoutId(): Int {
         return R.layout.fragment_album_display
     }
@@ -27,7 +27,7 @@ class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewMo
 
     override fun doInitListener() {
         viewModel.displayData.observe(viewLifecycleOwner, Observer {
-            albumDisplayRVAdapter.photoBeans = it
+            albumDisplayAdapter.photoBeans = it
             viewModel.albumPhotoSelectViewModel?.displayData?.value = DataStore.getInstance().allDisplayData.filter { i ->
                 !it.contains(i)
             }.toList()
@@ -35,7 +35,7 @@ class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewMo
     }
 
     override fun doInitDisplayData() {
-        albumDisplayRVAdapter = AlbumDisplayRVAdapter(CommonListener {
+        albumDisplayAdapter = AlbumDisplayAdapter(CommonListener {
             when (viewModel.albumPreviewViewModel?.currentModel?.value) {
                 WorthStore.MODE.MODE_NORMAL -> {
                     val intent = Intent(context, PhotoPreviewActivity::class.java)
@@ -51,7 +51,7 @@ class AlbumPhotoDisplayFragment : BaseFragmentController<AlbumPhotoDisplayViewMo
 
         })
         binding.rv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        binding.rv.adapter = albumDisplayRVAdapter
+        binding.rv.adapter = albumDisplayAdapter
     }
 
     companion object {

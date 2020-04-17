@@ -7,7 +7,7 @@ import com.codinlog.album.entity.kotlin.DiaryEntity
 @Dao
 interface DiaryDAO {
     @Query("select * from diaryTB order by diaryId desc")
-    fun queryAll(): LiveData<DiaryEntity>
+    fun queryAll(): LiveData<List<DiaryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertDiary(vararg diaryEntity: DiaryEntity)

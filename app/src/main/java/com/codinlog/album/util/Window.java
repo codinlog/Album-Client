@@ -16,6 +16,7 @@ public class Window {
     public static int albumItemSize = Math.min(displayWidth / albumItemNum, displayHeight / albumItemNum);
     public static int albumPhotoItemSize = Math.min(displayWidth / albumPhotoItemNum, displayHeight / albumPhotoItemNum);
     public static int gallerySize = displayWidth / 4;
-    public static int diaryMinSize = (int) (displayWidth * 0.25);
-    public static int diaryMaxSize = (int) (displayWidth * 0.75);
+    public static int diaryMinSize = (int) (displayWidth * 0.3);
+    public static int diaryMaxSize = (int) (displayWidth * 0.7);
+    public static int diaryPhotoItemSize = Math.min(displayWidth / thumbnailPhotoNum, displayHeight / thumbnailPhotoNum) - 10;
 }

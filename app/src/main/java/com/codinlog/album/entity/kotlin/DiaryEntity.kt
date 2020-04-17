@@ -6,15 +6,21 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.util.kotlin.DiaryTypeConverter
+import java.util.*
 
 @TypeConverters(DiaryTypeConverter::class)
 @Entity(tableName = "diaryTB")
 class DiaryEntity {
     @PrimaryKey
     @ColumnInfo(name = "diaryId")
-    var diaryId = -1
-    @ColumnInfo(name="title")
+    var diaryId = Date().time
+
+    @ColumnInfo(name = "title")
     var title = ""
-    @ColumnInfo(name ="photoBeans")
+
+    @ColumnInfo(name = "content")
+    var content = ""
+
+    @ColumnInfo(name = "photoBeans")
     var photoBeans = listOf<PhotoBean>()
 }

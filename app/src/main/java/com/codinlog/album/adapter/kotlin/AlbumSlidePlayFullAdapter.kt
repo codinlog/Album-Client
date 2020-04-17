@@ -11,8 +11,8 @@ import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.listener.CommonListener
 
-class AlbumSlidePlayRVFullAdapter(private val onClickListener: CommonListener)
-    : RecyclerView.Adapter<AlbumSlidePlayRVFullAdapter.ViewHolder>() {
+class AlbumSlidePlayFullAdapter(private val onClickListener: CommonListener)
+    : RecyclerView.Adapter<AlbumSlidePlayFullAdapter.ViewHolder>() {
     var displayData = listOf<PhotoBean>()
         set(value) {
             field = value

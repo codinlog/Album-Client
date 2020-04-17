@@ -14,7 +14,7 @@ import com.codinlog.album.listener.CommonListener
 import com.codinlog.album.listener.PhotoGroupListener
 import com.codinlog.album.util.Window
 
-class AlbumPhotoSelectRVAdapter(ivOnClickListener: CommonListener, cbOnClickListener: CommonListener) : RecyclerView.Adapter<AlbumPhotoSelectRVAdapter.ViewHolder>() {
+class AlbumPhotoSelectAdapter(ivOnClickListener: CommonListener, cbOnClickListener: CommonListener) : RecyclerView.Adapter<AlbumPhotoSelectAdapter.ViewHolder>() {
     private var ivOnClickListener = ivOnClickListener
     private var cbOnClickListener = cbOnClickListener as PhotoGroupListener
     var displayData: List<PhotoBean> = arrayListOf()

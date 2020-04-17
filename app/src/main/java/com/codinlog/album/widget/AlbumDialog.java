@@ -48,7 +48,7 @@ public class AlbumDialog extends Dialog {
         setContentView(R.layout.addto_album_dialog);
         setCancelable(false);
         setOnKeyListener(new OnKeyDownListener());
-        tvTitle = findViewById(R.id.tvTitle);
+        tvTitle = findViewById(R.id.tvTime);
         btn_cancel = findViewById(R.id.btnCancel);
         btn_ok = findViewById(R.id.btnOk);
         autoCompleteTextView = findViewById(R.id.editTextAlbum);

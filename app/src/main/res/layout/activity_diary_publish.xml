@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -14,6 +15,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -22,21 +24,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/normal_marign"
+                android:autofillHints=""
                 android:ems="10"
+                android:focusedByDefault="true"
                 android:gravity="center"
                 android:hint="@string/diary_title"
                 android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/etDesc"
+                app:layout_constraintBottom_toTopOf="@+id/etContent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/etDesc"
+                android:id="@+id/etContent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/normal_marign"
+                android:autofillHints=""
                 android:ems="10"
                 android:gravity="clip_vertical"
                 android:hint="@string/diary_desc"
@@ -54,19 +59,20 @@
                 android:id="@+id/rv"
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:background="@drawable/border_style"
+                android:background="@drawable/border_rect_style"
                 android:padding="@dimen/normal_marign"
                 app:layout_constraintBottom_toTopOf="@+id/btnPublish"
-                app:layout_constraintEnd_toEndOf="@+id/etDesc"
+                app:layout_constraintEnd_toEndOf="@+id/etContent"
                 app:layout_constraintHorizontal_bias="0.736"
-                app:layout_constraintStart_toStartOf="@+id/etDesc"
-                app:layout_constraintTop_toBottomOf="@+id/etDesc" />
+                app:layout_constraintStart_toStartOf="@+id/etContent"
+                app:layout_constraintTop_toBottomOf="@+id/etContent" />
 
             <Button
                 android:id="@+id/btnPublish"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border_style"
+                android:layout_margin="@dimen/normal_marign"
+                android:background="@drawable/border_circle_style"
                 android:text="@string/publish"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/rv"
@@ -86,16 +92,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/btnPublish"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <CheckBox
-                android:id="@+id/checkBox2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CheckBox"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/btnPublish" />
-
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline"
                 android:layout_width="wrap_content"
@@ -106,26 +102,24 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floatBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:fitsSystemWindows="true"
-                app:backgroundTint="@color/colorWhite"
-                app:layout_constraintBottom_toBottomOf="@+id/rv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rv"
-                app:layout_constraintVertical_bias="1.0"
-                app:srcCompat="@drawable/ic_library_add_black_24dp" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <include android:id="@+id/bottomSheet"
-            layout="@layout/diary_bottom_sheet"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:clickable="true"
+            android:fitsSystemWindows="true"
+            app:backgroundTint="@color/colorWhite"
+            app:srcCompat="@drawable/ic_library_add_black_24dp" />
+
+        <include
+            android:id="@+id/bottomSheet"
+            layout="@layout/diary_bottom_sheet"
+            android:visibility="visible" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

@@ -17,11 +17,11 @@ import com.codinlog.album.widget.kotlin.AlbumImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoPreviewVPAdapter extends RecyclerView.Adapter<PhotoPreviewVPAdapter.ViewHolder> {
+public class PhotoPreviewAdapter extends RecyclerView.Adapter<PhotoPreviewAdapter.ViewHolder> {
     private List<PhotoBean> photoBeans;
     private CommonListener commonListener;
 
-    public PhotoPreviewVPAdapter(CommonListener commonListener) {
+    public PhotoPreviewAdapter(CommonListener commonListener) {
         this.commonListener = commonListener;
     }
 

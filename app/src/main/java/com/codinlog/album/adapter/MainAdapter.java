@@ -10,11 +10,11 @@ import com.codinlog.album.bean.FragmentBean;
 
 import java.util.ArrayList;
 
-public class MainVPAdapter extends FragmentPagerAdapter {
+public class MainAdapter extends FragmentPagerAdapter {
     private ArrayList<FragmentBean> fragmentBeans;
 
 
-    public MainVPAdapter(@NonNull FragmentManager fm, int behavior) {
+    public MainAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
     }
 

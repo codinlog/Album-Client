@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.kotlin.AlbumFolderRVAdapter;
-import com.codinlog.album.adapter.kotlin.AlbumRVAdapter;
+import com.codinlog.album.adapter.kotlin.AlbumFolderAdapter;
+import com.codinlog.album.adapter.kotlin.AlbumAdapter;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.BaseFragmentController;
@@ -38,8 +38,8 @@ import java.util.List;
 import kotlin.Triple;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumFragmentBinding> {
-    private AlbumRVAdapter albumRVAdapter;
-    private AlbumFolderRVAdapter albumFolderRVAdapter;
+    private AlbumAdapter albumAdapter;
+    private AlbumFolderAdapter albumFolderAdapter;
     private BottomSheetBehavior sheetBehavior;
     private RecyclerView rvBottom;
     private Handler handler = new Handler();
@@ -64,7 +64,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitListener() {
         viewModel.getDisplayData().observe(getViewLifecycleOwner(), displayData -> {
-            albumRVAdapter.setDisplayData(displayData);
+            albumAdapter.setDisplayData(displayData);
             if (displayData.size() <= 0)
                 binding.noticeLayout.setVisibility(View.VISIBLE);
             else
@@ -80,11 +80,11 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             viewModel.mainViewModel.setTitle();
         });
         viewModel.getIsSelectAll().observe(getViewLifecycleOwner(), isAll -> {
-            albumRVAdapter.notifyDataSetChanged();
+            albumAdapter.notifyDataSetChanged();
         });
         viewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-            if (albumRVAdapter != null)
-                albumRVAdapter.setMode(mode);
+            if (albumAdapter != null)
+                albumAdapter.setMode(mode);
             if (mode == WorthStore.MODE.MODE_NORMAL)
                 viewModel.resetSelectData();
         });
@@ -95,13 +95,13 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         viewModel.getFolderDisplayData().observe(getViewLifecycleOwner(), map -> {
             List list = new ArrayList(map.keySet());
             Collections.sort(list);
-            albumFolderRVAdapter.setDisplayData(list);
+            albumFolderAdapter.setDisplayData(list);
         });
     }
 
     @Override
     public void doInitDisplayData() {
-        albumRVAdapter = new AlbumRVAdapter(o -> {
+        albumAdapter = new AlbumAdapter(o -> {
             if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL) {
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
@@ -109,15 +109,15 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                 startActivity(intent);
             } else {
                 viewModel.setSelectedData((int) o);
-                albumRVAdapter.notifyItemChanged((int) o, "payload");
+                albumAdapter.notifyItemChanged((int) o, "payload");
             }
         }, o -> {
             if (viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL)
                 viewModel.mainViewModel.setMode(WorthStore.MODE.MODE_SELECT);
             viewModel.setSelectedData((int) o);
-            albumRVAdapter.notifyItemChanged((int) o, "payload");
+            albumAdapter.notifyItemChanged((int) o, "payload");
         });
-        albumFolderRVAdapter = new AlbumFolderRVAdapter(o -> {
+        albumFolderAdapter = new AlbumFolderAdapter(o -> {
             FolderBean folderBean = (FolderBean) o;
             DataStore.getInstance().setFolderDisplayData(viewModel.getFolderDisplayData().getValue().get(folderBean));
             Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
@@ -138,7 +138,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                         Toast.makeText(getContext(), R.string.delete_not_all, Toast.LENGTH_SHORT).show();
                     else
                         viewModel.getFolderDisplayData().getValue().remove(folderBean);
-                    albumFolderRVAdapter.notifyItemRemoved(folderBeanViewPair.component3());
+                    albumFolderAdapter.notifyItemRemoved(folderBeanViewPair.component3());
                     handler.postDelayed(() -> viewModel.setFolderDisplayData(viewModel.getFolderDisplayData().getValue()), 550);
                 }
                 return true;
@@ -146,9 +146,9 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             popupMenu.show();
         });
         binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStore.albumItemNum));
-        binding.rv.setAdapter(albumRVAdapter);
+        binding.rv.setAdapter(albumAdapter);
         rvBottom.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvBottom.setAdapter(albumFolderRVAdapter);
+        rvBottom.setAdapter(albumFolderAdapter);
         rvBottom.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 

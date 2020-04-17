@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,7 +38,7 @@ import androidx.loader.content.Loader;
 import androidx.viewpager.widget.ViewPager;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.MainVPAdapter;
+import com.codinlog.album.adapter.MainAdapter;
 import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
@@ -85,7 +84,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
     private static final Object lock = new Object();
     private static boolean noOperation = true;
     private ArrayList<FragmentBean> fragmentBeans;
-    private MainVPAdapter mainVPAdapter;
+    private MainAdapter mainAdapter;
     private String currentPhotoPath;
     private PopupMenu popupMenuOperation;
     private Handler handler = new Handler();
@@ -110,13 +109,13 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
 
     @Override
     public void doInitDisplayData() {
-        mainVPAdapter = new MainVPAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        mainAdapter = new MainAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         fragmentBeans = new ArrayList<>();
         fragmentBeans.add(new FragmentBean(PhotoFragment.newInstance(), getString(R.string.photo)));
         fragmentBeans.add(new FragmentBean(AlbumFragment.newInstance(), getString(R.string.album)));
         fragmentBeans.add(new FragmentBean(DiaryFragment.newInstance(), getString(R.string.time)));
         viewModel.setFragments(fragmentBeans);
-        binding.viewPager.setAdapter(mainVPAdapter);
+        binding.viewPager.setAdapter(mainAdapter);
         binding.viewPager.setOffscreenPageLimit(2);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
         loadPhotoData();
@@ -126,10 +125,10 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
     @Override
     public void doInitListener() {
         viewModel.getFragments().observe(this, fragmentBeans -> {
-            if (mainVPAdapter == null)
+            if (mainAdapter == null)
                 return;
-            mainVPAdapter.setList(MainActivity.this.fragmentBeans);
-            mainVPAdapter.notifyDataSetChanged();
+            mainAdapter.setList(MainActivity.this.fragmentBeans);
+            mainAdapter.notifyDataSetChanged();
         });
         viewModel.getPhotoBeans().observe(this, it -> {
             DataStore.getInstance().setAllDisplayData(it);
@@ -582,7 +581,6 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         synchronized (lock) {
             List<AlbumEntity> albumEntities = viewModel.albumViewModel.getAlbumDAO().queryAllAlbumWithList();
             if (albumEntities != null) {
-                Log.d("msg", "Runnning");
                 for (AlbumEntity albumEntity : albumEntities) {
                     List<AlbumItemEntity> albumItemEntities = viewModel.albumViewModel.getAlbumItemDAO().queryAllAlbumItem(albumEntity.getAlbumId());
                     if (albumItemEntities != null) {
