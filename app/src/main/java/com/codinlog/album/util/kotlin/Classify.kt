@@ -6,17 +6,20 @@ import com.codinlog.album.entity.kotlin.CategoryEntity
 
 class Classify {
     companion object {
-        fun PhotoBeansCategoryClassify(pair: Pair<List<PhotoBean>, List<CategoryEntity>>): Map<CategoryBean, List<PhotoBean>>? {
+        fun photoBeansCategoryClassify(pair: Pair<List<PhotoBean>, List<CategoryEntity>>): Map<CategoryBean, List<PhotoBean>>? {
             if (pair.first == null || pair.second == null)
                 return null
-            val map =  pair.second.mapNotNull { i ->
+            val map = pair.second.mapNotNull { i ->
                 val photoBean = pair.first.find { t -> t.photoId == i.photoId }
                 if (photoBean != null)
                     photoBean.category = i.category
                 photoBean
-            }.sortedBy { it.tokenDate }.groupBy { it.category }.map {
-                mapOf(Pair(CategoryBean(it.value.first(),it.key),it.value))
-            }
+            }.sortedBy { it.tokenDate }
+                    .groupBy { it.category }
+                    .toSortedMap()
+                    .map {
+                        mapOf(Pair(CategoryBean(it.value.first(), it.key), it.value))
+                    }
             return map.first()
         }
     }

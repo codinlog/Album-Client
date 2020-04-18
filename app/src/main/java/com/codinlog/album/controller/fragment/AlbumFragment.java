@@ -104,7 +104,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         });
         viewModel.getCategoryClassifiedData().observe(getViewLifecycleOwner(), pair -> {
             handler.post(() -> {
-                viewModel.setCategoryDisplayData(Classify.Companion.PhotoBeansCategoryClassify(pair));
+                viewModel.setCategoryDisplayData(Classify.Companion.photoBeansCategoryClassify(pair));
             });
             if (pair.getFirst() != null && pair.getSecond() != null)
                 viewModel.beginCategoryClassify(pair, getActivity());
