@@ -42,6 +42,8 @@ public class PhotoBean implements Comparable, Parcelable {
     private int height;                // 图片高度
     @Ignore
     private int rotation = 0;
+    @Ignore
+    private String category;
 
     protected PhotoBean(Parcel in) {
         photoPath = in.readString();
@@ -146,6 +148,14 @@ public class PhotoBean implements Comparable, Parcelable {
 
     public void setRotation(int rotation) {
         this.rotation = rotation;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override

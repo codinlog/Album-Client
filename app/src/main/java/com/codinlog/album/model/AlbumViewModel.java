@@ -1,5 +1,6 @@
 package com.codinlog.album.model;
 
+import android.app.Activity;
 import android.os.Handler;
 
 import androidx.lifecycle.LiveData;
@@ -8,15 +9,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.bean.kotlin.CategoryBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.dao.AlbumDAO;
 import com.codinlog.album.dao.AlbumItemDAO;
+import com.codinlog.album.dao.kotlin.CategoryDAO;
 import com.codinlog.album.database.AlbumDatabase;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
+import com.codinlog.album.entity.kotlin.CategoryEntity;
 import com.codinlog.album.listener.CommonListener;
 import com.codinlog.album.util.Classify;
 import com.codinlog.album.util.WorthStore;
+import com.codinlog.album.util.kotlin.AlbumCategory;
 import com.codinlog.album.util.kotlin.AlbumDeleteDB;
 import com.codinlog.album.util.kotlin.AlbumExistInsertWithPhotoBeansDB;
 import com.codinlog.album.util.kotlin.AlbumInsertDB;
@@ -35,35 +40,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.Pair;
+
 public class AlbumViewModel extends ViewModel {
 
     public MainViewModel mainViewModel;
     Object lock;
     private MutableLiveData<Integer> displayOption;
-    private LiveData<List<AlbumEntity>> displayData;
+    private LiveData<List<AlbumEntity>> albumDisplayData;
     private MutableLiveData<Map<FolderBean, List<PhotoBean>>> folderDisplayData;
+    private MutableLiveData<Pair<List<PhotoBean>, List<CategoryEntity>>> categoryClassifiedData;
+    private MutableLiveData<Map<CategoryBean, List<PhotoBean>>> categoryDisplayData;
+    private LiveData<List<CategoryEntity>> categoryData;
     private MutableLiveData<WorthStore.MODE> mode;
     private MutableLiveData<List<AlbumEntity>> selectedData;
     private MutableLiveData<Boolean> isSelectAll;
     private AlbumDAO albumDAO;
     private AlbumItemDAO albumItemDAO;
+    private CategoryDAO categoryDAO;
     private Handler handler = new Handler();
     private Runnable classifiedRunnable;
 
-    public LiveData<List<AlbumEntity>> getDisplayData() {
-        if (displayData == null) {
-            displayData = getAlbumDAO().queryAllAlbum();
-        }
-        return displayData;
+    public LiveData<List<AlbumEntity>> getAlbumDisplayData() {
+        if (albumDisplayData == null)
+            albumDisplayData = getAlbumDAO().queryAllAlbum();
+        return albumDisplayData;
     }
 
-    public void setDisplayData(List<AlbumEntity> value) {
+    public void setAlbumDisplayData(List<AlbumEntity> value) {
         getSelectedData().setValue(value);
     }
 
     public MutableLiveData<WorthStore.MODE> getMode() {
         if (mode == null) {
-            mode = new MediatorLiveData<>();
+            mode = new MutableLiveData<>();
             mode.setValue(WorthStore.MODE.MODE_NORMAL);
         }
         return mode;
@@ -82,7 +92,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public void setSelectedData(int position) {
-        AlbumEntity albumEntity = displayData.getValue().get(position);
+        AlbumEntity albumEntity = albumDisplayData.getValue().get(position);
         albumEntity.setSelect(!albumEntity.isSelect());
         if (albumEntity.isSelect()) {
             if (!getSelectedData().getValue().contains(albumEntity))
@@ -103,6 +113,12 @@ public class AlbumViewModel extends ViewModel {
         if (albumItemDAO == null)
             albumItemDAO = AlbumDatabase.getInstance().getAlbumItemDAO();
         return albumItemDAO;
+    }
+
+    public CategoryDAO getCategoryDAO() {
+        if (categoryDAO == null)
+            categoryDAO = AlbumDatabase.getInstance().getCategoryDAO();
+        return categoryDAO;
     }
 
     public void insertAlbum(AlbumEntity... albumEntities) {
@@ -205,6 +221,10 @@ public class AlbumViewModel extends ViewModel {
         }
     }
 
+    public void beginCategoryClassify(Pair<List<PhotoBean>, List<CategoryEntity>> pair, Activity activity) {
+        new AlbumCategory(pair, activity, getCategoryDAO()).categoryClassify();
+    }
+
     public MutableLiveData<Boolean> getIsSelectAll() {
         if (isSelectAll == null)
             isSelectAll = new MediatorLiveData<>();
@@ -216,7 +236,7 @@ public class AlbumViewModel extends ViewModel {
     }
 
     public void selectAllAlbum(boolean isAll) {
-        displayData.getValue().forEach(it -> {
+        albumDisplayData.getValue().forEach(it -> {
             it.setSelect(isAll);
             if (it.isSelect()) {
                 if (!getSelectedData().getValue().contains(it))
@@ -226,5 +246,33 @@ public class AlbumViewModel extends ViewModel {
         });
         getSelectedData().setValue(getSelectedData().getValue());
         setIsSelectAll(isAll);
+    }
+
+    public LiveData<List<CategoryEntity>> getCategoryData() {
+        if (categoryData == null)
+            categoryData = getCategoryDAO().queryAll();
+        return categoryData;
+    }
+
+    public MutableLiveData<Pair<List<PhotoBean>, List<CategoryEntity>>> getCategoryClassifiedData() {
+        if (categoryClassifiedData == null) {
+            categoryClassifiedData = new MediatorLiveData<>();
+            categoryClassifiedData.setValue(new Pair<>(null, null));
+        }
+        return categoryClassifiedData;
+    }
+
+    public void setCategoryClassifiedData(List<PhotoBean> photoBeans, List<CategoryEntity> categoryEntities) {
+        getCategoryClassifiedData().setValue(new Pair<>(photoBeans, categoryEntities));
+    }
+
+    public MutableLiveData<Map<CategoryBean, List<PhotoBean>>> getCategoryDisplayData() {
+        if (categoryDisplayData == null)
+            categoryDisplayData = new MutableLiveData<>();
+        return categoryDisplayData;
+    }
+
+    public void setCategoryDisplayData(Map<CategoryBean, List<PhotoBean>> value) {
+        getCategoryDisplayData().setValue(value);
     }
 }

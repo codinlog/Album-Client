@@ -6,7 +6,7 @@ import android.provider.MediaStore;
 
 import com.codinlog.album.R;
 
-public class WorthStore {
+public final class WorthStore {
     public final static int photoPager = 0;
     public final static int albumPager = 1;
     public final static int diaryPager = 2;
@@ -21,14 +21,14 @@ public class WorthStore {
     public final static int albumItemNum = 3;
     public final static int REQUEST_TAKE_PHOTO = 101;
     public final static int albumPhotoItemNum = 2;
-    public static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.CAMERA,Manifest.permission.ACCESS_NETWORK_STATE};
-    public static int[] permissionsDetails = {R.string.permission_storage_read, R.string.permission_storage_write, R.string.permission_network, R.string.permission_camera,R.string.permission_access_network_state};
-    public static int permission_RequestCode = 100;
-    public static int loaderManager_ID = 200;
-    public static Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    public static String orderRule = MediaStore.Images.Media.DATE_TAKEN + " desc";
-    public static String selectionRule = MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "= ?";
-    public static String[] imageProjection = {
+    public final static String[] needPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.CAMERA,Manifest.permission.ACCESS_NETWORK_STATE};
+    public final static int[] permissionsDetails = {R.string.permission_storage_read, R.string.permission_storage_write, R.string.permission_network, R.string.permission_camera,R.string.permission_access_network_state};
+    public final static int permission_RequestCode = 100;
+    public final static int loaderManagerId = 200;
+    public final static Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    public final static String orderRule = MediaStore.Images.Media.DATE_TAKEN + " desc";
+    public final static String selectionRule = MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "= ?";
+    public final static String[] imageProjection = {
 //            MediaStore.Images.Media.DISPLAY_NAME,
 //            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
 //            MediaStore.Images.Media.BUCKET_ID,
@@ -40,10 +40,8 @@ public class WorthStore {
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
-
     };
-    public static String[] selectionArgs = {"image/jpeg", "image/png"};
-    public static String[] disAllowScanning = {"amap/data/",};
-
+    public final static String[] selectionArgs = {"image/jpeg", "image/png"};
+    public final static String[] disAllowScanning = {"amap/data/",};
     public enum MODE {MODE_NORMAL, MODE_SELECT}
 }

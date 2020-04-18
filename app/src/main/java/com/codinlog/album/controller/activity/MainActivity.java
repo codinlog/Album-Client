@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -58,6 +59,9 @@ import com.codinlog.album.model.kotlin.DiaryViewModel;
 import com.codinlog.album.util.Classify;
 import com.codinlog.album.util.DataStore;
 import com.codinlog.album.util.WorthStore;
+import com.codinlog.album.util.tflite.Classifier;
+import com.codinlog.album.util.tflite.Classifier.Device;
+import com.codinlog.album.util.tflite.Classifier.Model;
 import com.codinlog.album.widget.AlbumDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -77,7 +81,7 @@ import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CU
 import static com.codinlog.album.util.WorthStore.MODE.MODE_NORMAL;
 import static com.codinlog.album.util.WorthStore.REQUEST_TAKE_PHOTO;
 import static com.codinlog.album.util.WorthStore.albumPager;
-import static com.codinlog.album.util.WorthStore.loaderManager_ID;
+import static com.codinlog.album.util.WorthStore.loaderManagerId;
 import static com.codinlog.album.util.WorthStore.photoPager;
 
 public class MainActivity extends BaseActivityController<MainViewModel, ActivityMainBinding> {
@@ -134,6 +138,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             DataStore.getInstance().setAllDisplayData(it);
             viewModel.photoViewModel.setGroupClassifiedData(it);
             viewModel.albumViewModel.setFolderClassifiedData(it);
+            viewModel.albumViewModel.setCategoryClassifiedData(it,viewModel.albumViewModel.getCategoryClassifiedData().getValue().getSecond());
         });
         viewModel.getMode().observe(this, mode -> {
             binding.viewPager.setCanScroll(mode == MODE_NORMAL);
@@ -188,7 +193,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                             Toast.makeText(MainActivity.this, getString(R.string.choice_item), Toast.LENGTH_SHORT).show();
                             break;
                         }
-                        List<AlbumEntity> albumEntities = viewModel.albumViewModel.getDisplayData().getValue();
+                        List<AlbumEntity> albumEntities = viewModel.albumViewModel.getAlbumDisplayData().getValue();
                         List<String> stringList = new ArrayList<>();
                         if (albumEntities != null) {
                             stringList = albumEntities.stream().map(AlbumEntity::getAlbumName).collect(Collectors.toList());
@@ -257,7 +262,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                         viewModel.albumViewModel.getSelectedData().getValue().forEach(it -> {
                             noticeStrings.add(it.getAlbumName());
                         });
-                        viewModel.albumViewModel.getDisplayData().getValue().forEach(it -> {
+                        viewModel.albumViewModel.getAlbumDisplayData().getValue().forEach(it -> {
                             if (!noticeStrings.contains(it.getAlbumName()))
                                 invalidStrings.add(it.getAlbumName());
                         });
@@ -495,11 +500,11 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
 
     private void loadPhotoData() {
         LoaderManager loaderManager = LoaderManager.getInstance(this);
-        loaderManager.initLoader(loaderManager_ID, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+        loaderManager.initLoader(loaderManagerId, null, new LoaderManager.LoaderCallbacks<Cursor>() {
             @NonNull
             @Override
             public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-                if (id == loaderManager_ID)
+                if (id == loaderManagerId)
                     return new CursorLoader(MainActivity.this, WorthStore.imageUri, WorthStore.imageProjection, WorthStore.selectionRule, WorthStore.selectionArgs, WorthStore.orderRule);
                 return null;
             }

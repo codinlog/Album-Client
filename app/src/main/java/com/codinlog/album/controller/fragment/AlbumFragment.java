@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -16,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codinlog.album.R;
-import com.codinlog.album.adapter.kotlin.AlbumFolderAdapter;
 import com.codinlog.album.adapter.kotlin.AlbumAdapter;
+import com.codinlog.album.adapter.kotlin.AlbumFolderAdapter;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.BaseFragmentController;
@@ -26,6 +27,7 @@ import com.codinlog.album.databinding.AlbumFragmentBinding;
 import com.codinlog.album.model.AlbumViewModel;
 import com.codinlog.album.util.DataStore;
 import com.codinlog.album.util.WorthStore;
+import com.codinlog.album.util.kotlin.Classify;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
@@ -63,7 +65,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
 
     @Override
     public void doInitListener() {
-        viewModel.getDisplayData().observe(getViewLifecycleOwner(), displayData -> {
+        viewModel.getAlbumDisplayData().observe(getViewLifecycleOwner(), displayData -> {
             albumAdapter.setDisplayData(displayData);
             if (displayData.size() <= 0)
                 binding.noticeLayout.setVisibility(View.VISIBLE);
@@ -72,7 +74,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
             if (viewModel.getMode().getValue() == WorthStore.MODE.MODE_SELECT) {
-                int displaySize = viewModel.getDisplayData().getValue().size();
+                int displaySize = viewModel.getAlbumDisplayData().getValue().size();
                 int selectSize = viewModel.getSelectedData().getValue().size();
                 boolean allSelect = selectSize >= displaySize;
                 viewModel.mainViewModel.setIsSelectAll(allSelect);
@@ -97,6 +99,23 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             Collections.sort(list);
             albumFolderAdapter.setDisplayData(list);
         });
+        viewModel.getCategoryData().observe(getViewLifecycleOwner(), list -> {
+            viewModel.setCategoryClassifiedData(viewModel.getCategoryClassifiedData().getValue().getFirst(), list);
+        });
+        viewModel.getCategoryClassifiedData().observe(getViewLifecycleOwner(), pair -> {
+            handler.post(() -> {
+                viewModel.setCategoryDisplayData(Classify.Companion.PhotoBeansCategoryClassify(pair));
+            });
+            if (pair.getFirst() != null && pair.getSecond() != null)
+                viewModel.beginCategoryClassify(pair, getActivity());
+        });
+        viewModel.getCategoryDisplayData().observe(getViewLifecycleOwner(), map ->{
+            if(map == null)
+                return;
+            map.forEach((k,v) ->{
+                Log.d("msg","key:" + k.component2() + ";size:" + v.size());
+            });
+        });
     }
 
     @Override
@@ -105,7 +124,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL) {
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
-                intent.putExtra("fromValue", viewModel.getDisplayData().getValue().get((int) o));
+                intent.putExtra("fromValue", viewModel.getAlbumDisplayData().getValue().get((int) o));
                 startActivity(intent);
             } else {
                 viewModel.setSelectedData((int) o);
