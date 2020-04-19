@@ -1,10 +1,6 @@
 package com.codinlog.album.adapter.kotlin
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +41,7 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
         holder.tvTitle.text = diaryEntity.title
         holder.tvContent.text = diaryEntity.content
         holder.imgBtn.setOnClickListener { btnClickListener.handleEvent(Pair(holder.imgBtn, diaryEntity)) }
+        holder.ivLayout.removeAllViews()
         if (diaryEntity.photoBeans.size <= 1) {
             val photoBean = diaryEntity.photoBeans.first()
             if (photoBean.width > 0 && photoBean.height > 0) {
@@ -57,12 +54,12 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
             holder.ivBig.layoutParams = ConstraintLayout.LayoutParams(Window.diaryMaxSize, Window.diaryMinSize * 3)
             Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(holder.ivBig)
             var flag = 0
-            holder.ivLayout.removeAllViews()
             diaryEntity.photoBeans.forEach {
-                if (++flag > 3)
-                    return
-                val imageView = createImageView(it, holder.ivLayout.context, flag == 3)
-                holder.ivLayout.addView(imageView)
+                if (++flag <= 3) {
+                    val imageView = createImageView(it, holder.ivLayout.context, flag == 3)
+                    holder.ivLayout.addView(imageView)
+                }else
+                    return@forEach
             }
         }
     }
@@ -72,7 +69,7 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
         imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         imageView.layoutParams = LinearLayoutCompat.LayoutParams(Window.diaryMinSize, Window.diaryMinSize)
         Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(imageView)
-        if(lastOne)
+        if (lastOne)
             imageView.foreground = context.getDrawable(R.drawable.ic_view_module_black_24dp)
         return imageView
     }
