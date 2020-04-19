@@ -146,7 +146,15 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
             binding.tabLayout.setVisibility(mode == MODE_NORMAL ? View.VISIBLE : View.INVISIBLE);
             binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
-            binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
+            switch (viewModel.getCurrentPager().getValue()){
+                case WorthStore.photoPager:
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+                case WorthStore.albumPager:
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_remove_red_eye_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+                case WorthStore.diaryPager:
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_filter_list_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+            }
+
             viewModel.getIsSelectAll().setValue(false);
             viewModel.modeChanged();
         });
