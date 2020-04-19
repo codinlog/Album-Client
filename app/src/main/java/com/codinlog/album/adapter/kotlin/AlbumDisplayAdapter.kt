@@ -37,8 +37,8 @@ class AlbumDisplayAdapter constructor(private val photoItemOnClickListener: Comm
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.imageView.setOnClickListener { photoItemOnClickListener.handleEvent(position) }
-        holder.imageView.setOnLongClickListener {
+        holder.iv.setOnClickListener { photoItemOnClickListener.handleEvent(position) }
+        holder.iv.setOnLongClickListener {
             photoItemOnLongClickListener.handleEvent(position)
             return@setOnLongClickListener true
         }
@@ -47,7 +47,7 @@ class AlbumDisplayAdapter constructor(private val photoItemOnClickListener: Comm
             val scale = albumPhotoItemSize.toFloat() / photoBean.width
             holder.v.layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, (photoBeans[position].height * scale).toInt())
         }
-        Glide.with(AlbumApplication.context).load(photoBeans[position].photoPath).thumbnail(0.4f).error(R.drawable.ic_photo_black_24dp).into(holder.imageView)
+        Glide.with(AlbumApplication.context).load(photoBeans[position].photoPath).thumbnail(0.4f).error(R.drawable.ic_photo_black_24dp).into(holder.iv)
         doSelectModel(holder, position)
     }
 
@@ -62,19 +62,19 @@ class AlbumDisplayAdapter constructor(private val photoItemOnClickListener: Comm
     private fun doSelectModel(holder: ViewHolder, position: Int) {
         when (mode) {
             WorthStore.MODE.MODE_NORMAL -> {
-                holder.checkBox.visibility = View.INVISIBLE
-                holder.checkBox.isChecked = photoBeans[position].isSelected
+                holder.cb.visibility = View.INVISIBLE
+                holder.cb.isChecked = photoBeans[position].isSelected
             }
             WorthStore.MODE.MODE_SELECT -> {
-                holder.checkBox.visibility = View.VISIBLE
-                holder.checkBox.isChecked = photoBeans[position].isSelected
+                holder.cb.visibility = View.VISIBLE
+                holder.cb.isChecked = photoBeans[position].isSelected
             }
         }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var imageView: ImageView = view.findViewById(R.id.iv)
-        var checkBox: CheckBox = view.findViewById(R.id.cb)
+        var iv: ImageView = view.findViewById(R.id.iv)
+        var cb: CheckBox = view.findViewById(R.id.cb)
         var v: View = view.apply { layoutParams = ViewGroup.LayoutParams(albumPhotoItemSize, albumPhotoItemSize) }
     }
 

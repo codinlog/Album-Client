@@ -61,7 +61,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
         viewModel.navController.observe(this, androidx.lifecycle.Observer {
             it?.let {
                 it.addOnDestinationChangedListener { _, destination, _ ->
-                    if (viewModel.fromWhere != FromWhere.PhotoPreview && viewModel.fromWhere != FromWhere.AlbumFolderPreview) {
+                    if (viewModel.fromWhere != FromWhere.PhotoPreview && viewModel.fromWhere != FromWhere.AlbumFolderPreview && viewModel.fromWhere != FromWhere.AlbumCategoryPreview) {
                         viewModel.fromWhere = when (destination.id) {
                             R.id.album_confirm -> FromWhere.AlbumPreview
                             R.id.album_add -> FromWhere.SelectPreview
@@ -84,6 +84,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
         val from = when (intent.getStringExtra("from")) {
             "album" -> From(intent.getParcelableExtra("fromValue"), FromWhere.AlbumPreview)
             "albumFolder" -> From(intent.getStringExtra("fromValue"), FromWhere.AlbumFolderPreview)
+            "albumCategory" -> From(intent.getStringExtra("fromValue"), FromWhere.AlbumCategoryPreview)
             "photo" -> From(intent.getStringExtra("fromValue"), FromWhere.PhotoPreview)
             else -> From(intent.getStringExtra("fromValue"), FromWhere.None)
         }
@@ -102,7 +103,7 @@ class AlbumPreviewActivity : BaseActivityController<AlbumPreviewViewModel, Activ
                 menu?.findItem(R.id.album_play)?.isVisible = false
                 menu?.findItem(R.id.album_confirm)?.isVisible = true
             }
-            FromWhere.PhotoPreview, FromWhere.AlbumFolderPreview -> {
+            FromWhere.PhotoPreview, FromWhere.AlbumFolderPreview,FromWhere.AlbumCategoryPreview -> {
                 menu?.findItem(R.id.album_add)?.isVisible = false
                 menu?.findItem(R.id.album_play)?.isVisible = true
                 menu?.findItem(R.id.album_confirm)?.isVisible = false

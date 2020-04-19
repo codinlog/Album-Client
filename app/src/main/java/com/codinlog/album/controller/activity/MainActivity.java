@@ -393,7 +393,6 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         });
 
         binding.btnOperation.setOnClickListener(v ->
-
         {
             switch (viewModel.getCurrentPager().getValue()) {
                 case photoPager:
@@ -460,8 +459,10 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         {
             switch (item.getItemId()) {
                 case R.id.personal:
+                    viewModel.albumViewModel.setDisplayAdapter("personal");
                     break;
                 case R.id.intellect:
+                    viewModel.albumViewModel.setDisplayAdapter("intellect");
                     break;
                 case R.id.folder:
                     if (viewModel.albumViewModel.getFolderDisplayData().getValue().size() <= 0) {

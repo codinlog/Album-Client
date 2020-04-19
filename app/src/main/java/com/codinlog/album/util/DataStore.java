@@ -10,6 +10,7 @@ public class DataStore {
     private List<PhotoBean> displayData;
     private List<PhotoBean> slidePlayData;
     private List<PhotoBean> folderDisplayData;
+    private List<PhotoBean> categoryDisplayData;
 
     public static DataStore getInstance() {
         return SingletonEnum.INSTANCE.getDataStore();
@@ -47,6 +48,14 @@ public class DataStore {
 
     public void setFolderDisplayData(List<PhotoBean> photoBeans) {
         folderDisplayData = photoBeans;
+    }
+
+    public void setCategoryDisplayData(List<PhotoBean> photoBeans) {
+        categoryDisplayData = photoBeans;
+    }
+
+    public List<PhotoBean> getCategoryDisplayData() {
+        return categoryDisplayData;
     }
 
     private enum SingletonEnum {

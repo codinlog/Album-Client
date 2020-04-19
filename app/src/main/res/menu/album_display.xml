@@ -5,9 +5,9 @@
         android:id="@+id/personal"
         android:title="@string/personal" />
     <item
-        android:id="@+id/folder"
-        android:title="@string/folder" />
-    <item
         android:id="@+id/intellect"
         android:title="@string/intellect" />
+    <item
+        android:id="@+id/folder"
+        android:title="@string/folder" />
 </menu>

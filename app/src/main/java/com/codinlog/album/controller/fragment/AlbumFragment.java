@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codinlog.album.R;
 import com.codinlog.album.adapter.kotlin.AlbumAdapter;
+import com.codinlog.album.adapter.kotlin.AlbumCategoryAdapter;
 import com.codinlog.album.adapter.kotlin.AlbumFolderAdapter;
 import com.codinlog.album.bean.PhotoBean;
+import com.codinlog.album.bean.kotlin.CategoryBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
 import com.codinlog.album.controller.BaseFragmentController;
 import com.codinlog.album.controller.activity.kotlin.AlbumPreviewActivity;
@@ -36,12 +38,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import kotlin.Triple;
 
 public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumFragmentBinding> {
     private AlbumAdapter albumAdapter;
     private AlbumFolderAdapter albumFolderAdapter;
+    private AlbumCategoryAdapter albumCategoryAdapter;
     private BottomSheetBehavior sheetBehavior;
     private RecyclerView rvBottom;
     private Handler handler = new Handler();
@@ -109,12 +113,21 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             if (pair.getFirst() != null && pair.getSecond() != null)
                 viewModel.beginCategoryClassify(pair, getActivity());
         });
-        viewModel.getCategoryDisplayData().observe(getViewLifecycleOwner(), map ->{
-            if(map == null)
+        viewModel.getCategoryDisplayData().observe(getViewLifecycleOwner(), map -> {
+            if (map == null)
                 return;
-            map.forEach((k,v) ->{
-                Log.d("msg","key:" + k.component2() + ";size:" + v.size());
-            });
+            if (albumCategoryAdapter != null)
+                albumCategoryAdapter.setDisplayData(map.keySet().stream().collect(Collectors.toList()));
+        });
+        viewModel.getDisplayAdapter().observe(getViewLifecycleOwner(), adapter -> {
+            if (binding.rv.getLayoutManager() != null) {
+                switch (adapter) {
+                    case "personal":
+                        binding.rv.setAdapter(albumAdapter);break;
+                    case "intellect":
+                        binding.rv.setAdapter(albumCategoryAdapter);break;
+                }
+            }
         });
     }
 
@@ -163,6 +176,16 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                 return true;
             });
             popupMenu.show();
+        });
+        albumCategoryAdapter = new AlbumCategoryAdapter(o -> {
+            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL){
+                CategoryBean categoryBean = (CategoryBean) o;
+                DataStore.getInstance().setCategoryDisplayData(viewModel.getCategoryDisplayData().getValue().get(categoryBean));
+                Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
+                intent.putExtra("from", "albumCategory");
+                intent.putExtra("fromValue", categoryBean.component2());
+                startActivity(intent);
+            }
         });
         binding.rv.setLayoutManager(new GridLayoutManager(getContext(), WorthStore.albumItemNum));
         binding.rv.setAdapter(albumAdapter);

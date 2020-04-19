@@ -55,6 +55,7 @@ public class AlbumViewModel extends ViewModel {
     private MutableLiveData<WorthStore.MODE> mode;
     private MutableLiveData<List<AlbumEntity>> selectedData;
     private MutableLiveData<Boolean> isSelectAll;
+    private MutableLiveData<String> displayAdapter;
     private AlbumDAO albumDAO;
     private AlbumItemDAO albumItemDAO;
     private CategoryDAO categoryDAO;
@@ -274,5 +275,17 @@ public class AlbumViewModel extends ViewModel {
 
     public void setCategoryDisplayData(Map<CategoryBean, List<PhotoBean>> value) {
         getCategoryDisplayData().setValue(value);
+    }
+
+    public MutableLiveData<String> getDisplayAdapter() {
+        if(displayAdapter == null){
+            displayAdapter = new MediatorLiveData<>();
+            displayAdapter.setValue("person");
+        }
+        return displayAdapter;
+    }
+
+    public void setDisplayAdapter(String adapter) {
+        getDisplayAdapter().setValue(adapter);
     }
 }
