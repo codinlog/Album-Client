@@ -1,8 +1,12 @@
 package com.codinlog.album.controller.activity.kotlin
 
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.os.Message
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -27,10 +31,32 @@ import com.codinlog.album.util.DataStore
 import com.codinlog.album.util.Window.gallerySize
 import kotlinx.android.synthetic.main.activity_album_slide_play.*
 import java.util.*
+import kotlin.concurrent.timerTask
 import kotlin.properties.Delegates
 
 class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, ActivityAlbumSlidePlayBinding>() {
     private var mVisible: Boolean = false
+    private var timer: Timer? = null
+    private val handler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message) {
+            if (msg.what == 1)
+                show()
+            else if (msg.what == 2)
+                hide()
+            super.handleMessage(msg)
+        }
+    }
+    private val timerTask = timerTask {
+        viewModel.displayData.value?.let { it ->
+            if (currentPosition >= it.size - 1) {
+                timer?.cancel()
+                timer = null
+                handler.sendEmptyMessage(1)
+            } else
+                currentPosition++
+        }
+    }
     private val mHideRunnable = Runnable { hide() }
     private var currentPosition: Int by Delegates.observable(0) { _, oldPos, newPos ->
         viewModel.displayData.value.let {
@@ -75,6 +101,7 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setTitle(R.string.album_slide_play)
+
         }
         mVisible = true
     }
@@ -127,6 +154,8 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
     override fun doInitDisplayData() {
         albumSlidePlayFullAdapter = AlbumSlidePlayFullAdapter(CommonListener {
             toggle()
+            timer?.cancel()
+            timer = null
         })
         albumSlidePlayMinAdapter = AlbumSlidePlayMinAdapter(CommonListener { it ->
             currentPosition = it as Int
@@ -179,6 +208,20 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
         mHideHandler.postDelayed(mHideRunnable, delayMillis.toLong())
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.slide_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.auto_play) {
+            if (timer == null)
+                timer = Timer()
+            timer!!.schedule(timerTask, 10000, 10000)
+            handler.sendEmptyMessage(2)
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun showPermissionDialog(notAllowPermissions: ArrayList<Int>?) {}
 
