@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -14,7 +15,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -59,9 +59,6 @@ import com.codinlog.album.model.kotlin.DiaryViewModel;
 import com.codinlog.album.util.Classify;
 import com.codinlog.album.util.DataStore;
 import com.codinlog.album.util.WorthStore;
-import com.codinlog.album.util.tflite.Classifier;
-import com.codinlog.album.util.tflite.Classifier.Device;
-import com.codinlog.album.util.tflite.Classifier.Model;
 import com.codinlog.album.widget.AlbumDialog;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -138,7 +135,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             DataStore.getInstance().setAllDisplayData(it);
             viewModel.photoViewModel.setGroupClassifiedData(it);
             viewModel.albumViewModel.setFolderClassifiedData(it);
-            viewModel.albumViewModel.setCategoryClassifiedData(it,viewModel.albumViewModel.getCategoryClassifiedData().getValue().getSecond());
+            viewModel.albumViewModel.setCategoryClassifiedData(it, viewModel.albumViewModel.getCategoryClassifiedData().getValue().getSecond());
         });
         viewModel.getMode().observe(this, mode -> {
             binding.viewPager.setCanScroll(mode == MODE_NORMAL);
@@ -146,13 +143,16 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
             binding.bottomNavigation.setVisibility(mode == MODE_NORMAL ? View.GONE : View.VISIBLE);
             binding.tabLayout.setVisibility(mode == MODE_NORMAL ? View.VISIBLE : View.INVISIBLE);
             binding.topBarSelectNotice.setVisibility(mode == MODE_NORMAL ? View.INVISIBLE : View.VISIBLE);
-            switch (viewModel.getCurrentPager().getValue()){
+            switch (viewModel.getCurrentPager().getValue()) {
                 case WorthStore.photoPager:
-                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_camera_black_24dp : R.drawable.ic_delete_forever_black_24dp));
+                    break;
                 case WorthStore.albumPager:
-                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_remove_red_eye_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_remove_red_eye_black_24dp : R.drawable.ic_delete_forever_black_24dp));
+                    break;
                 case WorthStore.diaryPager:
-                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_filter_list_black_24dp : R.drawable.ic_delete_forever_black_24dp));break;
+                    binding.btnOperation.setImageDrawable(getDrawable(mode == MODE_NORMAL ? R.drawable.ic_filter_list_black_24dp : R.drawable.ic_delete_forever_black_24dp));
+                    break;
             }
 
             viewModel.getIsSelectAll().setValue(false);
@@ -406,7 +406,8 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                 case photoPager:
                     if (viewModel.getMode().getValue() == MODE_NORMAL) {
                         try {
-                            dispatchTakePictureIntent();
+                            if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY))
+                                dispatchTakePictureIntent();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
