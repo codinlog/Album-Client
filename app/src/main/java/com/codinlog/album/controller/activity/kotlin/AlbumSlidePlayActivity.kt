@@ -37,6 +37,8 @@ import kotlin.properties.Delegates
 class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, ActivityAlbumSlidePlayBinding>() {
     private var mVisible: Boolean = false
     private var timer: Timer? = null
+    private var timerTask: TimerTask? = null
+
     private val handler: Handler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -45,16 +47,6 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
             else if (msg.what == 2)
                 hide()
             super.handleMessage(msg)
-        }
-    }
-    private val timerTask = timerTask {
-        viewModel.displayData.value?.let { it ->
-            if (currentPosition >= it.size - 1) {
-                timer?.cancel()
-                timer = null
-                handler.sendEmptyMessage(1)
-            } else
-                currentPosition++
         }
     }
     private val mHideRunnable = Runnable { hide() }
@@ -215,8 +207,19 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.auto_play) {
-            if (timer == null)
+            if (timer == null) {
                 timer = Timer()
+                timerTask = timerTask {
+                    viewModel.displayData.value?.let { it ->
+                        if (currentPosition >= it.size - 1) {
+                            timer?.cancel()
+                            timer = null
+                            handler.sendEmptyMessage(1)
+                        } else
+                            currentPosition++
+                    }
+                }
+            }
             timer!!.schedule(timerTask, 10000, 10000)
             handler.sendEmptyMessage(2)
         }
