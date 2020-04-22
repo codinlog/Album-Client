@@ -59,10 +59,10 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
 //                holder.ivLayout.addView(imageView)
 //            }
             diaryEntity.photoBeans.forEachIndexed {i,p ->
-                if (i != 0 && i <= 4) {
-                    val imageView = createImageView(p, holder.ivLayout.context, i == 4)
+                if (i != 0 && i <= 3) {
+                    val imageView = createImageView(p, holder.ivLayout.context, i == 3)
                     holder.ivLayout.addView(imageView)
-                }else if(i > 4)
+                }else if(i > 3)
                     return@forEachIndexed
             }
         }
