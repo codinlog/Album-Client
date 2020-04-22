@@ -53,33 +53,37 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
             val photoBean = diaryEntity.photoBeans.first()
             holder.ivBig.layoutParams = ConstraintLayout.LayoutParams(Window.diaryMaxSize, Window.diaryMinSize * 3)
             Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(holder.ivBig)
-            var flag = 0
-            diaryEntity.photoBeans.forEach {
-                if (++flag <= 3) {
-                    val imageView = createImageView(it, holder.ivLayout.context, flag == 3)
+//            val subList = diaryEntity.photoBeans.subList(1, if (diaryEntity.photoBeans.size <= 4) diaryEntity.photoBeans.size else 4)
+//            subList.forEachIndexed { i, p ->
+//                val imageView = createImageView(p, holder.ivLayout.context, i == subList.size)
+//                holder.ivLayout.addView(imageView)
+//            }
+            diaryEntity.photoBeans.forEachIndexed {i,p ->
+                if (i != 0 && i <= 4) {
+                    val imageView = createImageView(p, holder.ivLayout.context, i == 4)
                     holder.ivLayout.addView(imageView)
-                }else
-                    return@forEach
+                }else if(i > 4)
+                    return@forEachIndexed
             }
         }
     }
 
-    private fun createImageView(photoBean: PhotoBean, context: Context, lastOne: Boolean): View {
-        val imageView = ImageView(context)
-        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-        imageView.layoutParams = LinearLayoutCompat.LayoutParams(Window.diaryMinSize, Window.diaryMinSize)
-        Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(imageView)
-        if (lastOne)
-            imageView.foreground = context.getDrawable(R.drawable.ic_view_module_black_24dp)
-        return imageView
-    }
+        private fun createImageView(photoBean: PhotoBean, context: Context, lastOne: Boolean): View {
+            val imageView = ImageView(context)
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.layoutParams = LinearLayoutCompat.LayoutParams(Window.diaryMinSize, Window.diaryMinSize)
+            Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(imageView)
+            if (lastOne)
+                imageView.foreground = context.getDrawable(R.drawable.ic_view_module_black_24dp)
+            return imageView
+        }
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val tvTime: TextView = view.findViewById(R.id.tvTime)
-        val tvTitle: TextView = view.findViewById(R.id.tvTitle)
-        val ivBig: ImageView = view.findViewById(R.id.ivBig)
-        val ivLayout: LinearLayout = view.findViewById(R.id.ivLayout)
-        val tvContent: TextView = view.findViewById(R.id.tvContent)
-        val imgBtn: ImageButton = view.findViewById(R.id.imgBtn)
+        class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+            val tvTime: TextView = view.findViewById(R.id.tvTime)
+            val tvTitle: TextView = view.findViewById(R.id.tvTitle)
+            val ivBig: ImageView = view.findViewById(R.id.ivBig)
+            val ivLayout: LinearLayout = view.findViewById(R.id.ivLayout)
+            val tvContent: TextView = view.findViewById(R.id.tvContent)
+            val imgBtn: ImageButton = view.findViewById(R.id.imgBtn)
+        }
     }
-}

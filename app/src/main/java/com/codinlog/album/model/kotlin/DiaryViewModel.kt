@@ -2,6 +2,7 @@ package com.codinlog.album.model.kotlin
 
 import android.app.Application
 import android.content.Context
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -35,12 +36,12 @@ class DiaryViewModel(application: Application, private val savedStateHandle: Sav
                     if (response.code() == 200) {
                         val userInfo = GsonBuilder().create().fromJson(response.body().toString(), UserModel::class.java)
                         val sharedPreferences = getApplication<AlbumApplication>().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-                        val edit = sharedPreferences.edit()
-                        edit.putString("username", userInfo.username)
-                        edit.putString("password", userInfo.password)
-                        edit.putString("email", userInfo.email)
-                        edit.putString("accessToken", userInfo.accessToken)
-                        edit.apply()
+                        sharedPreferences.edit{
+                            putString("username", userInfo.username)
+                            putString("password", userInfo.password)
+                            putString("email", userInfo.email)
+                            putString("accessToken", userInfo.accessToken)
+                        }
                         user.value = userInfo
                         savedStateHandle.set("userInfo", GsonBuilder().create().toJson(userInfo))
                     } else if (response.code() == 404) {
