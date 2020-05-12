@@ -6,7 +6,7 @@ import com.codinlog.album.entity.kotlin.CategoryEntity
 
 @Dao
 interface CategoryDAO {
-    @Query("select * from categoryTB order by photoId desc")
+    @Query("select * from categoryTB where category != \"\" order by photoId desc")
     fun queryAll(): LiveData<List<CategoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

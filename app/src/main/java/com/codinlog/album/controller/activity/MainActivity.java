@@ -48,6 +48,7 @@ import com.codinlog.album.controller.activity.kotlin.SettingsActivity;
 import com.codinlog.album.controller.fragment.AlbumFragment;
 import com.codinlog.album.controller.fragment.PhotoFragment;
 import com.codinlog.album.controller.fragment.kotlin.DiaryFragment;
+import com.codinlog.album.controller.service.kotlin.PushService;
 import com.codinlog.album.databinding.ActivityMainBinding;
 import com.codinlog.album.entity.AlbumEntity;
 import com.codinlog.album.entity.AlbumItemEntity;
@@ -106,6 +107,7 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
         viewModel.setLock(new Object());
         popupMenuOperation = new PopupMenu(this, binding.btnOperation);
         popupMenuOperation.getMenuInflater().inflate(R.menu.album_display, popupMenuOperation.getMenu());
+        startService(new Intent(this, PushService.class));
     }
 
     @Override
@@ -544,9 +546,9 @@ public class MainActivity extends BaseActivityController<MainViewModel, Activity
                                 String height = data.getString(data.getColumnIndexOrThrow(WorthStore.imageProjection[5]));
                                 PhotoBean photoBean = PhotoBean.newInstance();
                                 photoBean.setPhotoPath(path);
-                                photoBean.setPhotoId(Integer.parseInt(id));
-                                photoBean.setTokenDate(Long.parseLong(tokenData));
                                 photoBean.setDelete(false);
+                                photoBean.setPhotoId(Integer.parseInt(id));
+                                photoBean.setTokenDate(tokenData == null ? 0 : Long.parseLong(tokenData));
                                 photoBean.setWidth(width == null ? 0 : Integer.parseInt(width));
                                 photoBean.setHeight(height == null ? 0 : Integer.parseInt(height));
                                 photoBean.setPhotoSize(size == null ? 0 : Long.parseLong(size));

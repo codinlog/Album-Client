@@ -53,11 +53,6 @@ class DiaryAdapter(private val btnClickListener: CommonListener) : RecyclerView.
             val photoBean = diaryEntity.photoBeans.first()
             holder.ivBig.layoutParams = ConstraintLayout.LayoutParams(Window.diaryMaxSize, Window.diaryMinSize * 3)
             Glide.with(AlbumApplication.context).load(photoBean.photoPath).error(R.drawable.ic_photo_black_24dp).thumbnail(0.5F).into(holder.ivBig)
-//            val subList = diaryEntity.photoBeans.subList(1, if (diaryEntity.photoBeans.size <= 4) diaryEntity.photoBeans.size else 4)
-//            subList.forEachIndexed { i, p ->
-//                val imageView = createImageView(p, holder.ivLayout.context, i == subList.size)
-//                holder.ivLayout.addView(imageView)
-//            }
             diaryEntity.photoBeans.forEachIndexed {i,p ->
                 if (i != 0 && i <= 3) {
                     val imageView = createImageView(p, holder.ivLayout.context, i == 3)

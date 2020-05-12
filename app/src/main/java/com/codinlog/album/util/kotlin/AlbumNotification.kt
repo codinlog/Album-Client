@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import com.codinlog.album.R
 
 class AlbumNotification(private val context: Context) {
     private var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -15,7 +16,7 @@ class AlbumNotification(private val context: Context) {
         }
     }
 
-    fun builder(channelId: String, channelName: String, title: String, content: String, smallIcon: Int, autoCancel: Boolean): Notification.Builder {
+    fun builder(channelId: String, channelName: String, title: String, content: String, smallIcon: Int = R.drawable.ic_notifications_black_24dp, autoCancel: Boolean = true): Notification.Builder {
         val builder = Notification.Builder(context, channelId)
                 .setAutoCancel(autoCancel)
                 .setContentTitle(title)

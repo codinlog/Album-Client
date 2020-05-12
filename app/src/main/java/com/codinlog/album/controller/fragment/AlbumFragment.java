@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -71,10 +70,6 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     public void doInitListener() {
         viewModel.getAlbumDisplayData().observe(getViewLifecycleOwner(), displayData -> {
             albumAdapter.setDisplayData(displayData);
-            if (displayData.size() <= 0)
-                binding.noticeLayout.setVisibility(View.VISIBLE);
-            else
-                binding.noticeLayout.setVisibility(View.INVISIBLE);
         });
         viewModel.getSelectedData().observe(getViewLifecycleOwner(), o -> {
             if (viewModel.getMode().getValue() == WorthStore.MODE.MODE_SELECT) {
@@ -123,9 +118,11 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             if (binding.rv.getLayoutManager() != null) {
                 switch (adapter) {
                     case "personal":
-                        binding.rv.setAdapter(albumAdapter);break;
+                        binding.rv.setAdapter(albumAdapter);
+                        break;
                     case "intellect":
-                        binding.rv.setAdapter(albumCategoryAdapter);break;
+                        binding.rv.setAdapter(albumCategoryAdapter);
+                        break;
                 }
             }
         });
@@ -134,7 +131,8 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
     @Override
     public void doInitDisplayData() {
         albumAdapter = new AlbumAdapter(o -> {
-            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL) {
+            if (viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL) {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
                 intent.putExtra("from", "album");
                 intent.putExtra("fromValue", viewModel.getAlbumDisplayData().getValue().get((int) o));
@@ -178,7 +176,8 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
             popupMenu.show();
         });
         albumCategoryAdapter = new AlbumCategoryAdapter(o -> {
-            if (sheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN && viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL){
+            if (viewModel.getMode().getValue() == WorthStore.MODE.MODE_NORMAL) {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 CategoryBean categoryBean = (CategoryBean) o;
                 DataStore.getInstance().setCategoryDisplayData(viewModel.getCategoryDisplayData().getValue().get(categoryBean));
                 Intent intent = new Intent(getContext(), AlbumPreviewActivity.class);
@@ -194,7 +193,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
         rvBottom.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
-    public boolean deletePhotoBeans(List<PhotoBean> photoBeans, FolderBean folderBean) {
+    private boolean deletePhotoBeans(List<PhotoBean> photoBeans, FolderBean folderBean) {
         Iterator<PhotoBean> iterator = photoBeans.iterator();
         while (iterator.hasNext()) {
             PhotoBean photoBean = iterator.next();

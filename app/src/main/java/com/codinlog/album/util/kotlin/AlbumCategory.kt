@@ -41,7 +41,10 @@ class AlbumCategory(private val pair: Pair<List<PhotoBean>, List<CategoryEntity>
                     if (recognitions[0] != null) {
                         val categoryEntity = CategoryEntity()
                         categoryEntity.photoId = it.photoId
-                        categoryEntity.category = recognitions[0].title
+                        if (recognitions[0].confidence >= 0.7)
+                            categoryEntity.category = recognitions[0].title
+                        else
+                            categoryEntity.category = ""
                         classifiedList.add(categoryEntity)
                     }
                 }

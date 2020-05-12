@@ -37,6 +37,11 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
     private lateinit var layout: ConstraintLayout
     private lateinit var rvBottom: RecyclerView
     private val handler = Handler()
+    private lateinit var etName:EditText
+    private lateinit var etPassword:EditText
+    private lateinit var builder: AlertDialog
+
+
     override fun getLayoutId(): Int {
         return R.layout.diary_fragment
     }
@@ -49,42 +54,33 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
         rvBottom = binding.root.findViewById(R.id.rvBottom)
         layout = binding.root.findViewById(R.id.layout)
         binding.rv.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        val view = LayoutInflater.from(context).inflate(R.layout.user_login,null)
+        etName = view.findViewById(R.id.etName)
+        etPassword = view.findViewById(R.id.etPassword)
+        builder = AlertDialog.Builder(context)
+                .setCancelable(false)
+                .setTitle(R.string.user_login)
+                .setView(view)
+                .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.btn_ok, null)
+                .create()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun doInitListener() {
         layout.setOnClickListener {
-            val view = LayoutInflater.from(context).inflate(R.layout.user_login, null)
-            val etName = view.findViewById<EditText>(R.id.etName)
-            val etPassword = view.findViewById<EditText>(R.id.etPassword)
-            val builder = AlertDialog.Builder(context)
-                    .setCancelable(false)
-                    .setTitle(R.string.user_login)
-                    .setView(view)
-                    .setNegativeButton(R.string.btn_cancel) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .setPositiveButton(R.string.btn_ok, null)
-                    .create()
-            builder.setOnShowListener {
-                val button = builder.getButton(AlertDialog.BUTTON_POSITIVE)
-                button.setOnClickListener {
-                    val username = etName.text.toString()
-                    val password = etPassword.text.toString()
-                    viewModel.login(UserModel(username, null, password, null))
-                }
-                etName.requestFocus()
-                val inputManager = AlbumApplication.context
-                        .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                handler.postDelayed(Runnable { inputManager.showSoftInput(etName, 0) }, 200)
-            }
             builder.show()
         }
         activity?.let {
-            viewModel.user.observe(it, Observer { userInfo ->
-                userInfo?.let {
-                    tvName.text = userInfo.username
-                    Toast.makeText(context, R.string.user_login_success, Toast.LENGTH_SHORT).show()
+            viewModel.user.observe(it, Observer { loginRes ->
+                if (loginRes != null) {
+                    if (loginRes is UserModel) {
+                        builder.dismiss()
+                        tvName.text = loginRes.username
+                        Toast.makeText(context, R.string.user_login_success, Toast.LENGTH_SHORT).show()
+                    }
                 }
             })
         }
@@ -107,10 +103,6 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
         }
 
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-            }
-
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == SCROLL_STATE_IDLE)
@@ -119,6 +111,19 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
                     binding.floatBtn.visibility = View.INVISIBLE
             }
         })
+
+        builder.setOnShowListener {
+            val button = builder.getButton(AlertDialog.BUTTON_POSITIVE)
+            button.setOnClickListener {
+                val username = etName.text.toString()
+                val password = etPassword.text.toString()
+                viewModel.login(UserModel(username, null, password, null))
+            }
+            etName.requestFocus()
+            val inputManager = AlbumApplication.context
+                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            handler.postDelayed(Runnable { inputManager.showSoftInput(etName, 0) }, 200)
+        }
     }
 
     override fun doInitDisplayData() {

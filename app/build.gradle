@@ -60,7 +60,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
     implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
 
-    implementation 'com.microsoft.signalr:signalr:1.0.0'
+    implementation 'com.microsoft.signalr:signalr:3.1.3'
     implementation 'org.slf4j:slf4j-jdk14:1.7.30'
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'

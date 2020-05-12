@@ -62,6 +62,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".controller.service.kotlin.PushService"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.codinlog.album.fileprovider"

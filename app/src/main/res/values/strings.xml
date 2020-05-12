@@ -35,7 +35,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_photo_preview">photoPreview</string>
     <string name="title_activity_album_preview">albumPreview</string>
-    <string name="title_activity_diary_public">diaryPublic</string>
+    <string name="title_activity_diary_public">日记</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

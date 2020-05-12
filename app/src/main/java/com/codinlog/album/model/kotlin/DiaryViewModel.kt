@@ -24,7 +24,7 @@ import retrofit2.Response
 class DiaryViewModel(application: Application, private val savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
     private val diaryDAO = AlbumDatabase.getInstance().diaryDAO
     private val requestService = RequestService.requestService
-    var user = MutableLiveData<UserModel>()
+    var user = MutableLiveData<Any?>()
     var mainViewModel: MainViewModel? = null
     val displayData = diaryDAO.queryAll()
     var loginByUser = false
@@ -45,6 +45,7 @@ class DiaryViewModel(application: Application, private val savedStateHandle: Sav
                         user.value = userInfo
                         savedStateHandle.set("userInfo", GsonBuilder().create().toJson(userInfo))
                     } else if (response.code() == 404) {
+                        user.value = null
                     }
                 }
 
