@@ -1,5 +1,7 @@
 package com.codinlog.album.util;
 
+import android.annotation.SuppressLint;
+
 import com.codinlog.album.bean.GroupBean;
 import com.codinlog.album.bean.PhotoBean;
 import com.codinlog.album.bean.kotlin.FolderBean;
@@ -100,7 +102,7 @@ public class Classify {
         return classifiedFolderMap;
     }
 
-    public static String getFolderString(char[] str, char split) {
+    private static String getFolderString(char[] str, char split) {
         int length = str.length;
         int firstIndex = -1, lastIndex = -1;
         StringBuilder folder = new StringBuilder();

@@ -48,12 +48,12 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
         }
         binding.btnPublish.setOnClickListener {
             viewModel.selectData.value?.let {
-                if(it.size <= 0)
-                    Toast.makeText(this,R.string.must_add_photo,Toast.LENGTH_SHORT).show()
-                else{
+                if (it.size <= 0)
+                    Toast.makeText(this, R.string.must_add_photo, Toast.LENGTH_SHORT).show()
+                else {
                     val title = binding.etTitle.text.toString()
                     val content = binding.etContent.text.toString()
-                    viewModel.publishDiary(title,content)
+                    viewModel.publishDiary(title, content)
                     finish()
                 }
             }
@@ -75,7 +75,7 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
             viewModel.addSelectData(photoBean)
             diaryPhotoSelectAdapter.notifyItemRemoved(position)
             viewModel.selectData.value?.let { t ->
-                diaryPhotoSelectAdapter.notifyItemRangeChanged(position, t.size - position)
+                diaryPhotoSelectAdapter.notifyItemRangeChanged(position, t.size - position,"payload")
             }
             viewModel.displayData.value?.let { i ->
                 diaryPhotoDisplayAdapter.notifyItemChanged(i.indexOf(photoBean), "payload")
@@ -83,8 +83,7 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
         })
         diaryPhotoDisplayAdapter = DiaryPhotoDisplayAdapter(CommonListener { i ->
             val position = i as Int
-            val photoBean = viewModel.displayData.value?.get(position)
-            photoBean?.let { t ->
+            viewModel.displayData.value?.get(position)?.let { t ->
                 t.isSelected = !t.isSelected
                 viewModel.addSelectData(t)
                 diaryPhotoDisplayAdapter.notifyItemChanged(position, "payload")
