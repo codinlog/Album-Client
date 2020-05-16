@@ -1,6 +1,8 @@
 package com.codinlog.album.controller.activity.kotlin
 
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Rect
 import android.os.Handler
 import android.view.MenuItem
 import android.view.View
@@ -28,6 +30,8 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
     private lateinit var diaryPhotoDisplayAdapter: DiaryPhotoDisplayAdapter
     private lateinit var sheetBehavior: BottomSheetBehavior<View>
     private val handle = Handler()
+    private var windowHeight = 0
+    private var floatBtnHeight = 0
     private lateinit var rv: RecyclerView
     override fun doInitViewData() {
         viewModel = ViewModelProvider(this).get(DiaryPublicViewModel::class.java)
@@ -41,7 +45,30 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
     }
 
     override fun doInitListener() {
+        window.decorView.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            window.decorView.getWindowVisibleDisplayFrame(rect)
+            if (windowHeight == 0)
+                windowHeight = rect.height()
+            if (floatBtnHeight == 0)
+                floatBtnHeight = binding.floatBtn.bottom
+            val immHeight = windowHeight - rect.height()
+            if (immHeight > 0) {
+                ObjectAnimator.ofFloat(binding.floatBtn, "translationY", (immHeight - floatBtnHeight).toFloat()).apply {
+                    duration = 300
+                    start()
+                }
+            } else
+                ObjectAnimator.ofFloat(binding.floatBtn, "translationY", (floatBtnHeight - binding.floatBtn.bottom).toFloat()).apply {
+                    duration = 300
+                    start()
+                }
+        }
         binding.floatBtn.setOnClickListener {
+            if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                return@setOnClickListener
+            }
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.layout.windowToken, 0)
             sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -75,7 +102,7 @@ class DiaryPublishActivity : BaseActivityController<DiaryPublicViewModel, Activi
             viewModel.addSelectData(photoBean)
             diaryPhotoSelectAdapter.notifyItemRemoved(position)
             viewModel.selectData.value?.let { t ->
-                diaryPhotoSelectAdapter.notifyItemRangeChanged(position, t.size - position,"payload")
+                diaryPhotoSelectAdapter.notifyItemRangeChanged(position, t.size - position, "payload")
             }
             viewModel.displayData.value?.let { i ->
                 diaryPhotoDisplayAdapter.notifyItemChanged(i.indexOf(photoBean), "payload")

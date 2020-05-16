@@ -124,6 +124,7 @@ public class AlbumFragment extends BaseFragmentController<AlbumViewModel, AlbumF
                         binding.rv.setAdapter(albumCategoryAdapter);
                         break;
                 }
+                sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
     }

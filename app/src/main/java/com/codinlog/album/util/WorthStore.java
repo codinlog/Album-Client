@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi;
 
 import com.codinlog.album.R;
 
-@RequiresApi(api = Build.VERSION_CODES.Q)
+
 public final class WorthStore {
     public final static int photoPager = 0;
     public final static int albumPager = 1;
@@ -44,7 +44,7 @@ public final class WorthStore {
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media.WIDTH,
             MediaStore.Images.Media.HEIGHT,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+//            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
     };
     public final static String[] selectionArgs = {"image/jpeg", "image/png"};
     public final static String[] disAllowScanning = {"amap/data/",};

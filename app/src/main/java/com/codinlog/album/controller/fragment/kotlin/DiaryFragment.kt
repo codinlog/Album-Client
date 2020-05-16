@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -21,15 +22,16 @@ import com.codinlog.album.R
 import com.codinlog.album.adapter.kotlin.DiaryAdapter
 import com.codinlog.album.application.AlbumApplication
 import com.codinlog.album.controller.BaseFragmentController
+import com.codinlog.album.controller.activity.kotlin.DiaryDetailActivity
 import com.codinlog.album.controller.activity.kotlin.DiaryPublishActivity
 import com.codinlog.album.databinding.DiaryFragmentBinding
 import com.codinlog.album.entity.kotlin.DiaryEntity
 import com.codinlog.album.listener.CommonListener
-import com.codinlog.album.model.kotlin.DiaryViewModel
+import com.codinlog.album.model.kotlin.DiaryLoginViewModel
 import com.codinlog.album.network.kotlin.model.UserModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
-class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBinding>() {
+class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentBinding>() {
     private lateinit var diaryAdapter: DiaryAdapter
     private lateinit var sheetBehavior: BottomSheetBehavior<View>
     private lateinit var ivHeader: ImageView
@@ -47,7 +49,7 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
     }
 
     override fun doInitViewData() {
-        viewModel = ViewModelProvider(this).get(DiaryViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(DiaryLoginViewModel::class.java)
         sheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         ivHeader = binding.root.findViewById(R.id.ivHeader)
         tvName = binding.root.findViewById(R.id.tvName)
@@ -139,6 +141,10 @@ class DiaryFragment : BaseFragmentController<DiaryViewModel, DiaryFragmentBindin
                 true
             }
             popupMenu.show()
+        }, CommonListener {
+            val intent = Intent(context,DiaryDetailActivity::class.java)
+            intent.putExtra("diaryEntity",it as DiaryEntity)
+            startActivity(intent)
         })
         binding.rv.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding.rv.adapter = diaryAdapter

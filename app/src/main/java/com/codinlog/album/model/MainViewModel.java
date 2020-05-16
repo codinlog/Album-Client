@@ -7,7 +7,7 @@ import com.codinlog.album.R;
 import com.codinlog.album.application.AlbumApplication;
 import com.codinlog.album.bean.FragmentBean;
 import com.codinlog.album.bean.PhotoBean;
-import com.codinlog.album.model.kotlin.DiaryViewModel;
+import com.codinlog.album.model.kotlin.DiaryLoginViewModel;
 import com.codinlog.album.util.WorthStore;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import static com.codinlog.album.util.WorthStore.photoPager;
 public class MainViewModel extends ViewModel {
     public PhotoViewModel photoViewModel;
     public AlbumViewModel albumViewModel;
-    public DiaryViewModel diaryViewModel;
+    public DiaryLoginViewModel diaryLoginViewModel;
     private MutableLiveData<ArrayList<FragmentBean>> fragments;//界面
     private MutableLiveData<List<PhotoBean>> photoBeans;//图片数据
     private MutableLiveData<WorthStore.MODE> mode;//选择模式

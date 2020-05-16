@@ -21,7 +21,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DiaryViewModel(application: Application, private val savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
+class DiaryLoginViewModel(application: Application, private val savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
     private val diaryDAO = AlbumDatabase.getInstance().diaryDAO
     private val requestService = RequestService.requestService
     var user = MutableLiveData<Any?>()
