@@ -94,7 +94,7 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
         activity?.let { t ->
             viewModel.displayData.observe(t, Observer { i ->
                 diaryAdapter.displayData = i
-                binding.rv.scrollToPosition(0)
+//                binding.rv.scrollToPosition(0)
             })
         }
 
@@ -138,7 +138,7 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
             popupMenu.setOnMenuItemClickListener { i ->
                 if (i.itemId == R.id.delete)
                     viewModel.deleteDiary(diaryEntity)
-                true
+                return@setOnMenuItemClickListener true
             }
             popupMenu.show()
         }, CommonListener {

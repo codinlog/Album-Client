@@ -100,4 +100,7 @@
     <string name="diary_title">标题</string>
     <string name="publish">发布</string>
     <string name="auto_play">自动播放</string>
+    <string name="backup">备份</string>
+    <string name="expand">展开</string>
+    <string name="collapsed">收起</string>
 </resources>

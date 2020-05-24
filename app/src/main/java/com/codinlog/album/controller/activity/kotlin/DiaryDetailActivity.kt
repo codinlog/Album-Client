@@ -27,17 +27,16 @@ class DiaryDetailActivity : BaseActivityController<DiaryDetailViewModel, Activit
         binding = DataBindingUtil.setContentView(this, R.layout.activity_diary_detail)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun doInitListener() {
         viewModel.displayData.observe(this, androidx.lifecycle.Observer { it ->
             supportActionBar?.title = SimpleDateFormat("yyyy年MM月dd日hh:mm:ss").format(it.diaryId).toString()
             binding.tvTitle.apply {
                 text = it.title
-                visibility = if("" == it.title) View.GONE else View.VISIBLE
+//                visibility = if("" == it.title) View.GONE else View.VISIBLE
             }
             binding.tvContent.apply {
                 text = it.content
-                visibility = if("" == it.content) View.GONE else View.VISIBLE
+//                visibility = if("" == it.content) View.GONE else View.VISIBLE
             }
             albumDisplayAdapter = AlbumDisplayAdapter(CommonListener { i ->
                 val intent = Intent(context, PhotoPreviewActivity::class.java)
