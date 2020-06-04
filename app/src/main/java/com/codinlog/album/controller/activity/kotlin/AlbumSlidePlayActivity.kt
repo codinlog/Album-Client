@@ -220,7 +220,7 @@ class AlbumSlidePlayActivity : BaseActivityController<AlbumSlidePlayViewModel, A
                     }
                 }
             }
-            timer!!.schedule(timerTask, 10000, 10000)
+            timer!!.schedule(timerTask, 5000, 5000)
             handler.sendEmptyMessage(2)
         }
         return super.onOptionsItemSelected(item)

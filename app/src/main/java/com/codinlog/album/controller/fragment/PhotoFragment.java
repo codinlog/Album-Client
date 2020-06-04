@@ -67,6 +67,7 @@ public class PhotoFragment extends BaseFragmentController<PhotoViewModel, PhotoF
                 if (o instanceof PhotoBean) {
                     Intent intent = new Intent(getContext(), PhotoPreviewActivity.class);
                     intent.putExtra("photoBean", (PhotoBean) o);
+                    intent.putExtra("showEdit", true);
                     startActivity(intent);
                 }
             }

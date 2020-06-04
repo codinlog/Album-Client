@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -39,8 +38,9 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
     private lateinit var layout: ConstraintLayout
     private lateinit var rvBottom: RecyclerView
     private val handler = Handler()
-    private lateinit var etName:EditText
-    private lateinit var etPassword:EditText
+    private lateinit var etName: EditText
+    private lateinit var etPassword: EditText
+    private lateinit var tvError: TextView
     private lateinit var builder: AlertDialog
 
 
@@ -56,9 +56,10 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
         rvBottom = binding.root.findViewById(R.id.rvBottom)
         layout = binding.root.findViewById(R.id.layout)
         binding.rv.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        val view = LayoutInflater.from(context).inflate(R.layout.user_login,null)
+        val view = LayoutInflater.from(context).inflate(R.layout.user_login, null)
         etName = view.findViewById(R.id.etName)
         etPassword = view.findViewById(R.id.etPassword)
+        tvError = view.findViewById(R.id.tvError)
         builder = AlertDialog.Builder(context)
                 .setCancelable(false)
                 .setTitle(R.string.user_login)
@@ -83,6 +84,8 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
                         tvName.text = loginRes.username
                         Toast.makeText(context, R.string.user_login_success, Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    tvError.visibility = View.VISIBLE
                 }
             })
         }
@@ -142,8 +145,8 @@ class DiaryFragment : BaseFragmentController<DiaryLoginViewModel, DiaryFragmentB
             }
             popupMenu.show()
         }, CommonListener {
-            val intent = Intent(context,DiaryDetailActivity::class.java)
-            intent.putExtra("diaryEntity",it as DiaryEntity)
+            val intent = Intent(context, DiaryDetailActivity::class.java)
+            intent.putExtra("diaryEntity", it as DiaryEntity)
             startActivity(intent)
         })
         binding.rv.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)

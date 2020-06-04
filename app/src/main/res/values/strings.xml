@@ -103,4 +103,9 @@
     <string name="backup">备份</string>
     <string name="expand">展开</string>
     <string name="collapsed">收起</string>
+    <string name="user">用户</string>
+    <string name="user_info">user_info</string>
+    <string name="edit">编辑</string>
+    <string name="register">注册</string>
+    <string name="error">用户名或密码错误</string>
 </resources>

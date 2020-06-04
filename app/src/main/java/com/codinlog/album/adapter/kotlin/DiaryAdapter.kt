@@ -40,6 +40,10 @@ class DiaryAdapter(private val btnClickListener: CommonListener, private val det
         holder.tvTime.text = SimpleDateFormat("yyyy年MM月dd日hh:mm:ss").format(diaryEntity.diaryId).toString()
         holder.tvTitle.text = diaryEntity.title
         holder.tvContent.text = diaryEntity.content
+        holder.tvContent.setOnClickListener {
+            diaryEntity.isExpand = !diaryEntity.isExpand
+            updateIndicator(holder, position)
+        }
         holder.imgBtn.setOnClickListener { btnClickListener.handleEvent(Pair(holder.imgBtn, diaryEntity)) }
         holder.constraintLayout.setOnClickListener { detailClickListener.handleEvent(diaryEntity) }
         holder.ivLayout.removeAllViews()
@@ -62,6 +66,16 @@ class DiaryAdapter(private val btnClickListener: CommonListener, private val det
                     return@forEachIndexed
             }
         }
+        updateIndicator(holder, position)
+    }
+
+
+    private fun updateIndicator(holder: ViewHolder, position: Int) {
+        val diaryEntity = displayData[position]
+        if (diaryEntity.isExpand)
+            holder.tvContent.maxLines = Int.MAX_VALUE
+        else
+            holder.tvContent.maxLines = 3
     }
 
     private fun createImageView(photoBean: PhotoBean, context: Context, lastOne: Boolean): View {
@@ -79,7 +93,7 @@ class DiaryAdapter(private val btnClickListener: CommonListener, private val det
         val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         val ivBig: ImageView = view.findViewById(R.id.ivBig)
         val ivLayout: LinearLayout = view.findViewById(R.id.ivLayout)
-        val constraintLayout:ConstraintLayout = view.findViewById(R.id.constraintLayout_2)
+        val constraintLayout: ConstraintLayout = view.findViewById(R.id.constraintLayout_2)
         val tvContent: TextView = view.findViewById(R.id.tvContent)
         val imgBtn: ImageButton = view.findViewById(R.id.imgBtn)
     }

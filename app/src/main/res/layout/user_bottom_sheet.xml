@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -38,7 +39,6 @@
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="19dp"
             android:autoText="false"
             android:ellipsize="marquee"
             android:focusable="auto"
@@ -48,18 +48,9 @@
             android:maxLines="@integer/tv_max_line"
             android:text="@string/click_login"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvFriend"
-            app:layout_constraintStart_toEndOf="@+id/ivHeader" />
-
-        <TextView
-            android:id="@+id/tvFriend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/user_friend"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tvName"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.629" />
+            app:layout_constraintStart_toEndOf="@+id/ivHeader"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv"

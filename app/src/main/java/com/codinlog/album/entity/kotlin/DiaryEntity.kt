@@ -2,10 +2,7 @@ package com.codinlog.album.entity.kotlin
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.codinlog.album.bean.PhotoBean
 import com.codinlog.album.util.kotlin.DiaryTypeConverter
 import java.util.*
@@ -25,6 +22,9 @@ class DiaryEntity() :Parcelable {
 
     @ColumnInfo(name = "photoBeans")
     var photoBeans = listOf<PhotoBean>()
+
+    @Ignore
+    var isExpand = false
 
     constructor(parcel: Parcel) : this() {
         diaryId = parcel.readLong()

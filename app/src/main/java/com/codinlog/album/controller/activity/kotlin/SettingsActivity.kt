@@ -28,7 +28,6 @@ class SettingsActivity : AppCompatActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            Log.d("msg", "===$rootKey")
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
         }
     }
